@@ -1,8 +1,11 @@
 let Viholliset = {
   "lvl0": {
     HP: 10,
+    MaxHP: 10,
     MP: 10,
+    MaxMP: 10,
     Suoja: 10,
+    MaxAika: 10,
     Aika: 10,
     Kuva: "https://image.winudf.com/v2/image/Y29tLnN1YWRhaDA2MTEuYW5pbWVnaXJsa2F3YWlpYXBwX3NjcmVlbl8yXzE1MjM4OTA0OTRfMDI0/screen-2.jpg?fakeurl=1&type=.jpg",
     KuvaTop: "0px",
