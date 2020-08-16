@@ -39,6 +39,7 @@ let Pelaaja = {
 
   },
   Tiedot: {
+    MP: 100,
     HP: 20,
     Aika: 10,
     Raha: 0,

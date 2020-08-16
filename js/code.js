@@ -4,7 +4,7 @@ let pelaajanPikaValikkoNumero = 1;
 let pelaajanTaisteluKopio;
 let taisteltavat_viholliset = []
 
-let valittu_vihollinen;
+let valittu_vihollinen = null;
 
 let viholliset = document.getElementById("viholliset");
 viholliset.addEventListener("click", pelaajaHyokkaa);
@@ -21,6 +21,7 @@ siirry_taisteluruutuun();
 function siirry_taisteluruutuun() {
   pelaajanTaisteluKopio = JSON.parse(JSON.stringify(Pelaaja));              // Luo Kopion Pelaajasta
   pelaajanTaisteluKopio.Tiedot["MaxHP"] = pelaajanTaisteluKopio.Tiedot.HP || "Ei Löydy";
+  pelaajanTaisteluKopio.Tiedot["MaxMP"] = pelaajanTaisteluKopio.Tiedot.MP || "Ei Löydy";
 }
 
 function pelaajaHyokkaa(e) {
@@ -29,11 +30,13 @@ function pelaajaHyokkaa(e) {
   valittu_vihollinen = etsi_vihollisen_numero(e.target);
   if(document.getElementById(`vihollinen${valittu_vihollinen}`).style.animationName == "vihollinen_kuolee") return;
   let valittu = pelaajanTaisteluKopio.NopeaValikko[`Valikko${pelaajanPikaValikkoNumero}`];
-  if(valittu.Tyyppi == "ase") {
+  if(valittu.Tyyppi == "ase" || valittu.Tyyppi == "taika") {
+    if(valittu.Tyyppi == "taika") if(pelaajanTaisteluKopio.Tiedot.MP < valittu.Taika) return;
     pelaajanTaisteluKopio.Tiedot.Aika -= valittu.Nopeus;
     let crit = laskeCrit(valittu.CritProsentti);
     let vahinko = crit == true ? Random(valittu.MinDMG, valittu.MaxDMG || valittu.MinDMG) * pelaajanTaisteluKopio.Tiedot.CritKerroin : Random(valittu.MinDMG, valittu.MaxDMG || valittu.MinDMG);
 
+    pelaajanTaisteluKopio.Tiedot.MP -= valittu.Taika || 0;
     taisteltavat_viholliset[valittu_vihollinen].HP -= vahinko;
 
     for(let style = `shake${Random(0, 10)}`; 1 < 2; style = `shake${Random(0, 10)}`) { // Shake
@@ -41,9 +44,7 @@ function pelaajaHyokkaa(e) {
     }
 
     paivita_visuaalisesti_vihollinen(valittu_vihollinen);
-
     paivitaVisualPelaaja();
-
     luoPopUpDmg(e.x, e.y, vahinko, crit);
 
     if(taisteltavat_viholliset[valittu_vihollinen].HP <= 0) {
@@ -177,8 +178,14 @@ function pikanapit(e) {
     document.getElementById(`slot${+e.key}`).classList.add("valittuSlot");
   }
   if(e.keyCode == 32) {
-    let val = document.getElementById("vihollinen").getBoundingClientRect();
-    pelaajaHyokkaa({x: Random(val.left, val.right), y: Random(val.top, val.bottom)});
+    let taulu = Array.from(document.getElementById("viholliset").children);
+    if(valittu_vihollinen == null) valittu_vihollinen = Random(0, taulu.length - 1); 
+    let kohde;
+    if(taulu.length - 1 < valittu_vihollinen) {
+      kohde = taulu[Random(0, taulu.length - 1)];
+    } else kohde = taulu[valittu_vihollinen];
+    let val = kohde.getBoundingClientRect();
+    pelaajaHyokkaa({x: Random(val.left, val.right), y: Random(val.top, val.bottom), target: kohde});
   }
 }
 
@@ -234,6 +241,9 @@ function paivitaVisualPelaaja() {
   document.getElementById("PelaajanHp1").style.width = `${pelaajanTaisteluKopio.Tiedot.HP > 0 ? pelaajanTaisteluKopio.Tiedot.HP / pelaajanTaisteluKopio.Tiedot.MaxHP * 100 : 0}%`;
   document.getElementById("PelaajanHp2").style.width = `${pelaajanTaisteluKopio.Tiedot.HP > 0 ? pelaajanTaisteluKopio.Tiedot.HP / pelaajanTaisteluKopio.Tiedot.MaxHP * 100 : 0}%`;
   document.getElementById("pelaajaHpText").textContent = `${pelaajanTaisteluKopio.Tiedot.HP} / ${pelaajanTaisteluKopio.Tiedot.MaxHP}`;
+  document.getElementById("PelaajanMp1").style.width = `${pelaajanTaisteluKopio.Tiedot.MP > 0 ? pelaajanTaisteluKopio.Tiedot.MP / pelaajanTaisteluKopio.Tiedot.MaxMP * 100 : 0}%`;
+  document.getElementById("PelaajanMp2").style.width = `${pelaajanTaisteluKopio.Tiedot.MP > 0 ? pelaajanTaisteluKopio.Tiedot.MP / pelaajanTaisteluKopio.Tiedot.MaxMP * 100 : 0}%`;
+  document.getElementById("pelaajaMpText").textContent = `${pelaajanTaisteluKopio.Tiedot.MP} / ${pelaajanTaisteluKopio.Tiedot.MaxMP}`;
   document.getElementById("aikaText").textContent = `${pelaajanTaisteluKopio.Tiedot.Aika < 0 ? 0 : pelaajanTaisteluKopio.Tiedot.Aika}s`;
 }
 
