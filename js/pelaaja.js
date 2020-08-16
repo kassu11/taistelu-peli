@@ -44,6 +44,7 @@ let Pelaaja = {
     Aika: 10,
     Raha: 0,
     Exp: 0,
-    CritKerroin: 2
+    CritKerroin: 2,
+    ManaRegen: 1
   }
 }

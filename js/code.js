@@ -4,7 +4,7 @@ let pelaajanPikaValikkoNumero = 1;
 let pelaajanTaisteluKopio;
 let taisteltavat_viholliset = []
 
-let valittu_vihollinen = null;
+let valittu_vihollinen = 0;
 
 let viholliset = document.getElementById("viholliset");
 viholliset.addEventListener("click", pelaajaHyokkaa);
@@ -24,6 +24,7 @@ function siirry_taisteluruutuun() {
   pelaajanTaisteluKopio.Tiedot["MaxMP"] = pelaajanTaisteluKopio.Tiedot.MP || "Ei Löydy";
 }
 
+let animaation_aloitus_aika = null; // tää korjaa mielenkiintoisen animaation ajastuksen
 function pelaajaHyokkaa(e) {
   if(pelaajanTaisteluKopio.Tiedot.Aika <= 0 || pelaajanTaisteluKopio.Tiedot.HP <= 0) return;
   if(e.target.id == "viholliset") return;
@@ -48,6 +49,7 @@ function pelaajaHyokkaa(e) {
     luoPopUpDmg(e.x, e.y, vahinko, crit);
 
     if(taisteltavat_viholliset[valittu_vihollinen].HP <= 0) {
+      animaation_aloitus_aika = new Date().getTime();
       if(tarkista_onko_vihollinen_hengissa(taisteltavat_viholliset) == false) {
         document.getElementById(`vihollinen${valittu_vihollinen}`).style.filter = "blur(10px)";
         document.getElementById("voittoRuutu").style.animationName = "voittoIkkuna";
@@ -60,7 +62,8 @@ function pelaajaHyokkaa(e) {
         poistaElem(document.getElementById(`vihollinen${valittu_vihollinen}`), 5000)
       }
     } if(pelaajanTaisteluKopio.Tiedot.Aika <= 0 && tarkista_onko_vihollinen_hengissa(taisteltavat_viholliset) == true) {
-      setTimeout(vihollinenHyokkaa, tapettiinko_vihollinen() ? 3500 : 200);
+      let aika = animaation_aloitus_aika - new Date().getTime() + 3500;
+      setTimeout(vihollinenHyokkaa, tapettiinko_vihollinen() ? aika : 200);
       document.getElementById("taisteluRuutu").classList.add("vihu");
       document.getElementById("taisteluRuutu").classList.remove("pelaaja");
     }
@@ -91,12 +94,13 @@ function vihollinenHyokkaa() {
 
   let vihu = vapaa_vihollinen(taisteltavat_viholliset);
   pelaajanTaisteluKopio.Tiedot.HP -= taisteltavat_viholliset[vihu].Iskut[0].DMG;
+  pelaajanTaisteluKopio.Tiedot.MP += Math.min(taisteltavat_viholliset[vihu].Aika, taisteltavat_viholliset[vihu].Iskut[0].Nopeus) * pelaajanTaisteluKopio.Tiedot.ManaRegen;
+  if(pelaajanTaisteluKopio.Tiedot.MP > pelaajanTaisteluKopio.Tiedot.MaxMP) pelaajanTaisteluKopio.Tiedot.MP = pelaajanTaisteluKopio.Tiedot.MaxMP;
   taisteltavat_viholliset[vihu].Aika -= taisteltavat_viholliset[vihu].Iskut[0].Nopeus;
 
   for(let i = 0; i < Array.from(viholliset.children).length; i++) {
     Array.from(viholliset.children)[i].classList.add("vihollinen_ei_valittu");
   } document.getElementById(`vihollinen${vihu}`).classList.remove("vihollinen_ei_valittu");
-
 
   setTimeout(() => {
     paivitaVisualPelaaja()
