@@ -237,15 +237,14 @@ body {
   border: 5px solid #171717;
   transform: translateX(-50%);
   /* box-shadow: 0 0 5px 2px #131313;*/
+  overflow: hidden;
 }
 .vihollisen_kuva > img {
   position: absolute;
-  width: 249px;
-  left: 0px;
-  height: 320px;
+  width: 230px;
+  left: 10px;
   top: 0px;
   pointer-events: none;
-  opacity: 0.9;
 }
 
 
@@ -318,6 +317,14 @@ body {
   top: 20px;
 }
 
+#slot_popup_deley {
+  position: absolute;
+  width: 440px;
+  left: 27px;
+  height: 130px;
+  top: 5px;
+}
+
 #hotbarPopUpBg {
   position: absolute;
   width: fit-content;
@@ -326,6 +333,9 @@ body {
   background-color: black;
   pointer-events: none;
   opacity: .95;
+  animation-duration: .1s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 }
 .vihu #hotbarPopUpBg {
   opacity: .4;
@@ -339,49 +349,21 @@ body {
   top: 5px;
 }
 
-#hotbarPopUpNimi {
+#hotbar_infobox_sisalto > p {
   position: relative;
-  color: red;
   font-family: font3;
+  color: white;
+}
+
+#hotbar_infobox_sisalto #hotbar_tavara_nimi {
+  color: red;
   font-size: 18px;
   font-weight: 600;
 }
-
-#hotbarPopUpTyyppi {
-  position: relative;
-  color: white;
-  font-family: font3;
-}
-#hotbarPopUpTyyppi2 {
-  color: #ff9900;
-}
-
-#hotbarPopUpDmg {
-  position: relative;
-  color: white;
-  font-family: font3;
-}
-#hotbarPopUpDmg2 {
-  color: #ffe000;
-}
-
-#hotbarPopUpSpeed {
-  position: relative;
-  color: white;
-  font-family: font3;
-}
-#hotbarPopUpSpeed2 {
-  color: #41ee36;
-}
-
-#hotbarPopUpManaCost {
-  position: relative;
-  color: white;
-  font-family: font3;
-}
-#hotbarPopUpManaCost2 {
-  color: #2eb3e0;
-}
+.hotbar_tavara_tyyppi {color: #ff9900}
+.hotbar_tavara_vahinko {color: #ffe000}
+.hotbar_tavara_nopeus {color: #41ee36}
+.hotbar_tavara_taika {color: #2eb3e0}
 
 #hpBox {
   position: absolute;

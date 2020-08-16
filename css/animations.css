@@ -161,38 +161,6 @@
   100% {opacity: 1; transform: scale(1)}
 }
 
-/* @keyframes vihollinen_kuolee {
-  0% {z-index: -1; margin: 3px -7px -2px 0px}
-  1% {margin: 2px 6px -5px 7px}
-  2% {margin: -7px 0px 5px -5px}
-  3% {margin: 8px -4px 3px -1px}
-  4% {margin: 0px -6px 7px 2px}
-  5% {margin: -5px 4px 7px 5px}
-  6% {margin: 4px -10px -2px -9px}
-  7% {margin: 6px -2px -9px -2px}
-  8% {margin: -4px -5px -5px -7px}
-  9% {margin: -4px -5px -5px -7px}
-  10% {margin: -10px -8px 1px -7px}
-  11% {margin: 4px -5px -5px 8px}
-  12% {margin: 1px -8px 2px -4px}
-  13% {margin: -8px 9px 1px -7px}
-  14% {margin: -6px 4px -5px -3px}
-  15% {margin: -5px 4px 7px 5px}
-  16% {margin: 4px -10px -2px -9px}
-  17% {margin: 6px -2px -9px -2px}
-  18% {margin: -4px -5px -5px -7px}
-  19% {margin: -4px -5px -5px -7px}
-  20% {margin: -10px -8px 1px -7px}
-  23% {margin: 3px}
-  35% {margin: 3px}
-  45% {margin: -1000px -165px 0px -165px}
-
-  100% {
-    margin: -1000px -165px 0px -165px;
-    z-index: -1;
-  }
-} */
-
 @keyframes vihollinen_kuolee {
   0% {z-index: -1; left: 4px; top: 0px}
   1% {left: -7px; top: 51px}
@@ -242,4 +210,10 @@
     margin: -800px -165px 0px -165px;
     z-index: -1;
   }
+}
+
+@keyframes piilota_slot_popup {
+  0% {opacity: .95;}
+  99.9% {opacity: .95;}
+  100% {opacity: 0;}
 }

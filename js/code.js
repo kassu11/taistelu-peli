@@ -28,7 +28,7 @@ function pelaajaHyokkaa(e) {
   if(valittu.Tyyppi == "ase") {
     pelaajanTaisteluKopio.Tiedot.Aika -= valittu.Nopeus;
     let crit = laskeCrit(valittu.CritProsentti);
-    let vahinko = crit == true ? Random(valittu.MinDMG, valittu.MaxDMG) * pelaajanTaisteluKopio.Tiedot.CritKerroin : Random(valittu.MinDMG, valittu.MaxDMG);
+    let vahinko = crit == true ? Random(valittu.MinDMG, valittu.MaxDMG || valittu.MinDMG) * pelaajanTaisteluKopio.Tiedot.CritKerroin : Random(valittu.MinDMG, valittu.MaxDMG || valittu.MinDMG);
 
     // vihollisenTaisteluKopio.HP -= vahinko;
     taisteltavat_viholliset[valittu_vihollinen].HP -= vahinko;
@@ -280,20 +280,23 @@ function hotbarHover(e) {
   if(!e.target.id.startsWith("slot") || e.target.id.startsWith("slotBox")) {
     document.getElementById("hotbarPopUpBg").style.display = "none";
     return;
-  } document.getElementById("hotbarPopUpBg").style.display = null;
-  let numero = +e.target.id.substring(4);
+  } else if(e.target.id == "slot_popup_deley" && document.getElementById("hotbar_tavara_nimi").textContent == "") return; 
+  document.getElementById("hotbarPopUpBg").style.display = null;
 
-  document.getElementById("hotbarPopUpNimi").textContent = Pelaaja.NopeaValikko[`Valikko${numero}`].Nimi;
-  document.getElementById("hotbarPopUpTyyppi2").textContent = Pelaaja.NopeaValikko[`Valikko${numero}`].TyyppiText;
-  if(Pelaaja.NopeaValikko[`Valikko${numero}`].MinDMG) {
-    document.getElementById("hotbarPopUpDmg2").textContent = `${Pelaaja.NopeaValikko[`Valikko${numero}`].MinDMG}-${Pelaaja.NopeaValikko[`Valikko${numero}`].MaxDMG}`;
-  } else {
-    document.getElementById("hotbarPopUpDmg2").textContent = "";
-  }
-  document.getElementById("hotbarPopUpSpeed2").textContent = `${Pelaaja.NopeaValikko[`Valikko${numero}`].Nopeus}s`;
+  if(e.target.id !== "slot_popup_deley") {
+    document.getElementById("hotbarPopUpBg").style.animationName = null;
+    let valittu = Pelaaja.NopeaValikko[`Valikko${+e.target.id.substring(4)}`];
+    if(!valittu.Nimi) document.getElementById("hotbarPopUpBg").style.display = "none";
+
+    document.getElementById("hotbar_infobox_sisalto").innerHTML = `
+    <p id = "hotbar_tavara_nimi">${valittu.Nimi || ""}</p>
+    <p>${valittu.TyyppiText ? "Tyyppi: " : ""}<span class = "hotbar_tavara_tyyppi">${valittu.TyyppiText || ""}</span></p>
+    <p>${valittu.MinDMG ? "Vahinko: " : ""} <span class = "hotbar_tavara_vahinko">${valittu.MinDMG || ""}${valittu.MaxDMG ? "-"+valittu.MaxDMG : ""}</span></p>
+    <p>${valittu.Nopeus ? "Nopeus: " : ""}<span class = "hotbar_tavara_nopeus">${valittu.Nopeus ? valittu.Nopeus+"s" : ""}</span></p>
+    <p>${valittu.Taika ? "Manan kulutus: " : ""}<span class = "hotbar_tavara_taika">${valittu.Taika ? valittu.Taika + "m" : ""}</span></p>`
+  } else document.getElementById("hotbarPopUpBg").style.animationName = "piilota_slot_popup";
 
   let korkeus = document.getElementById("hotbarPopUpBg").getBoundingClientRect().height + 15;
-
   document.getElementById("hotbarPopUpBg").style.left = `${e.x + 25}px`;
   if(e.y - 20 < document.body.offsetHeight - korkeus) {
     document.getElementById("hotbarPopUpBg").style.top = `${e.y - 20}px`;
@@ -306,7 +309,7 @@ function hotbarHover(e) {
 
 document.getElementById("hotbar").addEventListener("click", painaHotbar);
 function painaHotbar(e) {
-  if(!e.target.id.startsWith("slot") || e.target.id.startsWith("slotBox")) return;
+  if(!e.target.id.startsWith("slot") || e.target.id.startsWith("slotBox") || e.target.id == "slot_popup_deley") return;
   let numero = +e.target.id.substring(4);
   document.getElementById(`slot${pelaajanPikaValikkoNumero}`).classList.remove("valittuSlot");
   pelaajanPikaValikkoNumero = numero;
@@ -315,7 +318,7 @@ function painaHotbar(e) {
 
 let taisteltavat_viholliset = []
 lisaa_vihollinen("lvl0");
-lisaa_vihollinen("lvl0");
+lisaa_vihollinen("lvl1");
 lisaa_vihollinen("lvl0");
 function lisaa_vihollinen(nimi) {
   taisteltavat_viholliset.push(JSON.parse(JSON.stringify(Viholliset[nimi])));

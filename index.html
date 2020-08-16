@@ -1,147 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang = "fi">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/font.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/tyyli.css">
-    <title>Pohjola remastered</title>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href = "css/font.css">
+    <link rel = "stylesheet" href = "css/animations.css">
+    <link rel = "stylesheet" href = "css/tyyli.css">
+    <title>Pohjola Remake</title>
   </head>
   <body>
-    <div id="taisteluRuutu" class = "pelaaja">
-      <div id="popUpDmg"></div>
+    <div id = "taisteluRuutu" class = "pelaaja">
+      <div id = "popUpDmg"></div>
       
-      <div id="pelaaja">
-        <div id="hpBox">
-          <div class="PelaajanHpBg">
-            <div id="PelaajanHp1"></div>
-            <div id="PelaajanHp2"></div>
+      <div id = "pelaaja">
+        <div id = "hpBox">
+          <div class = "PelaajanHpBg">
+            <div id = "PelaajanHp1"></div>
+            <div id = "PelaajanHp2"></div>
             <div class = "hpHohto"></div>
-            <p id="pelaajaHpText">100/100</p>
+            <p id = "pelaajaHpText">100/100</p>
           </div>
         </div>
-        <div id="mpBox">
-          <div class="PelaajanMpBg">
-            <div id="PelaajanMp1"></div>
-            <div id="PelaajanMp2"></div>
+        <div id = "mpBox">
+          <div class = "PelaajanMpBg">
+            <div id = "PelaajanMp1"></div>
+            <div id = "PelaajanMp2"></div>
             <div class = "mpHohto"></div>
-            <p id="pelaajaMpText">100/100</p>
+            <p id = "pelaajaMpText">100/100</p>
           </div>
         </div>
-        <div id="slotBox"></div>
+        <div id = "slotBox"></div>
 
-        <div id="aikaBox">
-          <p id="aikaText">10s</p>
+        <div id = "aikaBox">
+          <p id = "aikaText">10s</p>
         </div>
-        <div id="lvlBox">
-          <p id="lvlText">1</p>
+        <div id = "lvlBox">
+          <p id = "lvlText">1</p>
         </div>
-        <div id="luovutaBox">
-          <p id="luovutaNappi">Vaihto</p>
-          <div class="luovutaHover">
+        <div id = "luovutaBox">
+          <p id = "luovutaNappi">Vaihto</p>
+          <div class = "luovutaHover">
             <p>Tämä nappi vaihtaa vuoron viholliselle. Sen ainoa tarkoitus on auttaa pelaajaa jos et voi tehdä iskuja enää esim. full mana build</p>
           </div>
         </div>
-        <div class="PelaajanExpBg">
-          <div id="PelaajanExp1"></div>
-          <div id="PelaajanExp2"></div>
+        <div class = "PelaajanExpBg">
+          <div id = "PelaajanExp1"></div>
+          <div id = "PelaajanExp2"></div>
         </div>
 
-        <div id="hotbar">
-          <div class="slotsBox">
-            <div id="slot1" class = "slot valittuSlot">
+        <div id = "hotbar">
+          <div class = "slotsBox">
+            <div id = "slot_popup_deley"></div>
+            <div id = "slot1" class = "slot valittuSlot">
               <p class = "slotNumero">1</p>
-              <img src="" alt="" id="KuvaSlot1" class = "slotKuva">
+              <img id = "KuvaSlot1" class = "slotKuva">
             </div>
-            <div id="slot2" class = "slot">
+            <div id = "slot2" class = "slot">
               <p class = "slotNumero">2</p>
-              <img src="" alt="" id="KuvaSlot2" class = "slotKuva">
+              <img id = "KuvaSlot2" class = "slotKuva">
             </div>
-            <div id="slot3" class = "slot">
+            <div id = "slot3" class = "slot">
               <p class = "slotNumero">3</p>
-              <img src="" alt="" id="KuvaSlot3" class = "slotKuva">
+              <img id = "KuvaSlot3" class = "slotKuva">
             </div>
-            <div id="slot4" class = "slot">
+            <div id = "slot4" class = "slot">
               <p class = "slotNumero">4</p>
-              <img src="" alt="" id="KuvaSlot4" class = "slotKuva">
+              <img id = "KuvaSlot4" class = "slotKuva">
             </div>
-            <div id="slot5" class = "slot">
+            <div id = "slot5" class = "slot">
               <p class = "slotNumero">5</p>
-              <img src="" alt="" id="KuvaSlot5" class = "slotKuva">
+              <img id = "KuvaSlot5" class = "slotKuva">
             </div>
           </div>
         </div>
       </div>
 
-      <div id="hotbarPopUp">
-        <div id="hotbarPopUpBg" style = "display: none;">
-          <div id="hotbarNuoli"></div>
-          <p id="hotbarPopUpNimi">Puumiekka</p>
-          <p id="hotbarPopUpTyyppi">Tyyppi: <span id = "hotbarPopUpTyyppi2">Lähitaistelu</span></p>
-          <p id="hotbarPopUpDmg">Vahinko: <span id = "hotbarPopUpDmg2">10-12</span></p>
-          <p id="hotbarPopUpSpeed">Nopeus: <span id = "hotbarPopUpSpeed2">6s</span></p>
-          <p id="hotbarPopUpManaCost">Manan kulutus: <span id = "hotbarPopUpManaCost2">10m</span></p>
+      <div id = "hotbarPopUp">
+        <div id = "hotbarPopUpBg" style = "display: none;">
+          <div id = "hotbarNuoli"></div>
+          <div id = "hotbar_infobox_sisalto"></div>
         </div>
       </div>
 
-      <div id="viholliset"></div>
-      
-      <!-- <div id="vihollinen">
-        <div class = "hpbg">
-          <div id = "vihollinenHP1"></div>
-          <div id = "vihollinenHP2"></div>
-          <div class = "hpHohto"></div>
-          <p id="vihuHpText">100/100</p>
-        </div>
-        <div class = "mpbg">
-          <div id = "vihollinenMP1"></div>
-          <div id = "vihollinenMP2"></div>
-          <div class = "mpHohto"></div>
-          <p id="vihuMpText">100/100</p>
-        </div>
-        <div class="vihuNumeroBg">
-          <p id="vihuNumero">001</p>
-        </div>
-        <div id="vihollinenKuva">
-          <img id = "vihuKuva" src="https://image.winudf.com/v2/image/Y29tLnN1YWRhaDA2MTEuYW5pbWVnaXJsa2F3YWlpYXBwX3NjcmVlbl8yXzE1MjM4OTA0OTRfMDI0/screen-2.jpg?fakeurl=1&type=.jpg" alt="">
-        </div>
-      </div> -->
+      <div id = "viholliset"></div>
     </div>
 
-    <div id="ruudunTummennus"></div>
+    <div id = "ruudunTummennus"></div>
 
-    <div id="voittoRuutu">
-      <div class="voittoOtsikko">
+    <div id = "voittoRuutu">
+      <div class = "voittoOtsikko">
         <p>Voitit Taistelun</p>
       </div>
 
-      <div class="tavaraOtsikko">
+      <div class = "tavaraOtsikko">
         <p>Tässä voittamasi tavarat</p>
       </div>
 
-      <div id="voittoTavarat"></div>
-      <div id="jatkaNappi">
+      <div id = "voittoTavarat"></div>
+      <div id = "jatkaNappi">
         <p>Valikko</p>
       </div>
-      <div class="aloitaAlustaNappi" onclick="reset()">
+      <div class = "aloitaAlustaNappi" onclick="reset()">
         <p>Taistele</p>
       </div>
     </div>
 
-    <div id="havioRuutu">
-      <div class="havioOtsikko">
+    <div id = "havioRuutu">
+      <div class = "havioOtsikko">
         <p>Hävisit Taistelun</p>
       </div>
 
-      <div class="tavaraOtsikko">
+      <div class = "tavaraOtsikko">
         <p>Noh, se olis voinu mennä paremmin!</p>
       </div>
       
-      <div id="jatkaNappi">
+      <div id = "jatkaNappi">
         <p>Valikko</p>
       </div>
-      <div class="aloitaAlustaNappi" onclick="reset()">
+      <div class = "aloitaAlustaNappi" onclick="reset()">
         <p>Taistele</p>
       </div>
     </div>
