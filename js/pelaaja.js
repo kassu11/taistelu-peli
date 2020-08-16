@@ -11,7 +11,7 @@ let Pelaaja = {
     },
     "Valikko2": {
       Nimi: "Taikasauva",
-      Tyyppi: "ase",
+      Tyyppi: "taika",
       TyyppiText: "Taika",
       MaxDMG: 8,
       MinDMG: 12,

@@ -1,5 +1,6 @@
 let Viholliset = {
   "lvl0": {
+    ID: "0",
     HP: 10,
     MaxHP: 10,
     MP: 10,
@@ -22,6 +23,7 @@ let Viholliset = {
     ]
   },
   "lvl1": {
+    ID: "1",
     HP: 45,
     MaxHP: 45,
     MP: 20,

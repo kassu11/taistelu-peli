@@ -2,7 +2,7 @@ let taisteluRuutu = document.getElementById("taisteluRuutu");
 let pelaajanPikaValikkoNumero = 1;
 
 let pelaajanTaisteluKopio;
-let vihollisenTaisteluKopio;
+let taisteltavat_viholliset = []
 
 let valittu_vihollinen;
 
@@ -17,7 +17,11 @@ document.getElementById("luovutaBox").addEventListener("click", () => {
   document.getElementById("taisteluRuutu").classList.remove("pelaaja");
 })
 
-taisteleVihollista("lvl0");
+siirry_taisteluruutuun();
+function siirry_taisteluruutuun() {
+  pelaajanTaisteluKopio = JSON.parse(JSON.stringify(Pelaaja));              // Luo Kopion Pelaajasta
+  pelaajanTaisteluKopio.Tiedot["MaxHP"] = pelaajanTaisteluKopio.Tiedot.HP || "Ei Löydy";
+}
 
 function pelaajaHyokkaa(e) {
   if(pelaajanTaisteluKopio.Tiedot.Aika <= 0 || pelaajanTaisteluKopio.Tiedot.HP <= 0) return;
@@ -30,7 +34,6 @@ function pelaajaHyokkaa(e) {
     let crit = laskeCrit(valittu.CritProsentti);
     let vahinko = crit == true ? Random(valittu.MinDMG, valittu.MaxDMG || valittu.MinDMG) * pelaajanTaisteluKopio.Tiedot.CritKerroin : Random(valittu.MinDMG, valittu.MaxDMG || valittu.MinDMG);
 
-    // vihollisenTaisteluKopio.HP -= vahinko;
     taisteltavat_viholliset[valittu_vihollinen].HP -= vahinko;
 
     for(let style = `shake${Random(0, 10)}`; 1 < 2; style = `shake${Random(0, 10)}`) { // Shake
@@ -39,8 +42,7 @@ function pelaajaHyokkaa(e) {
 
     paivita_visuaalisesti_vihollinen(valittu_vihollinen);
 
-    document.getElementById("aikaText").textContent = `${pelaajanTaisteluKopio.Tiedot.Aika}s`;
-    if(pelaajanTaisteluKopio.Tiedot.Aika < 0) document.getElementById("aikaText").textContent = `0s`;
+    paivitaVisualPelaaja();
 
     luoPopUpDmg(e.x, e.y, vahinko, crit);
 
@@ -60,8 +62,6 @@ function pelaajaHyokkaa(e) {
       setTimeout(vihollinenHyokkaa, tapettiinko_vihollinen() ? 3500 : 200);
       document.getElementById("taisteluRuutu").classList.add("vihu");
       document.getElementById("taisteluRuutu").classList.remove("pelaaja");
-      // document.getElementById("vihollinenMP1").style.width = `${100}%`;
-      // document.getElementById("vihollinenMP2").style.width = `${100}%`;
     }
   }
 
@@ -96,13 +96,8 @@ function vihollinenHyokkaa() {
     Array.from(viholliset.children)[i].classList.add("vihollinen_ei_valittu");
   } document.getElementById(`vihollinen${vihu}`).classList.remove("vihollinen_ei_valittu");
 
-  // let aikaProsentti = vihollisenTaisteluKopio.Aika / vihollisenTaisteluKopio.MaxAika * 100;
 
-  // document.getElementById("vihollinenMP1").style.width = `${aikaProsentti > 0 ? aikaProsentti : 0}%`;
-  // document.getElementById("vihollinenMP2").style.width = `${aikaProsentti > 0 ? aikaProsentti : 0}%`;
   setTimeout(() => {
-
-  
     paivitaVisualPelaaja()
     let num = +document.getElementById(`vihollinen${vihu}`).style.animationName.substring(7, 8) || 0;
     document.getElementById(`vihollinen${vihu}`).style.animationName = `hyokkaa${Math.abs(num - 1)}`;
@@ -125,7 +120,7 @@ function vihollinenHyokkaa() {
         document.getElementById("taisteluRuutu").classList.remove("vihu");
         pelaajanTaisteluKopio.Tiedot.Aika = Pelaaja.Tiedot.Aika;
         document.getElementById("aikaText").textContent = `${pelaajanTaisteluKopio.Tiedot.Aika}s`;
-        vihollisen_parannus();
+        vihollisen_aika_parannus();
         for(let i = 0; i < Array.from(viholliset.children).length; i++) {
           Array.from(viholliset.children)[i].classList.remove("vihollinen_ei_valittu");
         }
@@ -137,7 +132,6 @@ function vihollinenHyokkaa() {
   }, 800);
 
   function vapaa_vihollinen(tiedot) {
-    console.log(tiedot)
     for(let i = 0; i < tiedot.length; i++) {
       if(tiedot[i].Aika > 0 && tiedot[i].HP > 0) {
         if(tiedot[i].Aika >= tiedot[i].Iskut[0].Nopeus) {
@@ -147,7 +141,7 @@ function vihollinenHyokkaa() {
     } return null
   }
 
-  function vihollisen_parannus() {
+  function vihollisen_aika_parannus() {
     for(let i = 0; i < taisteltavat_viholliset.length; i++) {
       if(taisteltavat_viholliset[i].HP > 0) {
         taisteltavat_viholliset[i].Aika = taisteltavat_viholliset[i].MaxAika;
@@ -155,7 +149,6 @@ function vihollinenHyokkaa() {
     }
   }
 };
-
 
 function luoPopUpDmg(x, y, vahinko, crit) {
   let p = document.createElement("p");
@@ -174,22 +167,6 @@ function luoPopUpDmg(x, y, vahinko, crit) {
     p.style.left = `${x + Math.floor(Math.random() * 800) - 400}px`;
     p.style.transform = `rotate(${Math.floor(Math.random() * 31) - 15}deg)`;
   }, 30);
-}
-
-function taisteleVihollista(nimi) {
-  vihollisenTaisteluKopio = JSON.parse(JSON.stringify(Viholliset[nimi]));   // Luo Kopion Vihollisesta
-  vihollisenTaisteluKopio["MaxHP"] =  Viholliset[nimi].HP || "Ei Löydy";
-  vihollisenTaisteluKopio["MaxMP"] =  Viholliset[nimi].MP || "Ei Löydy";
-  vihollisenTaisteluKopio["MaxAika"] =  Viholliset[nimi].Aika || "Ei Löydy";
-  vihollisenTaisteluKopio["Nimi"] = nimi;
-  pelaajanTaisteluKopio = JSON.parse(JSON.stringify(Pelaaja));              // Luo Kopion Pelaajasta
-  pelaajanTaisteluKopio.Tiedot["MaxHP"] = pelaajanTaisteluKopio.Tiedot.HP || "Ei Löydy";
-
-  // document.getElementById("vihuKuva").src = vihollisenTaisteluKopio.Kuva || "https://steamuserimages-a.akamaihd.net/ugc/914659215888655432/82DCA20555DE13B0F76E9C833110411BC60DEB3F/";
-  // document.getElementById("vihuKuva").style.top = vihollisenTaisteluKopio.KuvaTop;
-  // document.getElementById("vihuKuva").style.left = vihollisenTaisteluKopio.KuvaLeft;
-  // document.getElementById("vihuKuva").style.width = vihollisenTaisteluKopio.KuvaWidth;
-  // document.getElementById("vihuKuva").style.height = vihollisenTaisteluKopio.KuvaHeight;
 }
 
 window.addEventListener("keydown", pikanapit);
@@ -220,20 +197,21 @@ function scroll(e) {
   }
 }
 function reset() {
-  taisteleVihollista(vihollisenTaisteluKopio.Nimi);
-  vihollinen.style.filter = "blur(0px)";
-  vihollinen.style.transition = "0s";
-
+  let kopiot = JSON.parse(JSON.stringify(taisteltavat_viholliset));
+  document.getElementById("viholliset").textContent = "";
+  taisteltavat_viholliset = [];
+  for(let kopio of kopiot) {
+    lisaa_vihollinen(kopio.Nimi);
+  }
   document.getElementById("taisteluRuutu").classList.add("pelaaja");
   document.getElementById("taisteluRuutu").classList.remove("vihu");
-
-  paivitaVisualVihu();
-  paivitaVisualPelaaja();
 
   document.getElementById("ruudunTummennus").style.animationName = null;
   document.getElementById("voittoRuutu").style.animationName = null;
   document.getElementById("havioRuutu").style.animationName = null;
-  setTimeout(() => {vihollinen.style.transition = null;}, 500);
+
+  siirry_taisteluruutuun();
+  paivitaVisualPelaaja();
 }
 
 function poistaElem(elem, aika = 0) {
@@ -256,10 +234,12 @@ function paivitaVisualPelaaja() {
   document.getElementById("PelaajanHp1").style.width = `${pelaajanTaisteluKopio.Tiedot.HP > 0 ? pelaajanTaisteluKopio.Tiedot.HP / pelaajanTaisteluKopio.Tiedot.MaxHP * 100 : 0}%`;
   document.getElementById("PelaajanHp2").style.width = `${pelaajanTaisteluKopio.Tiedot.HP > 0 ? pelaajanTaisteluKopio.Tiedot.HP / pelaajanTaisteluKopio.Tiedot.MaxHP * 100 : 0}%`;
   document.getElementById("pelaajaHpText").textContent = `${pelaajanTaisteluKopio.Tiedot.HP} / ${pelaajanTaisteluKopio.Tiedot.MaxHP}`;
+  document.getElementById("aikaText").textContent = `${pelaajanTaisteluKopio.Tiedot.Aika < 0 ? 0 : pelaajanTaisteluKopio.Tiedot.Aika}s`;
 }
 
 function laskeCrit(mahdollisuus) {
-  if(Random(0, 100) <= mahdollisuus) return true;
+  if(Random(0, 100) < mahdollisuus) return true;
+  return false;
 }
 
 paivitaSlots();
@@ -316,13 +296,13 @@ function painaHotbar(e) {
   document.getElementById(`slot${numero}`).classList.add("valittuSlot");
 }
 
-let taisteltavat_viholliset = []
 lisaa_vihollinen("lvl0");
 lisaa_vihollinen("lvl1");
 lisaa_vihollinen("lvl0");
 function lisaa_vihollinen(nimi) {
   taisteltavat_viholliset.push(JSON.parse(JSON.stringify(Viholliset[nimi])));
   let num = taisteltavat_viholliset.length - 1;
+  taisteltavat_viholliset[num]["Nimi"] = nimi;
   document.getElementById("viholliset").innerHTML += `
   <div id = "vihollinen${num}" class = "vihollinen">
     <div class = "hpbg">
@@ -338,7 +318,7 @@ function lisaa_vihollinen(nimi) {
       <p id = "vihu${num}_mp_text" class = "vihu_mp_text">${Viholliset[nimi].MP}/${Viholliset[nimi].MP}</p>
     </div>
     <div class = "vihun_numero_bg">
-      <p id = "vihu${num}_numero">${"0".repeat(6 - nimi.length)}${nimi.substring(3)}</p>
+      <p id = "vihu${num}_numero">${"0".repeat(3 - Viholliset[nimi].ID.length)}${Viholliset[nimi].ID}</p>
     </div>
     <div class = "vihollisen_kuva">
       <img src = "${Viholliset[nimi].Kuva}" style = "left:${Viholliset[nimi].KuvaLeft}; top:${Viholliset[nimi].KuvaTop}; width:${Viholliset[nimi].KuvaWidth}; height:${Viholliset[nimi].KuvaHeight};">
