@@ -1,50 +1,21 @@
 let Pelaaja = {
-  NopeaValikko: {
-    "Valikko1": {
-      Nimi: "Puumiekka",
-      Tyyppi: "ase",
-      TyyppiText: "Lähitaistelu",
-      MaxDMG: 4,
-      MinDMG: 2,
-      Nopeus: 7,
-      CritProsentti: 10,
-    },
-    "Valikko2": {
-      Nimi: "Taikasauva",
-      Tyyppi: "taika",
-      TyyppiText: "Taika",
-      MaxDMG: 8,
-      MinDMG: 12,
-      Nopeus: 9,
-      CritProsentti: 10,
-      Taika: 25
-    },
-    "Valikko3": {
-      Nimi: "Rautamiekka",
-      Tyyppi: "ase",
-      TyyppiText: "Lähitaistelu",
-      MinDMG: 9,
-      Nopeus: 9,
-      CritProsentti: 10,
-      Taika: 9
-    },
-    "Valikko4": {
-
-    },
-    "Valikko5": {
-
-    }
+  nopea_valikko: {
+    "valikko1": Tavarat.puumiekka,
+    "valikko2": Tavarat.taikasauva,
+    "valikko3": Tavarat.rautamiekka,
+    "valikko4": {},
+    "valikko5": {}
   },
-  StatusEfektit: {
+  status_efektit: {
 
   },
-  Tiedot: {
-    MP: 100,
-    HP: 20,
-    Aika: 10,
-    Raha: 0,
-    Exp: 0,
-    CritKerroin: 2,
-    ManaRegen: 1
+  tiedot: {
+    mp: 100,
+    hp: 20,
+    aika: 10,
+    raha: 0,
+    exp: 0,
+    crit_kerroin: 2,
+    mana_regen: 1
   }
 }

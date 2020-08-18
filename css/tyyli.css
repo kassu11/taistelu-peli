@@ -242,7 +242,7 @@ body {
 .vihollisen_kuva > img {
   position: absolute;
   width: 230px;
-  left: 10px;
+  left: 0px;
   top: 0px;
   pointer-events: none;
 }

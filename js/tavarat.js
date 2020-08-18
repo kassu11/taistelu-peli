@@ -1,0 +1,30 @@
+let Tavarat = {
+  "puumiekka": {
+    nimi: "Puumiekka",
+    tyyppi: "ase",
+    tyyppi_text: "Lähitaistelu",
+    max_dmg: 4,
+    min_dmg: 2,
+    nopeus: 7,
+    crit_prosentti: 10,
+  },
+  "taikasauva": {
+    nimi: "Taikasauva",
+    tyyppi: "taika",
+    tyyppi_text: "Taika",
+    max_dmg: 8,
+    min_dmg: 12,
+    nopeus: 9,
+    crit_prosentti: 10,
+    taika: 25
+  },
+  "rautamiekka": {
+    nimi: "Rautamiekka",
+    tyyppi: "ase",
+    tyyppi_text: "Lähitaistelu",
+    min_dmg: 9,
+    nopeus: 9,
+    crit_prosentti: 10,
+    taika: 9
+  },
+}
