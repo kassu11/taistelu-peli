@@ -136,14 +136,14 @@ function vihollinen_hyokkaa() {
 
   function vapaa_vihollinen(tiedot) {
     for(let i = 0; i < tiedot.length; i++) {
-      if(tiedot[i].aika > 0) return i;
+      if(tiedot[i].aika > 0 && tiedot[i].hp > 0) return i;
     } return null
   }
 
   function vihollisen_aika_parannus() {
     for(let i = 0; i < taisteltavat_viholliset.length; i++) {
       if(taisteltavat_viholliset[i].hp > 0) {
-        taisteltavat_viholliset[i].aika = taisteltavat_viholliset[i].MaxAika;
+        taisteltavat_viholliset[i].aika = taisteltavat_viholliset[i].max_aika;
       }
     }
   }
@@ -311,7 +311,7 @@ lisaa_vihollinen("lvl0");
 function lisaa_vihollinen(nimi) {
   taisteltavat_viholliset.push(JSON.parse(JSON.stringify(Viholliset[nimi])));
   let num = taisteltavat_viholliset.length - 1;
-  taisteltavat_viholliset[num]["Nimi"] = nimi;
+  taisteltavat_viholliset[num]["nimi"] = nimi;
   viholliset.innerHTML += `
   <div id = "vihollinen${num}" class = "vihollinen">
     <div class = "hpbg">
