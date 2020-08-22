@@ -3,7 +3,7 @@ let Pelaaja = {
     "valikko1": Tavarat.puumiekka,
     "valikko2": Tavarat.taikasauva,
     "valikko3": Tavarat.rautamiekka,
-    "valikko4": {},
+    "valikko4": Tavarat.hp_pottu,
     "valikko5": {}
   },
   status_efektit: {

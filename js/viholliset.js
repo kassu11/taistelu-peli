@@ -2,14 +2,17 @@ let Viholliset = {
   "lvl0": {
     id: "0",
     hp: 10,
-    mp: 10,
+    mp: 30,
     suoja: 10,
-    aika: 10,
+    aika: 5,
     kuva: "https://image.winudf.com/v2/image/Y29tLnN1YWRhaDA2MTEuYW5pbWVnaXJsa2F3YWlpYXBwX3NjcmVlbl8yXzE1MjM4OTA0OTRfMDI0/screen-2.jpg?fakeurl=1&type=.jpg",
     kuva_width: "249px",
     kuva_height: "320px",
     tavarat: [
-      Tavarat.puumiekka
+      Tavarat.test1,
+      Tavarat.test2,
+      Tavarat.puumiekka,
+      Tavarat.rautamiekka
     ]
   },
   "lvl1": {
@@ -23,6 +26,20 @@ let Viholliset = {
     tavarat: [
       Tavarat.rautamiekka
     ]
+  },
+  "lvl2": {
+    id: "2",
+    hp: 45,
+    mp: 20,
+    suoja: 10,
+    aika: 10,
+    kuva: "",
+    kuva_width: "249px",
+    tavarat: [
+      Tavarat.test1,
+      Tavarat.test2,
+      Tavarat.puumiekka
+    ]
   }
 }
 
@@ -30,7 +47,7 @@ for(let vihollinen in Viholliset) { // lisää soluja tauluun, joita ei tarvii j
   if(!Viholliset[vihollinen].max_aika) Viholliset[vihollinen]["max_aika"] = Viholliset[vihollinen].aika;
   if(!Viholliset[vihollinen].max_mp) Viholliset[vihollinen]["max_mp"] = Viholliset[vihollinen].mp;
   if(!Viholliset[vihollinen].max_hp) Viholliset[vihollinen]["max_hp"] = Viholliset[vihollinen].hp;
-  if(!Viholliset[vihollinen].kuva) Viholliset[vihollinen]["kuva"] = "https://steamuserimages-a.akamaihd.net/ugc/914659215888655432/82DCA20555DE13B0F76E9C833110411BC60DEB3F/";
+  if(!Viholliset[vihollinen].kuva) Viholliset[vihollinen]["kuva"] = ei_kuvaa;
   if(!Viholliset[vihollinen].kuva_top) Viholliset[vihollinen]["kuva_top"] = ""
   if(!Viholliset[vihollinen].kuva_left) Viholliset[vihollinen]["kuva_left"] = ""
   if(!Viholliset[vihollinen].kuva_width) Viholliset[vihollinen]["kuva_width"] = ""

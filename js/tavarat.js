@@ -23,8 +23,37 @@ let Tavarat = {
     tyyppi: "ase",
     tyyppi_text: "Lähitaistelu",
     min_dmg: 6,
-    nopeus: 9,
+    nopeus: 6,
     crit_prosentti: 10,
     taika: 9
+  },
+  "test1": {
+    nimi: "Testi 1",
+    tyyppi: "taika",
+    tyyppi_text: "Taika",
+    max_dmg: 3,
+    min_dmg: 4,
+    nopeus: 3,
+    crit_prosentti: 20,
+    taika: 15
+  },
+  "test2": {
+    nimi: "Testi 2",
+    tyyppi: "taika",
+    tyyppi_text: "Taika",
+    max_dmg: 5,
+    min_dmg: 5,
+    nopeus: 5,
+    crit_prosentti: 20,
+    taika: 25
+  },
+  "hp_pottu": {
+    nimi: "Parannus pullo",
+    tyyppi: "hp",
+    tyyppi_text: "Parannus",
+    parannus: 5,
+    nopeus: 5,
+    maara: 3,
+    taika: 25
   },
 }

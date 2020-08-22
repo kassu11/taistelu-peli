@@ -1,6 +1,6 @@
 let taistelu_Ruutu = document.getElementById("taisteluRuutu");
 let viholliset = document.getElementById("viholliset");
-viholliset.addEventListener("click", pelaajaHyokkaa);
+viholliset.addEventListener("click", kayta_tavaraa);
 
 let pelaajan_taistelu_kopio;
 let taisteltavat_viholliset = []
@@ -22,65 +22,99 @@ function siirry_taisteluruutuun() {
   pelaajan_taistelu_kopio = JSON.parse(JSON.stringify(Pelaaja));              // Luo Kopion Pelaajasta
   pelaajan_taistelu_kopio.tiedot["max_hp"] = pelaajan_taistelu_kopio.tiedot.hp || "Ei Löydy";
   pelaajan_taistelu_kopio.tiedot["max_mp"] = pelaajan_taistelu_kopio.tiedot.mp || "Ei Löydy";
+
+  lisaa_pelaaja_slots();
+  paivita_visual_pelaaja();
+}
+
+function lisaa_pelaaja_slots() {
+  document.getElementById("hotbar").innerHTML = `
+  <div class = "slotsBox">
+    <div id = "slot_popup_deley"></div>
+    ${loop()}
+  </div>`
+
+  function loop() {
+    let text = ``;
+    for(let i = 1; i <= 5; i++) {
+      let tavara = pelaajan_taistelu_kopio.nopea_valikko[`valikko${i}`];
+      text += `
+      <div id = "slot${i}" class = "slot ${i == pelaajan_pikavalikko_numero ? "valittu_slot" : ""}">
+        <p class = "slot_numero">${i}</p>
+        <img id = "slot${i}_kuva" class = "slot_kuva" src = ${tavara.nimi ? tavara.kuva || ei_kuvaa : ""}>
+        <p id = "tavara_luku${i}" class = "tavara_luku">${tavara.maara || ""}</p>
+      </div>`
+    } return text;
+  }
 }
 
 let animaation_aloitus_aika = null; // tää korjaa mielenkiintoisen animaation ajastuksen
-function pelaajaHyokkaa(e) {
-  if(pelaajan_taistelu_kopio.tiedot.aika <= 0 || pelaajan_taistelu_kopio.tiedot.hp <= 0) return;
-  if(e.target.id == "viholliset") return;
-  valittu_vihollinen = etsi_vihollisen_numero(e.target);
-  if(document.getElementById(`vihollinen${valittu_vihollinen}`).style.animationName == "vihollinen_kuolee") return;
-  let valittu = pelaajan_taistelu_kopio.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`];
-  if(valittu.tyyppi == "ase" || valittu.tyyppi == "taika") {
-    if(valittu.tyyppi == "taika") if(pelaajan_taistelu_kopio.tiedot.mp < valittu.taika) return;
-    pelaajan_taistelu_kopio.tiedot.aika -= valittu.nopeus;
-    let crit = laskeCrit(valittu.crit_prosentti);
-    let vahinko = crit == true ? Random(valittu.min_dmg, valittu.max_dmg || valittu.min_dmg) * pelaajan_taistelu_kopio.tiedot.crit_kerroin : Random(valittu.min_dmg, valittu.max_dmg || valittu.min_dmg);
-
-    pelaajan_taistelu_kopio.tiedot.mp -= valittu.taika || 0;
-    taisteltavat_viholliset[valittu_vihollinen].hp -= vahinko;
+function kayta_tavaraa(e) {
+  if(e) if(e.target) valittu_vihollinen = etsi_vihollisen_numero(e.target);
+  if(pelaajan_taistelu_kopio.tiedot.aika <= 0 || !tarkista_onko_vihollinen_hengissa()) return;
+  let tavara = pelaajan_taistelu_kopio.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`];
+  let vihollinen = document.getElementById(`vihollinen${valittu_vihollinen}`);
+  let vahinko;
+  if(tavara.min_dmg || tavara.max_dmg) {
+    if(vihollinen.style.animationName == "vihollinen_kuolee") return;
 
     for(let style = `shake${Random(0, 10)}`; 1 < 2; style = `shake${Random(0, 10)}`) { // Shake
-      if(document.getElementById(`vihollinen${valittu_vihollinen}`).style.animationName !== style) {document.getElementById(`vihollinen${valittu_vihollinen}`).style.animationName = style; break;}
+      if(vihollinen.style.animationName !== style) {vihollinen.style.animationName = style; break;}
     }
 
-    paivita_visuaalisesti_vihollinen(valittu_vihollinen);
-    paivita_visual_pelaaja();
-    luo_pop_up_dmg(e.x, e.y, vahinko, crit);
+    vahinko = laske_vahinko(tavara, pelaajan_taistelu_kopio.tiedot.crit_kerroin);
+  }
 
-    if(taisteltavat_viholliset[valittu_vihollinen].hp <= 0) {
-      animaation_aloitus_aika = new Date().getTime();
-      if(tarkista_onko_vihollinen_hengissa(taisteltavat_viholliset) == false) {
-        document.getElementById(`vihollinen${valittu_vihollinen}`).style.filter = "blur(10px)";
-        document.getElementById("voittoRuutu").style.animationName = "voittoIkkuna";
-        document.getElementById("ruudunTummennus").style.animationName = "tummentuma";
-        pelaajan_taistelu_kopio.tiedot.aika = 0;
-      } else {
-        document.getElementById(`vihollinen${valittu_vihollinen}`).style.animationName = "vihollinen_kuolee";
-        document.getElementById(`vihollinen${valittu_vihollinen}`).style.animationDuration = "6s";
-        document.getElementById(`vihollinen${valittu_vihollinen}`).style.animationTimingFunction = "ease";
-        poistaElem(document.getElementById(`vihollinen${valittu_vihollinen}`), 5000)
-      }
-    } if(pelaajan_taistelu_kopio.tiedot.aika <= 0 && tarkista_onko_vihollinen_hengissa(taisteltavat_viholliset) == true) {
-      let aika = animaation_aloitus_aika - new Date().getTime() + 3500;
-      setTimeout(vihollinen_hyokkaa, tapettiinko_vihollinen() ? aika : 200);
-      taistelu_Ruutu.classList.add("vihu");
-      taistelu_Ruutu.classList.remove("pelaaja");
+  pelaajan_taistelu_kopio.tiedot.aika -= tavara.nopeus || 0;
+  pelaajan_taistelu_kopio.tiedot.mp -= tavara.taika || 0;
+  pelaajan_taistelu_kopio.tiedot.hp += tavara.parannus || 0;
+  pelaajan_taistelu_kopio.tiedot.hp = Math.min(pelaajan_taistelu_kopio.tiedot.hp, pelaajan_taistelu_kopio.tiedot.max_hp);
+  taisteltavat_viholliset[valittu_vihollinen].hp -= vahinko ? vahinko.vahinko : 0;
+
+  if(tavara.maara) {
+    pelaajan_taistelu_kopio.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`].maara -= 1;
+    Pelaaja.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`].maara -= 1;
+    document.getElementById(`tavara_luku${pelaajan_pikavalikko_numero}`).textContent -= 1;
+
+    if(tavara.maara <= 0) {
+      pelaajan_taistelu_kopio.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`] = ""
+      Pelaaja.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`] = ""
+      document.getElementById(`tavara_luku${pelaajan_pikavalikko_numero}`).textContent = "";
+      document.getElementById(`slot${pelaajan_pikavalikko_numero}_kuva`).src = "";
     }
+  }
+
+  paivita_visuaalisesti_vihollinen(valittu_vihollinen);
+  if(e) if(vahinko) luo_pop_up_dmg(e.x, e.y, vahinko.vahinko, vahinko.crit);
+  paivita_visual_pelaaja();
+
+  if(taisteltavat_viholliset[valittu_vihollinen].hp <= 0) {
+    animaation_aloitus_aika = new Date().getTime();
+    if(!tarkista_onko_vihollinen_hengissa()) {
+      vihollinen.style.filter = "blur(10px)";
+      document.getElementById("voittoRuutu").style.animationName = "voittoIkkuna";
+      document.getElementById("ruudunTummennus").style.animationName = "tummentuma";
+      pelaajan_taistelu_kopio.tiedot.aika = 0;
+    } else {
+      vihollinen.style.animationName = "vihollinen_kuolee";
+      vihollinen.style.animationDuration = "6s";
+      vihollinen.style.animationTimingFunction = "ease";
+      poistaElem(vihollinen, 5000);
+    }
+  } if(pelaajan_taistelu_kopio.tiedot.aika <= 0 && tarkista_onko_vihollinen_hengissa()) {
+    let aika = animaation_aloitus_aika - new Date().getTime() + 3500;
+    setTimeout(vihollinen_hyokkaa, tapettiinko_vihollinen() ? aika : 200);
+    taistelu_Ruutu.classList.add("vihu");
+    taistelu_Ruutu.classList.remove("pelaaja");
   }
 
   function etsi_vihollisen_numero(val) {
     let obj = val;
     for (let i = 0; i < 6; i++) {
       if(obj.classList.contains("vihollinen")) return +obj.id.substring(10);
+      if(obj.id == "viholliset") break;
       obj = obj.parentNode;
-    }
-  }
-
-  function tarkista_onko_vihollinen_hengissa(tiedot) {
-    for(let tieto of tiedot) {
-      if(tieto.hp > 0) return true
-    } return false;
+    } return valittu_vihollinen;
   }
 
   function tapettiinko_vihollinen() {
@@ -88,6 +122,18 @@ function pelaajaHyokkaa(e) {
       if(Array.from(viholliset.children)[i].style.animationName == "vihollinen_kuolee") return true;
     }
   }
+
+  function tarkista_onko_vihollinen_hengissa() {
+    for(let tieto of taisteltavat_viholliset) {
+      if(tieto.hp > 0) return true
+    } return false;
+  }
+}
+
+function laske_vahinko(tavara, kerroin, kohde = null) {
+  let crit = laskeCrit(tavara.crit_prosentti);
+  let vahinko = crit == true ? Random(tavara.min_dmg, tavara.max_dmg || tavara.min_dmg) * kerroin : Random(tavara.min_dmg, tavara.max_dmg || tavara.min_dmg);
+  return {crit, vahinko};
 }
 
 function vihollinen_hyokkaa() {
@@ -171,9 +217,9 @@ function luo_pop_up_dmg(x, y, vahinko, crit) {
 window.addEventListener("keydown", pikanapit);
 function pikanapit(e) {
   if(e.key <= 5 && e.key > 0) {
-    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittuSlot");
+    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittu_slot");
     pelaajan_pikavalikko_numero = +e.key;
-    document.getElementById(`slot${+e.key}`).classList.add("valittuSlot");
+    document.getElementById(`slot${+e.key}`).classList.add("valittu_slot");
   }
   if(e.keyCode == 32) {
     let taulu = Array.from(viholliset.children);
@@ -183,22 +229,22 @@ function pikanapit(e) {
       kohde = taulu[Random(0, taulu.length - 1)];
     } else kohde = taulu[valittu_vihollinen];
     let val = kohde.getBoundingClientRect();
-    pelaajaHyokkaa({x: Random(val.left, val.right), y: Random(val.top, val.bottom), target: kohde});
+    kayta_tavaraa({x: Random(val.left, val.right), y: Random(val.top, val.bottom), target: kohde});
   }
 }
 
 window.addEventListener("mousewheel", scroll)
 function scroll(e) {
   if(e.deltaY < 0) {
-    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittuSlot");
+    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittu_slot");
     pelaajan_pikavalikko_numero += 1;
     if(pelaajan_pikavalikko_numero >= 6) pelaajan_pikavalikko_numero = 1;
-    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.add("valittuSlot");
+    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.add("valittu_slot");
   } else {
-    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittuSlot");
+    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittu_slot");
     pelaajan_pikavalikko_numero -= 1;
     if(pelaajan_pikavalikko_numero <= 0) pelaajan_pikavalikko_numero = 5;
-    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.add("valittuSlot");
+    document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.add("valittu_slot");
   }
 }
 
@@ -251,19 +297,6 @@ function laskeCrit(mahdollisuus) {
   return false;
 }
 
-paivitaSlots();
-function paivitaSlots() {
-  for(let i = 1; i <= 5; i++) {
-    if(pelaajan_taistelu_kopio.nopea_valikko[`valikko${i}`].tyyppi) {
-      if(pelaajan_taistelu_kopio.nopea_valikko[`valikko${i}`].kuva) {
-        document.getElementById(`KuvaSlot${i}`).src = pelaajan_taistelu_kopio.nopea_valikko[`valikko${i}`].kuva;
-      } else {
-        document.getElementById(`KuvaSlot${i}`).src = "https://steamuserimages-a.akamaihd.net/ugc/914659215888655432/82DCA20555DE13B0F76E9C833110411BC60DEB3F/";
-      }
-    }
-  }
-}
-
 window.addEventListener("mousemove", hotbarHover);
 function hotbarHover(e) {
   if(!e.target.id.startsWith("slot") || e.target.id.startsWith("slotBox")) {
@@ -281,6 +314,7 @@ function hotbarHover(e) {
     <p id = "hotbar_tavara_nimi">${valittu.nimi || ""}</p>
     <p>${valittu.tyyppi_text ? "Tyyppi: " : ""}<span class = "hotbar_tavara_tyyppi">${valittu.tyyppi_text || ""}</span></p>
     <p>${valittu.min_dmg ? "Vahinko: " : ""} <span class = "hotbar_tavara_vahinko">${valittu.min_dmg || ""}${valittu.max_dmg ? "-"+valittu.max_dmg : ""}</span></p>
+    <p>${valittu.parannus ? "Parannus: " : ""} <span class = "hotbar_tavara_vahinko">${valittu.parannus ? valittu.parannus + "hp" : ""}</span></p>
     <p>${valittu.nopeus ? "Nopeus: " : ""}<span class = "hotbar_tavara_nopeus">${valittu.nopeus ? valittu.nopeus+"s" : ""}</span></p>
     <p>${valittu.taika ? "Manan kulutus: " : ""}<span class = "hotbar_tavara_taika">${valittu.taika ? valittu.taika + "m" : ""}</span></p>`
   } else document.getElementById("hotbarPopUpBg").style.animationName = "piilota_slot_popup";
@@ -300,13 +334,12 @@ document.getElementById("hotbar").addEventListener("click", painaHotbar);
 function painaHotbar(e) {
   if(!e.target.id.startsWith("slot") || e.target.id.startsWith("slotBox") || e.target.id == "slot_popup_deley") return;
   let numero = +e.target.id.substring(4);
-  document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittuSlot");
+  document.getElementById(`slot${pelaajan_pikavalikko_numero}`).classList.remove("valittu_slot");
   pelaajan_pikavalikko_numero = numero;
-  document.getElementById(`slot${numero}`).classList.add("valittuSlot");
+  document.getElementById(`slot${numero}`).classList.add("valittu_slot");
 }
 
 lisaa_vihollinen("lvl0");
-lisaa_vihollinen("lvl1");
 lisaa_vihollinen("lvl0");
 function lisaa_vihollinen(nimi) {
   taisteltavat_viholliset.push(JSON.parse(JSON.stringify(Viholliset[nimi])));
@@ -332,6 +365,96 @@ function lisaa_vihollinen(nimi) {
     <div class = "vihollisen_kuva">
       <img src = "${Viholliset[nimi].kuva}" style = "left:${Viholliset[nimi].kuva_left}; top:${Viholliset[nimi].kuva_top}; width:${Viholliset[nimi].kuva_width}; height:${Viholliset[nimi].kuva_height};">
     </div>
-  </div>
-  `
+  </div>`
+}
+
+
+
+// vihollisen_ai(0);
+
+function vihollisen_ai(num) { // tulee palauttamaan parhaimman liikkeen
+
+  if(voiko_kaikki_tappaa_pelaajan(num)) {
+    // hyökkää
+  } else if(voiko_pelaaja_tappaa()) {
+    // hp up
+  }
+  
+console.log(voiko_kaikki_tappaa_pelaajan(num))
+console.log(paras_tavara_dmg_yhdistelma(num))
+console.log(valitse_satunnainen_tavara_v(taisteltavat_viholliset[num]))
+console.log(voiko_pelaaja_tappaa())
+
+  function voiko_kaikki_tappaa_pelaajan() {
+    let vahinko = 0;
+    for(let i = num; i < taisteltavat_viholliset.length; i++) {
+      vahinko += paras_tavara_dmg_yhdistelma(i).paras_dmg;
+    } return vahinko >= pelaajan_taistelu_kopio.tiedot.hp;
+  }
+
+  function voiko_pelaaja_tappaa() {
+    let iskut = [], paras_dmg = 0;
+    for(let i = 0; i < 200; i++) {
+      let kopio = taulu_kopio(pelaajan_taistelu_kopio);
+      let iskut2 = [], paras_dmg2 = 0;
+      for(let u = valitse_satunnainen_tavara_p(kopio.nopea_valikko); u !== undefined; u = valitse_satunnainen_tavara_p(kopio.nopea_valikko)) {
+        iskut2.push(u)
+        paras_dmg2 += laske_vahinko(kopio.nopea_valikko[`valikko${u}`], 1).vahinko;
+        kopio.tiedot.mp -= kopio.nopea_valikko[`valikko${u}`].taika || 0;
+        kopio.tiedot.aika -= kopio.nopea_valikko[`valikko${u}`].nopeus;
+
+        if(kopio.tiedot.aika <= 0) break;
+      }
+      if(paras_dmg2 > paras_dmg) {
+        iskut = iskut2;
+        paras_dmg = paras_dmg2;
+      }
+    }
+
+    return {iskut, paras_dmg};
+  }
+
+  function valitse_satunnainen_tavara_p(array) { // Palauttaa tavaran index numeron, jos ei ole palauttaa null
+    let taulu = [];
+    for(let i = 1; i <= 5; i++) {
+      if(array[`valikko${i}`].taika) if(array[`valikko${i}`].taika > pelaajan_taistelu_kopio.tiedot.mp) continue;
+      if(!array[`valikko${i}`].nimi) continue;
+      taulu.push(i);
+    } return taulu[Random(taulu.length - 1)];
+  }
+
+  function paras_tavara_dmg_yhdistelma(vihnum) {
+    let iskut = [], paras_dmg = 0;
+    for(let i = 0; i < 200; i++) {
+      let kopio = taulu_kopio(taisteltavat_viholliset[vihnum]);
+      let iskut2 = [], paras_dmg2 = 0;
+      for(let u = valitse_satunnainen_tavara_v(kopio); u !== undefined; u = valitse_satunnainen_tavara_v(kopio)) {
+        iskut2.push(u)
+        paras_dmg2 += laske_vahinko(kopio.tavarat[u], 1).vahinko;
+        kopio.mp -= kopio.tavarat[u].taika || 0;
+        kopio.aika -= kopio.tavarat[u].nopeus;
+
+        if(kopio.aika <= 0) break;
+      }
+      if(paras_dmg2 > paras_dmg) {
+        iskut = iskut2;
+        paras_dmg = paras_dmg2;
+      }
+    }
+
+    return {iskut, paras_dmg};
+  }
+
+  function valitse_satunnainen_tavara_v(array) { // Palauttaa tavaran index numeron, jos ei ole palauttaa null
+    let taulu = [];
+    let copy = array.tavarat
+    for(let i = 0; i < copy.length; i++) {
+      if(copy[i].taika) if(copy[i].taika > array.mp) continue;
+      taulu.push(i);
+    } return taulu[Random(taulu.length - 1)];
+  }
+}
+
+function taulu_kopio(e) {
+  return JSON.parse(JSON.stringify(e));
 }
