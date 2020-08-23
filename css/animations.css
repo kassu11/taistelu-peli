@@ -138,6 +138,13 @@
   100% {transform: scale(1)}
 }
 
+@keyframes skip {
+  0% {transform: scale(0) rotate(-48deg);}
+  10% {transform: scale(1) rotate(-48deg);}
+  90% {transform: scale(1) rotate(-48deg);}
+  100% {transform: scale(0) rotate(-48deg);}
+}
+
 @keyframes pelaajaShake0 {
   0% {margin: 3px 7px 7px -6px; transform: scale(1.1)}
   25% {margin: -4px -10px 6px -5px}

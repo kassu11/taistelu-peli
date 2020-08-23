@@ -71,11 +71,19 @@ function kayta_tavaraa(e) {
   pelaajan_taistelu_kopio.tiedot.hp = Math.min(pelaajan_taistelu_kopio.tiedot.hp, pelaajan_taistelu_kopio.tiedot.max_hp);
   taisteltavat_viholliset[valittu_vihollinen].hp -= vahinko ? vahinko.vahinko : 0;
 
+  for(let i = 0; i < taisteltavat_viholliset.length; i++) {
+    if(taisteltavat_viholliset[i].hp <= 0) continue;
+    if(taisteltavat_viholliset[i].mana_regen) {
+      if(pelaajan_taistelu_kopio.tiedot.aika >= 0) {
+        taisteltavat_viholliset[i].mp += taisteltavat_viholliset[i].mana_regen * tavara.nopeus || 0;
+      } else taisteltavat_viholliset[i].mp += taisteltavat_viholliset[i].mana_regen * (pelaajan_taistelu_kopio.tiedot.aika + tavara.nopeus || 0);
+    } taisteltavat_viholliset[i].mp = Math.min(taisteltavat_viholliset[i].mp, taisteltavat_viholliset[i].max_mp);
+  }
+
   if(tavara.maara) {
     pelaajan_taistelu_kopio.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`].maara -= 1;
     Pelaaja.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`].maara -= 1;
     document.getElementById(`tavara_luku${pelaajan_pikavalikko_numero}`).textContent -= 1;
-
     if(tavara.maara <= 0) {
       pelaajan_taistelu_kopio.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`] = ""
       Pelaaja.nopea_valikko[`valikko${pelaajan_pikavalikko_numero}`] = ""
@@ -84,7 +92,7 @@ function kayta_tavaraa(e) {
     }
   }
 
-  paivita_visuaalisesti_vihollinen(valittu_vihollinen);
+  paivita_visuaalisesti_viholliset();
   if(e) if(vahinko) luo_pop_up_dmg(e.x, e.y, vahinko.vahinko, vahinko.crit);
   paivita_visual_pelaaja();
 
@@ -131,6 +139,10 @@ function kayta_tavaraa(e) {
 }
 
 function laske_vahinko(tavara, kerroin, kohde = null) {
+  if(tavara == undefined) {
+    console.log("VIRHE");
+    return {crit: false, vahinko: 0};
+  }
   if(!tavara.min_dmg) return {crit: false, vahinko: 0};
   let crit = laskeCrit(tavara.crit_prosentti);
   let vahinko = crit == true ? Random(tavara.min_dmg, tavara.max_dmg || tavara.min_dmg) * kerroin : Random(tavara.min_dmg, tavara.max_dmg || tavara.min_dmg);
@@ -139,7 +151,13 @@ function laske_vahinko(tavara, kerroin, kohde = null) {
 
 function vihollinen_hyokkaa() {
   let vihu = vapaa_vihollinen(taisteltavat_viholliset);
+  if(vihu == null) {lopeta_vihollisen_vuoro(); return}
   let ase = vihollisen_ai(vihu);
+  console.log("vihu",vihu);
+  console.log("ase",ase);
+  if(ase == undefined) {skippaa_vihollinen(vihu); return}
+
+  taisteltavat_viholliset[vihu].aika
   let vahinko = laske_vahinko(taisteltavat_viholliset[vihu].tavarat[ase], 1).vahinko || 0;
   let parannus = taisteltavat_viholliset[vihu].tavarat[ase].parannus || 0;
   pelaajan_taistelu_kopio.tiedot.hp -= vahinko;
@@ -160,10 +178,10 @@ function vihollinen_hyokkaa() {
       let num = +document.getElementById(`vihollinen${vihu}`).style.animationName.substring(7, 8) || 0;
       document.getElementById(`vihollinen${vihu}`).style.animationName = `paranna${Math.abs(num - 1)}`;
     }
-  },  650)
+  },  650);
   setTimeout(() => {
     paivita_visual_pelaaja()
-    paivita_visuaalisesti_vihollinen(vihu);
+    paivita_visuaalisesti_viholliset();
     if(!parannus > 0) {
       let num = +document.getElementById(`vihollinen${vihu}`).style.animationName.substring(7, 8) || 0;
       document.getElementById(`vihollinen${vihu}`).style.animationName = `hyokkaa${Math.abs(num - 1)}`;
@@ -188,16 +206,7 @@ function vihollinen_hyokkaa() {
       document.getElementById("havioRuutu").style.animationName = "voittoIkkuna";
       document.getElementById("ruudunTummennus").style.animationName = "tummentuma";
     } else if(vapaa_vihollinen(taisteltavat_viholliset) == null) {
-      setTimeout(() => {
-        taistelu_Ruutu.classList.add("pelaaja");
-        taistelu_Ruutu.classList.remove("vihu");
-        pelaajan_taistelu_kopio.tiedot.aika = Pelaaja.tiedot.aika;
-        document.getElementById("aikaText").textContent = `${pelaajan_taistelu_kopio.tiedot.aika}s`;
-        vihollisen_aika_parannus();
-        for(let i = 0; i < Array.from(viholliset.children).length; i++) {
-          Array.from(viholliset.children)[i].classList.remove("vihollinen_ei_valittu");
-        }
-      }, 1000);
+      setTimeout(lopeta_vihollisen_vuoro, 1000)
     } else {
       setTimeout(vihollinen_hyokkaa, 200);
     }
@@ -208,6 +217,36 @@ function vihollinen_hyokkaa() {
       if(tiedot[i].aika > 0 && tiedot[i].hp > 0) return i;
     } return null
   }
+};
+
+function skippaa_vihollinen(num) {
+  for(let i = 0; i < Array.from(viholliset.children).length; i++) {
+    Array.from(viholliset.children)[i].classList.add("vihollinen_ei_valittu");
+  } document.getElementById(`vihollinen${num}`).classList.remove("vihollinen_ei_valittu");
+
+  taisteltavat_viholliset[num].aika = 0;
+  setTimeout(() => luo_skipped_text(num), 300);
+  setTimeout(vihollinen_hyokkaa, 1500);
+}
+
+function luo_skipped_text(num) {
+  let p = document.createElement("p");
+  p.textContent = "Ei liikkeitä";
+  p.classList.add("skipped_text_popup");
+  document.getElementById(`vihollinen${num}`).appendChild(p);
+
+  // poistaElem(p, 1500);
+}
+
+function lopeta_vihollisen_vuoro() {
+  taistelu_Ruutu.classList.add("pelaaja");
+  taistelu_Ruutu.classList.remove("vihu");
+  pelaajan_taistelu_kopio.tiedot.aika = Pelaaja.tiedot.aika;
+  document.getElementById("aikaText").textContent = `${pelaajan_taistelu_kopio.tiedot.aika}s`;
+  vihollisen_aika_parannus();
+  for(let i = 0; i < Array.from(viholliset.children).length; i++) {
+    Array.from(viholliset.children)[i].classList.remove("vihollinen_ei_valittu");
+  }
 
   function vihollisen_aika_parannus() {
     for(let i = 0; i < taisteltavat_viholliset.length; i++) {
@@ -216,7 +255,7 @@ function vihollinen_hyokkaa() {
       }
     }
   }
-};
+}
 
 function luo_pop_up_dmg(x, y, vahinko, crit) {
   let p = document.createElement("p");
@@ -295,23 +334,27 @@ function poistaElem(elem, aika = 0) {
   else setTimeout(() => {elem.remove()}, aika);
 };
 
-function paivita_visuaalisesti_vihollinen(num) {
-  let hp = +document.getElementById(`vihu${num}_hp_text`).textContent.split("/")[0];
-  let mp = +document.getElementById(`vihu${num}_mp_text`).textContent.split("/")[0];
-  let hpProsentti = taisteltavat_viholliset[num].hp / taisteltavat_viholliset[num].max_hp * 100;
-  document.getElementById(`vihollisen${num}_hp_1`).style.width = `${hpProsentti > 0 ? hpProsentti : 0}%`;
-  document.getElementById(`vihollisen${num}_hp_2`).style.width = `${hpProsentti > 0 ? hpProsentti : 0}%`;
-  let mpProsentti = taisteltavat_viholliset[num].mp / taisteltavat_viholliset[num].max_mp * 100;
-  document.getElementById(`vihollisen${num}_mp_1`).style.width = `${mpProsentti > 0 ? mpProsentti : 0}%`;
-  document.getElementById(`vihollisen${num}_mp_2`).style.width = `${mpProsentti > 0 ? mpProsentti : 0}%`;
-  document.getElementById(`vihu${num}_hp_text`).textContent = `${taisteltavat_viholliset[num].hp}/${taisteltavat_viholliset[num].max_hp}`;
-  document.getElementById(`vihu${num}_mp_text`).textContent = `${taisteltavat_viholliset[num].mp}/${taisteltavat_viholliset[num].max_mp}`;
-  if(hp > +document.getElementById(`vihu${num}_hp_text`).textContent.split("/")[0]) {
-    document.getElementById(`vihu${num}_hp_text`).parentNode.classList = "hpbg down";
-  } else document.getElementById(`vihu${num}_hp_text`).parentNode.classList = "hpbg up";
-  if(mp > +document.getElementById(`vihu${num}_mp_text`).textContent.split("/")[0]) {
-    document.getElementById(`vihu${num}_mp_text`).parentNode.classList = "mpbg down";
-  } else document.getElementById(`vihu${num}_mp_text`).parentNode.classList = "mpbg up";
+function paivita_visuaalisesti_viholliset() {
+  for(let i = 0; i < taisteltavat_viholliset.length; i++) {
+    if(!document.getElementById(`vihollinen${i}`)) continue;
+
+    let hp = +document.getElementById(`vihu${i}_hp_text`).textContent.split("/")[0];
+    let mp = +document.getElementById(`vihu${i}_mp_text`).textContent.split("/")[0];
+    let hpProsentti = taisteltavat_viholliset[i].hp / taisteltavat_viholliset[i].max_hp * 100;
+    document.getElementById(`vihollisen${i}_hp_1`).style.width = `${hpProsentti > 0 ? hpProsentti : 0}%`;
+    document.getElementById(`vihollisen${i}_hp_2`).style.width = `${hpProsentti > 0 ? hpProsentti : 0}%`;
+    let mpProsentti = taisteltavat_viholliset[i].mp / taisteltavat_viholliset[i].max_mp * 100;
+    document.getElementById(`vihollisen${i}_mp_1`).style.width = `${mpProsentti > 0 ? mpProsentti : 0}%`;
+    document.getElementById(`vihollisen${i}_mp_2`).style.width = `${mpProsentti > 0 ? mpProsentti : 0}%`;
+    document.getElementById(`vihu${i}_hp_text`).textContent = `${taisteltavat_viholliset[i].hp}/${taisteltavat_viholliset[i].max_hp}`;
+    document.getElementById(`vihu${i}_mp_text`).textContent = `${taisteltavat_viholliset[i].mp}/${taisteltavat_viholliset[i].max_mp}`;
+    if(hp > +document.getElementById(`vihu${i}_hp_text`).textContent.split("/")[0]) {
+      document.getElementById(`vihu${i}_hp_text`).parentNode.classList = "hpbg down";
+    } else document.getElementById(`vihu${i}_hp_text`).parentNode.classList = "hpbg up";
+    if(mp > +document.getElementById(`vihu${i}_mp_text`).textContent.split("/")[0]) {
+      document.getElementById(`vihu${i}_mp_text`).parentNode.classList = "mpbg down";
+    } else document.getElementById(`vihu${i}_mp_text`).parentNode.classList = "mpbg up";
+  }
 }
 
 function paivita_visual_pelaaja() {
@@ -380,7 +423,9 @@ function painaHotbar(e) {
 }
 
 lisaa_vihollinen("lvl0");
-// lisaa_vihollinen("lvl0");
+lisaa_vihollinen("lvl1");
+lisaa_vihollinen("lvl2");
+
 function lisaa_vihollinen(nimi) {
   taisteltavat_viholliset.push(JSON.parse(JSON.stringify(Viholliset[nimi])));
   let num = taisteltavat_viholliset.length - 1;

@@ -73,6 +73,23 @@ body {
   color: #ff0000;
   text-shadow: 0 0 9px #ff1919e0, 5px 5px #540000, 5px 5px 9px #ff0000;
 }
+.skipped_text_popup {
+  position: absolute;
+  font-size: 85px;
+  transform: rotate(-48deg);
+  z-index: 2;
+  font-family: font1;
+  pointer-events: none;
+  color: #b02727;
+  text-shadow: 0 0 9px #ff00008f, 5px 5px #540000, 5px 5px 9px #ff000091;
+  left: -98px;
+  top: 70px;
+  animation-fill-mode: forwards;
+  animation-name: skip;
+  animation-duration: 1.4s;
+  text-align: center;
+  line-height: 1.4;
+}
 
 #viholliset {
   display: flex;

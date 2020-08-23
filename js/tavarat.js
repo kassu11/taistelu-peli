@@ -12,10 +12,10 @@ let Tavarat = {
     nimi: "Taikasauva",
     tyyppi: "taika",
     tyyppi_text: "Taika",
-    max_dmg: 8,
-    min_dmg: 1992,
+    max_dmg: 10,
+    min_dmg: 7,
     nopeus: 9,
-    crit_prosentti: 100,
+    crit_prosentti: 25,
     taika: 25
   },
   "rautamiekka": {
