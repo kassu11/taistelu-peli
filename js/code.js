@@ -131,6 +131,7 @@ function kayta_tavaraa(e) {
 }
 
 function laske_vahinko(tavara, kerroin, kohde = null) {
+  if(!tavara.min_dmg) return {crit: false, vahinko: 0};
   let crit = laskeCrit(tavara.crit_prosentti);
   let vahinko = crit == true ? Random(tavara.min_dmg, tavara.max_dmg || tavara.min_dmg) * kerroin : Random(tavara.min_dmg, tavara.max_dmg || tavara.min_dmg);
   return {crit, vahinko};
@@ -138,28 +139,50 @@ function laske_vahinko(tavara, kerroin, kohde = null) {
 
 function vihollinen_hyokkaa() {
   let vihu = vapaa_vihollinen(taisteltavat_viholliset);
-  pelaajan_taistelu_kopio.tiedot.hp -= Random(taisteltavat_viholliset[vihu].tavarat[0].min_dmg, taisteltavat_viholliset[vihu].tavarat[0].max_dmg || taisteltavat_viholliset[vihu].tavarat[0].min_dmg);
-  pelaajan_taistelu_kopio.tiedot.mp += Math.min(taisteltavat_viholliset[vihu].aika, taisteltavat_viholliset[vihu].tavarat[0].nopeus) * pelaajan_taistelu_kopio.tiedot.mana_regen;
+  let ase = vihollisen_ai(vihu);
+  let vahinko = laske_vahinko(taisteltavat_viholliset[vihu].tavarat[ase], 1).vahinko || 0;
+  let parannus = taisteltavat_viholliset[vihu].tavarat[ase].parannus || 0;
+  pelaajan_taistelu_kopio.tiedot.hp -= vahinko;
+  pelaajan_taistelu_kopio.tiedot.mp += Math.min(taisteltavat_viholliset[vihu].aika, taisteltavat_viholliset[vihu].tavarat[ase].nopeus) * pelaajan_taistelu_kopio.tiedot.mana_regen;
   if(pelaajan_taistelu_kopio.tiedot.mp > pelaajan_taistelu_kopio.tiedot.max_mp) pelaajan_taistelu_kopio.tiedot.mp = pelaajan_taistelu_kopio.tiedot.max_mp;
-  taisteltavat_viholliset[vihu].aika -= taisteltavat_viholliset[vihu].tavarat[0].nopeus;
+  taisteltavat_viholliset[vihu].aika -= taisteltavat_viholliset[vihu].tavarat[ase].nopeus;
+  taisteltavat_viholliset[vihu].hp += taisteltavat_viholliset[vihu].tavarat[ase].parannus || 0;
+  if(taisteltavat_viholliset[vihu].hp > taisteltavat_viholliset[vihu].max_hp) taisteltavat_viholliset[vihu].hp = taisteltavat_viholliset[vihu].max_hp;
+  taisteltavat_viholliset[vihu].mp -= taisteltavat_viholliset[vihu].tavarat[ase].taika || 0;
+  if(taisteltavat_viholliset[vihu].tavarat[ase].maara) taisteltavat_viholliset[vihu].tavarat[ase].maara -= 1;
 
   for(let i = 0; i < Array.from(viholliset.children).length; i++) {
     Array.from(viholliset.children)[i].classList.add("vihollinen_ei_valittu");
   } document.getElementById(`vihollinen${vihu}`).classList.remove("vihollinen_ei_valittu");
 
   setTimeout(() => {
-    paivita_visual_pelaaja()
-    let num = +document.getElementById(`vihollinen${vihu}`).style.animationName.substring(7, 8) || 0;
-    document.getElementById(`vihollinen${vihu}`).style.animationName = `hyokkaa${Math.abs(num - 1)}`;
-
-    for(let style = `pelaajaShake${Random(0, 1)}`; 1 < 2; style = `pelaajaShake${Random(0, 1)}`) { // Shake
-      if(document.getElementById("pelaaja").style.animationName !== style) {
-        document.getElementById("pelaaja").style.animationName = style; break;
-      }
+    if(parannus > 0) {
+      let num = +document.getElementById(`vihollinen${vihu}`).style.animationName.substring(7, 8) || 0;
+      document.getElementById(`vihollinen${vihu}`).style.animationName = `paranna${Math.abs(num - 1)}`;
     }
+  },  650)
+  setTimeout(() => {
+    paivita_visual_pelaaja()
+    paivita_visuaalisesti_vihollinen(vihu);
+    if(!parannus > 0) {
+      let num = +document.getElementById(`vihollinen${vihu}`).style.animationName.substring(7, 8) || 0;
+      document.getElementById(`vihollinen${vihu}`).style.animationName = `hyokkaa${Math.abs(num - 1)}`;
+      document.body.style.animationName = "body_blood";
+    } else {
+      document.body.style.animationName = "body_hp";
+    } setTimeout(() => {document.body.style.animationName = null;},700);
 
-    document.body.style.animationName = "bodyBlood";
-    setTimeout(() => {document.body.style.animationName = null;},700);
+    if(vahinko > 0) {
+      for(let style = `pelaajaShake${Random(0, 1)}`; 1 < 2; style = `pelaajaShake${Random(0, 1)}`) { // Shake
+        if(document.getElementById("pelaaja").style.animationName !== style) {
+          document.getElementById("pelaaja").style.animationName = style; break;
+        }
+      }
+    } else if(parannus > 0){
+      let kohde = document.getElementById(`vihollinen${vihu}`);
+      let val = kohde.getBoundingClientRect();
+      luo_pop_up_dmg(Random(val.left, val.right), Random(val.top, val.bottom), `+${parannus}`, "hp")
+    }
 
     if(pelaajan_taistelu_kopio.tiedot.hp <= 0) {
       document.getElementById("havioRuutu").style.animationName = "voittoIkkuna";
@@ -199,7 +222,8 @@ function luo_pop_up_dmg(x, y, vahinko, crit) {
   let p = document.createElement("p");
   p.textContent = vahinko;
   p.classList.add("dmgPopUp");
-  if(crit) p.classList.add("dmgPopUpCrit");
+  if(crit == "hp") p.classList.add("dmg_popup_hp");
+  else if(crit) p.classList.add("dmgPopUpCrit");
 
   document.getElementById("popUpDmg").appendChild(p);
 
@@ -272,6 +296,8 @@ function poistaElem(elem, aika = 0) {
 };
 
 function paivita_visuaalisesti_vihollinen(num) {
+  let hp = +document.getElementById(`vihu${num}_hp_text`).textContent.split("/")[0];
+  let mp = +document.getElementById(`vihu${num}_mp_text`).textContent.split("/")[0];
   let hpProsentti = taisteltavat_viholliset[num].hp / taisteltavat_viholliset[num].max_hp * 100;
   document.getElementById(`vihollisen${num}_hp_1`).style.width = `${hpProsentti > 0 ? hpProsentti : 0}%`;
   document.getElementById(`vihollisen${num}_hp_2`).style.width = `${hpProsentti > 0 ? hpProsentti : 0}%`;
@@ -280,9 +306,17 @@ function paivita_visuaalisesti_vihollinen(num) {
   document.getElementById(`vihollisen${num}_mp_2`).style.width = `${mpProsentti > 0 ? mpProsentti : 0}%`;
   document.getElementById(`vihu${num}_hp_text`).textContent = `${taisteltavat_viholliset[num].hp}/${taisteltavat_viholliset[num].max_hp}`;
   document.getElementById(`vihu${num}_mp_text`).textContent = `${taisteltavat_viholliset[num].mp}/${taisteltavat_viholliset[num].max_mp}`;
+  if(hp > +document.getElementById(`vihu${num}_hp_text`).textContent.split("/")[0]) {
+    document.getElementById(`vihu${num}_hp_text`).parentNode.classList = "hpbg down";
+  } else document.getElementById(`vihu${num}_hp_text`).parentNode.classList = "hpbg up";
+  if(mp > +document.getElementById(`vihu${num}_mp_text`).textContent.split("/")[0]) {
+    document.getElementById(`vihu${num}_mp_text`).parentNode.classList = "mpbg down";
+  } else document.getElementById(`vihu${num}_mp_text`).parentNode.classList = "mpbg up";
 }
 
 function paivita_visual_pelaaja() {
+  let hp = +document.getElementById("pelaajaHpText").textContent.split("/")[0];
+  let mp = +document.getElementById("pelaajaMpText").textContent.split("/")[0];
   document.getElementById("PelaajanHp1").style.width = `${pelaajan_taistelu_kopio.tiedot.hp > 0 ? pelaajan_taistelu_kopio.tiedot.hp / pelaajan_taistelu_kopio.tiedot.max_hp * 100 : 0}%`;
   document.getElementById("PelaajanHp2").style.width = `${pelaajan_taistelu_kopio.tiedot.hp > 0 ? pelaajan_taistelu_kopio.tiedot.hp / pelaajan_taistelu_kopio.tiedot.max_hp * 100 : 0}%`;
   document.getElementById("pelaajaHpText").textContent = `${pelaajan_taistelu_kopio.tiedot.hp} / ${pelaajan_taistelu_kopio.tiedot.max_hp}`;
@@ -290,6 +324,12 @@ function paivita_visual_pelaaja() {
   document.getElementById("PelaajanMp2").style.width = `${pelaajan_taistelu_kopio.tiedot.mp > 0 ? pelaajan_taistelu_kopio.tiedot.mp / pelaajan_taistelu_kopio.tiedot.max_mp * 100 : 0}%`;
   document.getElementById("pelaajaMpText").textContent = `${pelaajan_taistelu_kopio.tiedot.mp} / ${pelaajan_taistelu_kopio.tiedot.max_mp}`;
   document.getElementById("aikaText").textContent = `${pelaajan_taistelu_kopio.tiedot.aika < 0 ? 0 : pelaajan_taistelu_kopio.tiedot.aika}s`;
+  if(hp > +document.getElementById("pelaajaHpText").textContent.split("/")[0]) {
+    document.getElementById("hpBox").classList = "down"
+  } else document.getElementById("hpBox").classList = "up"
+  if(mp > +document.getElementById("pelaajaMpText").textContent.split("/")[0]) {
+    document.getElementById("mpBox").classList = "down"
+  } else document.getElementById("mpBox").classList = "up"
 }
 
 function laskeCrit(mahdollisuus) {
@@ -340,7 +380,7 @@ function painaHotbar(e) {
 }
 
 lisaa_vihollinen("lvl0");
-lisaa_vihollinen("lvl0");
+// lisaa_vihollinen("lvl0");
 function lisaa_vihollinen(nimi) {
   taisteltavat_viholliset.push(JSON.parse(JSON.stringify(Viholliset[nimi])));
   let num = taisteltavat_viholliset.length - 1;
@@ -368,28 +408,71 @@ function lisaa_vihollinen(nimi) {
   </div>`
 }
 
-
-
-// vihollisen_ai(0);
-
 function vihollisen_ai(num) { // tulee palauttamaan parhaimman liikkeen
-
-  if(voiko_kaikki_tappaa_pelaajan(num)) {
-    // hyökkää
+  if(voiko_kaikki_tappaa_pelaajan()) {
+    return paras_tavara_dmg_yhdistelma(num).iskut[0];
   } else if(voiko_pelaaja_tappaa()) {
-    // hp up
+    if(kannattaako_parantaa()) {
+      return paras_tavara_hp_yhdistelma(num).iskut[0];
+    } else {
+      return paras_tavara_dmg_yhdistelma(num).iskut[0];
+    }
+  } else {
+    return paras_tavara_dmg_yhdistelma(num).iskut[0];
   }
   
-console.log(voiko_kaikki_tappaa_pelaajan(num))
-console.log(paras_tavara_dmg_yhdistelma(num))
-console.log(valitse_satunnainen_tavara_v(taisteltavat_viholliset[num]))
-console.log(voiko_pelaaja_tappaa())
+// console.log(voiko_kaikki_tappaa_pelaajan())
+// console.log(paras_tavara_dmg_yhdistelma(num))
+// console.log(valitse_satunnainen_tavara_v(taisteltavat_viholliset[num]))
+// console.log(voiko_pelaaja_tappaa())
+  // console.log(paras_tavara_hp_yhdistelma(num))
+  // console.log(pienin_aika_pelaaja_tarvitsee_tappamaan(taisteltavat_viholliset[num]))
+  // console.log(kannattaako_parantaa())
+  // console.log(vihollinen_tarvitsee_parantaa)
+  // console.log(voiko_parantaa)
 
   function voiko_kaikki_tappaa_pelaajan() {
     let vahinko = 0;
     for(let i = num; i < taisteltavat_viholliset.length; i++) {
+      if(taisteltavat_viholliset[i].hp <= 0) continue;
       vahinko += paras_tavara_dmg_yhdistelma(i).paras_dmg;
     } return vahinko >= pelaajan_taistelu_kopio.tiedot.hp;
+  }
+
+  function kannattaako_parantaa() {
+    let aika = pienin_aika_pelaaja_tarvitsee_tappamaan(taisteltavat_viholliset[num]).paras_aika;
+    let hp = paras_tavara_hp_yhdistelma(num).paras_hp;
+    let kopio = taulu_kopio(taisteltavat_viholliset[num]);
+    kopio.hp += hp;
+    if(kopio.hp > kopio.max_hp) kopio.hp = kopio.max_hp;
+    let aika2 = pienin_aika_pelaaja_tarvitsee_tappamaan(kopio).paras_aika;
+    return aika < aika2;
+  }
+
+  function pienin_aika_pelaaja_tarvitsee_tappamaan(kohde) {
+    let vihu = taulu_kopio(kohde);
+    let iskut = [], paras_dmg = 0, paras_aika = Infinity;
+    for(let i = 0; i < 200; i++) {
+      let kopio = taulu_kopio(pelaajan_taistelu_kopio);
+      let iskut2 = [], paras_dmg2 = 0, paras_aika2 = 0;
+      for(let u = valitse_satunnainen_tavara_p(kopio.nopea_valikko); u !== undefined; u = valitse_satunnainen_tavara_p(kopio.nopea_valikko)) {
+        iskut2.push(u)
+        paras_dmg2 += laske_vahinko(kopio.nopea_valikko[`valikko${u}`], 1).vahinko;
+        kopio.tiedot.mp -= kopio.nopea_valikko[`valikko${u}`].taika || 0;
+        kopio.tiedot.aika -= kopio.nopea_valikko[`valikko${u}`].nopeus;
+        paras_aika2 += kopio.nopea_valikko[`valikko${u}`].nopeus;
+        if(kopio.nopea_valikko[`valikko${u}`].maara) kopio.nopea_valikko[`valikko${u}`].maara -= 1;
+
+        if(kopio.tiedot.aika <= 0 || paras_dmg2 >= vihu.hp) break;
+      }
+      if(paras_aika2 <= paras_aika && paras_dmg2 >= vihu.hp) {
+        iskut = iskut2;
+        paras_dmg = paras_dmg2;
+        paras_aika = paras_aika2
+      }
+    }
+
+    return {iskut, paras_dmg, paras_aika};
   }
 
   function voiko_pelaaja_tappaa() {
@@ -403,6 +486,8 @@ console.log(voiko_pelaaja_tappaa())
         kopio.tiedot.mp -= kopio.nopea_valikko[`valikko${u}`].taika || 0;
         kopio.tiedot.aika -= kopio.nopea_valikko[`valikko${u}`].nopeus;
 
+        if(kopio.nopea_valikko[`valikko${u}`].maara) kopio.nopea_valikko[`valikko${u}`].maara -= 1;
+
         if(kopio.tiedot.aika <= 0) break;
       }
       if(paras_dmg2 > paras_dmg) {
@@ -414,11 +499,38 @@ console.log(voiko_pelaaja_tappaa())
     return {iskut, paras_dmg};
   }
 
+  function paras_tavara_hp_yhdistelma(vihnum) {
+    let iskut = [], paras_hp = 0, paras_dmg = 0;
+    for(let i = 0; i < 200; i++) {
+      let kopio = taulu_kopio(taisteltavat_viholliset[vihnum]);
+      let iskut2 = [], paras_hp2 = 0, paras_dmg2 = 0;;
+      for(let u = valitse_satunnainen_tavara_v(kopio); u !== undefined; u = valitse_satunnainen_tavara_v(kopio)) {
+        if(kopio.tavarat[u].parannus && kopio.hp + paras_hp2 >= kopio.max_hp) continue;
+        iskut2.push(u)
+        paras_hp2 += kopio.tavarat[u].parannus || 0;
+        kopio.mp -= kopio.tavarat[u].taika || 0;
+        kopio.aika -= kopio.tavarat[u].nopeus;
+        if(kopio.tavarat[u].maara) kopio.tavarat[u].maara -= 1;
+        paras_dmg2 += laske_vahinko(kopio.tavarat[u], 1).vahinko;
+
+        if(kopio.aika <= 0) break;
+      }
+      if((paras_hp2 > paras_hp) || (paras_dmg2 > paras_dmg && paras_hp2 >= paras_hp)) {
+        iskut = iskut2;
+        paras_hp = paras_hp2;
+        paras_dmg = paras_dmg2;
+      }
+    }
+
+    return {iskut, paras_hp};
+  }
+
   function valitse_satunnainen_tavara_p(array) { // Palauttaa tavaran index numeron, jos ei ole palauttaa null
     let taulu = [];
     for(let i = 1; i <= 5; i++) {
       if(array[`valikko${i}`].taika) if(array[`valikko${i}`].taika > pelaajan_taistelu_kopio.tiedot.mp) continue;
       if(!array[`valikko${i}`].nimi) continue;
+      if(array[`valikko${i}`].maara) if(array[`valikko${i}`].maara <= 0) continue;
       taulu.push(i);
     } return taulu[Random(taulu.length - 1)];
   }
@@ -433,6 +545,7 @@ console.log(voiko_pelaaja_tappaa())
         paras_dmg2 += laske_vahinko(kopio.tavarat[u], 1).vahinko;
         kopio.mp -= kopio.tavarat[u].taika || 0;
         kopio.aika -= kopio.tavarat[u].nopeus;
+        if(kopio.tavarat[u].maara) kopio.tavarat[u].maara -= 1;
 
         if(kopio.aika <= 0) break;
       }
@@ -450,6 +563,7 @@ console.log(voiko_pelaaja_tappaa())
     let copy = array.tavarat
     for(let i = 0; i < copy.length; i++) {
       if(copy[i].taika) if(copy[i].taika > array.mp) continue;
+      if(copy[i].maara) if(copy[i].maara <= 0) continue;
       taulu.push(i);
     } return taulu[Random(taulu.length - 1)];
   }

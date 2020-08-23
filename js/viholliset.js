@@ -2,17 +2,19 @@ let Viholliset = {
   "lvl0": {
     id: "0",
     hp: 10,
-    mp: 30,
+    mp: 300,
     suoja: 10,
-    aika: 5,
+    aika: 6,
     kuva: "https://image.winudf.com/v2/image/Y29tLnN1YWRhaDA2MTEuYW5pbWVnaXJsa2F3YWlpYXBwX3NjcmVlbl8yXzE1MjM4OTA0OTRfMDI0/screen-2.jpg?fakeurl=1&type=.jpg",
     kuva_width: "249px",
     kuva_height: "320px",
     tavarat: [
       Tavarat.test1,
       Tavarat.test2,
+      Tavarat.test3,
       Tavarat.puumiekka,
-      Tavarat.rautamiekka
+      Tavarat.rautamiekka,
+      Tavarat.hp_pottu
     ]
   },
   "lvl1": {
