@@ -65,4 +65,13 @@ let Tavarat = {
     maara: 3,
     taika: 3
   },
+  "hpPottu2": {
+    nimi: "Parannus pullo 2",
+    tyyppi: "hp",
+    tyyppiText: "Parannus",
+    parannus: 5,
+    nopeus: 5,
+    maara: 3,
+    taika: 3
+  },
 }

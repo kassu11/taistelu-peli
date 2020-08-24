@@ -15,7 +15,7 @@ let Viholliset = {
       Tavarat.test3,
       Tavarat.puumiekka,
       Tavarat.rautamiekka,
-      Tavarat.hpPottu
+      Tavarat.hpPottu2
     ]
   },
   "lvl1": {
@@ -30,7 +30,7 @@ let Viholliset = {
     tavarat: [
       Tavarat.test1,
       Tavarat.rautamiekka,
-      Tavarat.hpPottu,
+      Tavarat.hpPottu2,
     ]
   },
   "lvl2": {

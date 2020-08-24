@@ -58,6 +58,7 @@ function kaytaTavaraa(e) {
   if(tavara.minDmg || tavara.maxDmg) {
     if(vihollinen.style.animationName == "vihollinenKuolee") return;
     for(let style = `shake${Random(0, 10)}`; 1 < 2; style = `shake${Random(0, 10)}`) { // Shake
+      // console.log("?????")
       if(vihollinen.style.animationName !== style) {vihollinen.style.animationName = style; break;}
     } vahinko = laskeVahinko(tavara, pelaajanTaisteluKopio.tiedot.critKerroin);
   }
@@ -146,9 +147,9 @@ function vihollinenHyokkaa() {
   let vihu = vapaaVihollinen(taisteltavatViholliset);
   if(vihu == null) {lopetaVihollisenVuoro(); return}
   let ase = vihollisenAi(vihu);
-  console.log("vihu",vihu);
-  console.log("ase",ase);
-  console.log(total);
+  // console.log("vihu",vihu);
+  // console.log("ase",ase);
+  // console.log(total);
   if(ase == undefined) {skippaaVihollinen(vihu); return}
 
   taisteltavatViholliset[vihu].aika
@@ -186,6 +187,7 @@ function vihollinenHyokkaa() {
 
     if(vahinko > 0) {
       for(let style = `pelaajaShake${Random(0, 1)}`; 1 < 2; style = `pelaajaShake${Random(0, 1)}`) { // Shake
+        // console.log("?????")
         if(document.getElementById("pelaaja").style.animationName !== style) {
           document.getElementById("pelaaja").style.animationName = style; break;
         }
@@ -416,8 +418,8 @@ function painaHotbar(e) {
 
 let total = 0;
 
-// lisaaVihollinen("lvl0");
-// lisaaVihollinen("lvl1");
+lisaaVihollinen("lvl0");
+lisaaVihollinen("lvl1");
 lisaaVihollinen("lvl2");
 
 function lisaaVihollinen(nimi) {
@@ -454,14 +456,14 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
     mp += taisteltavatViholliset[i].maxAika * pelaajanTaisteluKopio.tiedot.critKerroin;
   } mp = Math.min(pelaajanTaisteluKopio.tiedot.mp, pelaajanTaisteluKopio.tiedot.maxMp);
 
-  console.log(voikoKaikkiTappaaPelaajan())
-  console.log(parasTavaraDmgYhdistelma(num))
-  console.log(valitseSatunnainenTavaraV(taisteltavatViholliset[num]))
-  console.log(voikoPelaajaTappaa())
-  console.log(parasTavaraHpYhdistelma(num))
-  console.log(pieninAikaPelaajaTarvitseeTappamaan(taisteltavatViholliset[num].hp))
-  console.log(kannattaakoParantaa())
-  console.log("########################################")
+  // console.log(voikoKaikkiTappaaPelaajan())
+  // console.log(parasTavaraDmgYhdistelma(num))
+  // console.log(valitseSatunnainenTavaraV(taisteltavatViholliset[num]))
+  // console.log(voikoPelaajaTappaa())
+  // console.log(parasTavaraHpYhdistelma(num))
+  // console.log(pieninAikaPelaajaTarvitseeTappamaan(taisteltavatViholliset[num].hp))
+  // console.log(kannattaakoParantaa())
+  // console.log("########################################")
 
   if(voikoKaikkiTappaaPelaajan()) {
     return parasTavaraDmgYhdistelma(num).iskut[0];
@@ -498,12 +500,14 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
       let aika = Pelaaja.tiedot.aika;
       let iskut2 = [], parasDmg2 = 0, parasAika2 = 0, mp2 = mp;
       for(let u = valitseSatunnainenTavaraP(kopio, mp2); u !== undefined; u = valitseSatunnainenTavaraP(kopio, mp2)) {
+        // console.log("?????")
         iskut2.push(u)
         parasDmg2 += laskeVahinko(kopio.slots[u], pelaajanTaisteluKopio.tiedot.critKerroin).vahinko;
         mp2 -= kopio.slots[u].taika || 0;
         aika -= kopio.slots[u].nopeus;
         parasAika2 += kopio.slots[u].nopeus;
         if(kopio.slots[u].maara) kopio.slots[u].maara -= 1;
+        // console.log(i)
         if(aika <= 0 || parasDmg2 >= hp) break;
       }
       if(parasAika2 <= parasAika && parasDmg2 >= hp) {
@@ -516,12 +520,13 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
 
   function voikoPelaajaTappaa() {
     let iskut = [], parasDmg = 0;
-    for(let i = 0; i < 1000; i++) {
+    for(let i = 0; i < 200; i++) {
       let kopio = clone(pelaajanTaisteluKopio);
       let mp2 = mp;
       let aika = Pelaaja.tiedot.aika;
       let iskut2 = [], parasDmg2 = 0;
       for(let u = valitseSatunnainenTavaraP(kopio, mp2); u !== undefined; u = valitseSatunnainenTavaraP(kopio, mp2)) {
+        // console.log("?????")
         iskut2.push(u)
         parasDmg2 += laskeVahinko(kopio.slots[u], pelaajanTaisteluKopio.tiedot.critKerroin).vahinko;
         mp2 -= kopio.slots[u].taika || 0;
@@ -543,14 +548,13 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
       let kopio = clone(taisteltavatViholliset[vihnum]);
       let iskut2 = [], parasHp2 = 0, parasDmg2 = 0;;
       for(let u = valitseSatunnainenTavaraV(kopio); u !== undefined; u = valitseSatunnainenTavaraV(kopio)) {
-        if(kopio.tavarat[u].parannus && kopio.hp + parasHp2 >= kopio.maxHp) continue;
+        // console.log("?????")
         iskut2.push(u)
         parasHp2 += kopio.tavarat[u].parannus || 0;
         kopio.mp -= kopio.tavarat[u].taika || 0;
         kopio.aika -= kopio.tavarat[u].nopeus;
         if(kopio.tavarat[u].maara) kopio.tavarat[u].maara -= 1;
         parasDmg2 += laskeVahinko(kopio.tavarat[u], 1).vahinko;
-
         if(kopio.aika <= 0) break;
       }
       if((parasHp2 > parasHp) || (parasDmg2 > parasDmg && parasHp2 >= parasHp)) {
@@ -581,11 +585,14 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
       let kopio = clone(taisteltavatViholliset[vihnum]);
       let iskut2 = [], parasDmg2 = 0;
       for(let u = valitseSatunnainenTavaraV(kopio); u !== undefined; u = valitseSatunnainenTavaraV(kopio)) {
+        // console.log("?????")
         iskut2.push(u)
         parasDmg2 += laskeVahinko(kopio.tavarat[u], 1).vahinko;
         kopio.mp -= kopio.tavarat[u].taika || 0;
         kopio.aika -= kopio.tavarat[u].nopeus;
         if(kopio.tavarat[u].maara) kopio.tavarat[u].maara -= 1;
+
+        // console.log(i);
 
         if(kopio.aika <= 0) break;
       }
