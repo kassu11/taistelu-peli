@@ -61,4 +61,6 @@ for(let vihollinen in Viholliset) { // lisää soluja tauluun, joita ei tarvii j
   if(!Viholliset[vihollinen].kuvaLeft) Viholliset[vihollinen]["kuvaLeft"] = ""
   if(!Viholliset[vihollinen].kuvaWidth) Viholliset[vihollinen]["kuvaWidth"] = ""
   if(!Viholliset[vihollinen].kuvaHeight) Viholliset[vihollinen]["kuvaHeight"] = ""
+  if(!Viholliset[vihollinen].critKerroin) Viholliset[vihollinen]["critKerroin"] = 1
+  if(!Viholliset[vihollinen].manaRegen) Viholliset[vihollinen]["manaRegen"] = 0
 }
