@@ -1,6 +1,6 @@
 body {
   position: absolute;
-  background-color: #151515;
+  background-color: var(--ruudun-bg);
   overflow: hidden;
   animation-duration: 0.6s;
   width: 100%;
@@ -35,9 +35,6 @@ body {
 #taisteluRuutu.vihu #luovutaBox {
   opacity: .3;
 }
-#taisteluRuutu.vihu #aikaBox {
-  opacity: .3;
-}
 
 
 #popUpDmg {
@@ -60,18 +57,18 @@ body {
   transition: left 3s cubic-bezier(0.28, 0.72, 0.58, 1), transform 1.5s;
   font-family: font1;
   pointer-events: none;
-  color: #e4ff00;
-  text-shadow: 0 0 9px #e4ff00d9, 5px 5px #4b5400, 5px 5px 9px #e4ff0096;
+  color: var(--dmg-text-vari);
+  text-shadow: var(--dmg-text-varjo)
 }
 .dmgPopupHp {
   font-size: 70px;
-  color: #00ff00;
-  text-shadow: 0 0 9px #21ff19e0, 5px 5px #005400, 5px 5px 9px #09ff00;
+  color: var(--hp-text-vari);
+  text-shadow: var(--hp-text-varjo);
 }
 .dmgPopUpCrit {
   font-size: 70px;
-  color: #ff0000;
-  text-shadow: 0 0 9px #ff1919e0, 5px 5px #540000, 5px 5px 9px #ff0000;
+  color: var(--dmg-crit-text-vari);
+  text-shadow: var(--dmg-crit-text-varjo);
 }
 .skippedTextPopup {
   position: absolute;
@@ -92,6 +89,7 @@ body {
 }
 
 #viholliset {
+  top: 50px;
   display: flex;
   position: absolute;
   left: 50%;
@@ -101,19 +99,19 @@ body {
 }
 
 .vihollinen {
+  top: 0px;
   position: relative;
   width: 320px;
   height: 480px;
-  background-color: #313131;
-  border: 5px solid #464646;
-  top: 50px;
+  background-color: var(--vihollisen-bg);
+  border: 5px solid var(--vihollisen-reuna);
   animation-duration: .15s;
   animation-iteration-count: 1;
   animation-timing-function: linear;
-  box-shadow: inset 0 0 53px -3px #000000;
+  box-shadow: inset 0 0 53px -3px var(--vihollisen-varjo);
   overflow: hidden;
   user-select: none;
-  transition: filter 2s .25s, margin .25s, box-shadow .25s, background-color .2s, transform .15s, top .15s, opacity .25s;
+  transition: margin .15s, box-shadow .15s, background-color .2s, transform .15s, top .15s, opacity .25s;
   cursor: pointer;
   margin: 3px;
   transform: scale(1);
@@ -122,8 +120,9 @@ body {
   background-color: #292929;
   box-shadow: inset 0 0 51px -4px #000000, 0px 0px #00000091;
   opacity: 1;
-  transform: scalex(1.0484848484848484848484848484848) scaley(1.0489795918367346938775510204082);
-  top: 56px;
+  /* transform: scalex(1.0484848484848484848484848484848) scaley(1.0489795918367346938775510204082); */
+  transform: scalex(1.030303030303030303030303030303) scaley(1.0326530612244897959183673469388);
+  top: 2px;
   /* margin: -9px; */
   z-index: 1;
   box-shadow: inset 0 0 53px -3px #000000, 0 0 26px 3px #ffffff42;
@@ -145,15 +144,15 @@ body {
   left: 50%;
   transform: translateX(-50%);
   top: 17px;
-  background: linear-gradient(90deg, rgb(0, 102, 11) 0%, rgb(30, 194, 0) 100%);
-  border: 4px solid #24d814;
-  box-shadow: 0 0 5px 2px #16ff1f;
+  background: var(--hp-box-bg);
+  border: 4px solid var(--hp-box-rauna);
+  box-shadow: 0 0 5px 2px var(--hp-box-varjo);
 }
 .vihollisenHp1 {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgb(148, 255, 134) 0%, rgb(206, 255, 205) 100%);
+  background: var(--hp-box-ero);
 }
 .hpbg.down .vihollisenHp1 {
   transition: width .5s cubic-bezier(0, 0, 0.23, 0.94);
@@ -163,7 +162,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgb(60, 255, 33) 0%, rgb(108, 255, 106) 100%);
+  background: var(--hp-box-fill);
 }
 .hpbg.up .vihollisenHp2 {
   transition: width .5s cubic-bezier(0, 0, 0.23, 0.94);
@@ -173,7 +172,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  box-shadow: inset 0 0 20px 0 #02b900;
+  box-shadow: inset 0 0 20px 0 var(--hp-box-hohto);
 }
 .vihuHpText {
   position: absolute;
@@ -182,14 +181,32 @@ body {
   top: -2px;
   width: 100%;
   text-align: center;
-  color: #c5ffc1;
-  text-shadow: 0 0 8px #afffac;
+  color: var(--hp-maara-vari);
+  text-shadow: 0 0 8px var(--hp-maara-varjo);
   opacity: 0;
-  transition: .1s opacity;
+  transition: .2s opacity;
   transition-delay: .05s;
+}
+.vihuHpText2 {
+  position: absolute;
+  font-family: font3;
+  font-size: 38px;
+  top: -10px;
+  width: 100%;
+  text-align: center;
+  color: var(--hp-info-text-vari);
+  text-shadow: 0 0 8px var(--hp-info-text-varjo);
+  opacity: 1;
+  transition: .2s opacity;
+  transition-delay: .05s;
+  font-weight: 800;
 }
 .hpbg:hover .vihuHpText {
   opacity: 1;
+  transition-delay: 0s;
+}
+.hpbg:hover .vihuHpText2 {
+  opacity: 0;
   transition-delay: 0s;
 }
 
@@ -198,18 +215,18 @@ body {
   width: calc(100% - 130px);
   max-width: 163px;
   height: 30px;
-  left: calc(50% - -53px);
+  left: calc(50% + 53px);
   transform: translateX(-50%);
   top: 424px;
-  background: linear-gradient(90deg, rgb(0, 88, 128) 0%, rgb(0, 126, 200) 100%);
-  border: 4px solid #0096d8;
-  box-shadow: 0 0 5px 2px #0087ff;
+  background: var(--mp-box-bg);
+  border: 4px solid var(--mp-box-rauna);
+  box-shadow: 0 0 5px 2px var(--mp-box-varjo);
 }
 .vihollisenMp1 {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgb(91, 166, 255) 0%, rgba(190,220,255,1) 100%);
+  background: var(--mp-box-ero);
 }
 .mpbg.down .vihollisenMp1 {
   transition: width .5s cubic-bezier(0, 0, 0.23, 0.94);
@@ -219,7 +236,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgb(0, 129, 255) 0%, rgb(95, 196, 255) 100%);
+  background: var(--mp-box-fill);
 }
 .mpbg.up .vihollisenMp2 {
   transition: width .5s cubic-bezier(0, 0, 0.23, 0.94);
@@ -229,7 +246,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  box-shadow: inset 0 0 20px 0 #00a5c1;
+  box-shadow: inset 0 0 20px 0 var(--mp-box-hohto);
 }
 .vihuMpText {
   position: absolute;
@@ -238,14 +255,32 @@ body {
   top: -2px;
   width: 100%;
   text-align: center;
-  color: #aadcff;
-  text-shadow: 0 0 8px #aadcff;
+  color: var(--mp-maara-vari);
+  text-shadow: 0 0 8px var(--mp-maara-varjo);
   opacity: 0;
   transition: .2s opacity;
   transition-delay: .05s;
 }
+.vihuMpText2 {
+  position: absolute;
+  font-family: font3;
+  font-size: 38px;
+  top: -9px;
+  width: 100%;
+  text-align: center;
+  color: var(--mp-info-text-vari);
+  text-shadow: 0 0 8px var(--mp-info-text-varjo);
+  opacity: 1;
+  transition: .2s opacity;
+  transition-delay: .05s;
+  font-weight: 800;
+}
 .mpbg:hover .vihuMpText {
   opacity: 1;
+  transition-delay: 0s;
+}
+.mpbg:hover .vihuMpText2 {
+  opacity: 0;
   transition-delay: 0s;
 }
 
@@ -253,18 +288,18 @@ body {
   position: absolute;
   width: 170px;
   height: 170px;
-  background-color: #C2185B;
+  background-color: var(--vihollisen-id-bg);
   border-radius: 100%;
   left: -75px;
   bottom: -87px;
-  border: 6px solid #880E4F;
+  border: 6px solid var(--vihollisen-id-reuna);
   z-index: 1;
 }
 .vihunNumeroBg > p {
   position: absolute;
   left: 80px;
   bottom: 81px;
-  color: white;
+  color:var(--vihollisen-id-text);
   font-family: font1;
   font-weight: 1000;
   font-size: 37px;
@@ -272,7 +307,7 @@ body {
   text-align: left;
   transform: rotate(-8deg);
   z-index: 1;
-  text-shadow: -4px -3px 0px #F06292;
+  text-shadow: -4px -3px 0px var(--vihollisen-id-text-varjo);
 }
 
 .vihollisenKuva {
@@ -281,9 +316,9 @@ body {
   height: 320px;
   left: 50%;
   bottom: 75px;
-  background-color: #191919;
-  box-shadow: inset 0 0 20px 0px #000000, 0 0 5px 2px #131313;
-  border: 5px solid #171717;
+  background-color: var(--vihollisen-kuva-box-bg);
+  box-shadow: var(--vihollisen-kuva-box-varjo);
+  border: 5px solid var(--vihollisen-kuva-reuna);
   transform: translateX(-50%);
   /* box-shadow: 0 0 5px 2px #131313;*/
   overflow: hidden;
@@ -487,7 +522,7 @@ body {
   height: 40px;
   left: 20px;
   bottom: 22px;
-  background: linear-gradient(90deg, rgb(0, 102, 11) 0%, rgb(30, 194, 0) 100%);
+  background: var(--hp-box-bg);
   border: 4px solid #24d814;
   box-shadow: 0 0 5px 2px #16ff1f;
 }
@@ -524,8 +559,26 @@ body {
   transition: .2s opacity;
   transition-delay: .05s;
 }
+.pelaajaHpText2 {
+  position: absolute;
+  font-family: font3;
+  font-size: 48px;
+  top: -11px;
+  width: 100%;
+  text-align: center;
+  color: var(--hp-info-text-vari);
+  text-shadow: 0 0 8px var(--hp-info-text-varjo);
+  opacity: 1;
+  transition: .2s opacity;
+  transition-delay: .05s;
+  font-weight: 800;
+}
 .PelaajanHpBg:hover #pelaajaHpText {
   opacity: 1;
+  transition-delay: 0s;
+}
+.PelaajanHpBg:hover .pelaajaHpText2 {
+  opacity: 0;
   transition-delay: 0s;
 }
 
@@ -539,11 +592,17 @@ body {
   border: 4px solid #0096d8;
   box-shadow: 0 0 5px 2px #0087ff;
 }
+#mpBox.down #PelaajanMp1 {
+  transition: width .5s cubic-bezier(0, 0, 0.23, 0.94);
+  transition-delay: 0.12s;
+}
 #PelaajanMp1 {
   position: absolute;
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, rgb(91, 166, 255) 0%, rgba(190,220,255,1) 100%);
+}
+#mpBox.up #PelaajanMp2{
   transition: width .5s cubic-bezier(0, 0, 0.23, 0.94);
   transition-delay: 0.12s;
 }
@@ -566,8 +625,26 @@ body {
   transition: .2s opacity;
   transition-delay: .05s;
 }
+.pelaajaMpText2 {
+  position: absolute;
+  font-family: font3;
+  font-size: 48px;
+  top: -10px;
+  width: 100%;
+  text-align: center;
+  color: var(--mp-info-text-vari);
+  text-shadow: 0 0 8px var(--mp-info-text-varjo);
+  opacity: 1;
+  transition: .2s opacity;
+  transition-delay: .05s;
+  font-weight: 800;
+}
 .PelaajanMpBg:hover #pelaajaMpText {
   opacity: 1;
+  transition-delay: 0s;
+}
+.PelaajanMpBg:hover .pelaajaMpText2 {
+  opacity: 0;
   transition-delay: 0s;
 }
 
@@ -598,31 +675,6 @@ body {
   background: linear-gradient(90deg, rgb(157, 0, 255) 0%, rgb(157, 95, 255) 100%);
 }
 
-#aikaBox {
-  position: absolute;
-  left: 50%;
-  margin-left: -205px;
-  width: 150px;
-  height: 50px;
-  background-color: #5f5f5f;
-  bottom: 222px;
-  border: 5px solid black;
-  box-shadow: inset 0 0 20px 0px black;
-  border-radius: 0px 50px 0px 100px;
-  transition: opacity .25s;
-}
-#aikaText {
-  color: white;
-  font-family: font1;
-  font-size: 28px;
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  top: 1px;
-  left: 10px;
-  pointer-events: none;
-}
-
 #lvlBox {
   position: absolute;
   width: 60px;
@@ -647,33 +699,35 @@ body {
 #luovutaBox {
   position: absolute;
   left: 50%;
-  margin-left: 45px;
-  width: 150px;
-  height: 50px;
-  background-color: #5f5f5f;
-  bottom: 222px;
-  border: 5px solid black;
+  margin-left: -68px;
+  width: 136px;
+  height: 40px;
+  background-color: #474747;
+  top: 5px;
+  border: 1px solid #747474;
   box-shadow: inset 0 0 20px 0px black;
-  border-radius: 50px 0px 100px 0px;
   transition: .15s, opacity .25s;
   cursor: pointer;
   user-select: none;
+  box-sizing: border-box;
 }
 #luovutaNappi {
-  color: white;
-  font-family: font1;
-  font-size: 24px;
+  color: #ababab;
+  font-family: font3;
+  font-size: 23px;
   position: absolute;
   width: 100%;
   text-align: center;
-  top: 4px;
-  left: -10px;
+  top: 9px;
   pointer-events: none;
   transition: .15s;
+  line-height: .8;
+  font-weight: 100;
 }
 
 .pelaaja #luovutaBox:hover {
   background-color: #1d1d1d;
+  border: 1px solid rgb(255, 15, 15);
 }
 
 .pelaaja #luovutaBox:hover #luovutaNappi {
@@ -687,42 +741,6 @@ body {
 
 .vihu #luovutaBox:hover #luovutaNappi {
   color: rgb(170, 170, 170);
-}
-
-#luovutaBox:hover > .luovutaHover {
-  opacity: 1;
-  transition-delay: .5s;
-  transform: scale(1);
-  opacity: 1;
-}
-
-.luovutaHover {
-  position: absolute;
-  right: 50%;
-  margin-right: -80px;
-  width: 401px;
-  bottom: 60px;
-  height: 85px;
-  background-color: #1f1f1f;
-  border: 5px solid black;
-  box-shadow: inset 0 0 43px 0px black;
-  transform: scale(0);
-  transition-delay: 0s;
-  opacity: 0;
-  transition: opacity .15s, transform 0s .15s;
-}
-
-.luovutaHover > p {
-  position: absolute;
-  font-size: 20px;
-  font-family: font3;
-  font-weight: 500;
-  width: 90%;
-  left: 20px;
-  text-align: center;
-  top: 2px;
-  color: #ffd400;
-  text-shadow: 0 0 5px #ff7a00;
 }
 
 /* ===================================

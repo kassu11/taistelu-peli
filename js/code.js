@@ -40,7 +40,7 @@ function lisaaPelaajaSlots() {
       let tavara = pelaajanTaisteluKopio.tavarat[i];
       text += `
       <div id = "slot${i}" class = "slot ${i == pelaajanPikavalikkoNumero ? "valittuSlot" : ""}">
-        <p class = "slotNumero">${i}</p>
+        <p class = "slotNumero">${i + 1}</p>
         <img id = "slot${i}Kuva" class = "slotKuva" src = ${tavara.nimi ? tavara.kuva || eiKuvaa : ""}>
         <p id = "tavaraLuku${i}" class = "tavaraLuku">${tavara.maara || ""}</p>
       </div>`
@@ -56,6 +56,7 @@ function kaytaTavaraa(e) {
   let tavara = pelaajanTaisteluKopio.tavarat[pelaajanPikavalikkoNumero];
   let vihollinen = document.getElementById(`vihollinen${valittuVihollinen}`);
   let vahinko;
+  if(tavara.taika > pelaajanTaisteluKopio.mp) return;
   if(tavara.minDmg || tavara.maxDmg) {
     if(vihollinen.style.animationName == "vihollinenKuolee") return;
     for(let style = `shake${Random(0, 10)}`; 1 < 2; style = `shake${Random(0, 10)}`) { // Shake
@@ -97,16 +98,16 @@ function kaytaTavaraa(e) {
 
   if(taisteltavatViholliset[valittuVihollinen].hp <= 0) {
     animaationAloitusAika = new Date().getTime();
+    vihollinen.style.animationName = "vihollinenKuolee";
+    vihollinen.style.animationDuration = "6s";
+    vihollinen.style.animationTimingFunction = "ease";
+    poistaElem(vihollinen, 5000);
     if(!tarkistaOnkoVihollinenHengissa()) {
-      vihollinen.style.filter = "blur(10px)";
-      document.getElementById("voittoRuutu").style.animationName = "voittoIkkuna";
-      document.getElementById("ruudunTummennus").style.animationName = "tummentuma";
-      pelaajanTaisteluKopio.aika = 0;
-    } else {
-      vihollinen.style.animationName = "vihollinenKuolee";
-      vihollinen.style.animationDuration = "6s";
-      vihollinen.style.animationTimingFunction = "ease";
-      poistaElem(vihollinen, 5000);
+      setTimeout(() => {
+        document.getElementById("voittoRuutu").style.animationName = "voittoIkkuna";
+        document.getElementById("ruudunTummennus").style.animationName = "tummentuma";
+        pelaajanTaisteluKopio.aika = 0;
+      }, 2500);
     }
   } if(pelaajanTaisteluKopio.aika <= 0 && tarkistaOnkoVihollinenHengissa()) {
     let aika = animaationAloitusAika - new Date().getTime() + 3500;
@@ -238,7 +239,7 @@ function luoSkippedText(num) {
 function lopetaVihollisenVuoro() {
   taisteluRuutu.classList = "pelaaja";
   pelaajanTaisteluKopio.aika = pelaajanTaisteluKopio.maxAika;
-  document.getElementById("aikaText").textContent = `${pelaajanTaisteluKopio.aika}s`;
+  paivitaVisualPelaaja();
   vihollisenAikaParannus();
   for(let i = 0; i < Array.from(viholliset.children).length; i++) {
     Array.from(viholliset.children)[i].classList.remove("vihollinenEiValittu");
@@ -357,11 +358,13 @@ function paivitaVisualPelaaja() {
   let mp = +document.getElementById("pelaajaMpText").textContent.split("/")[0];
   document.getElementById("PelaajanHp1").style.width = `${pelaajanTaisteluKopio.hp > 0 ? pelaajanTaisteluKopio.hp / pelaajanTaisteluKopio.maxHp * 100 : 0}%`;
   document.getElementById("PelaajanHp2").style.width = `${pelaajanTaisteluKopio.hp > 0 ? pelaajanTaisteluKopio.hp / pelaajanTaisteluKopio.maxHp * 100 : 0}%`;
-  document.getElementById("pelaajaHpText").textContent = `${pelaajanTaisteluKopio.hp} / ${pelaajanTaisteluKopio.maxHp}`;
+  document.getElementById("pelaajaHpText").textContent = `${pelaajanTaisteluKopio.hp}/${pelaajanTaisteluKopio.maxHp}`;
   document.getElementById("PelaajanMp1").style.width = `${pelaajanTaisteluKopio.mp > 0 ? pelaajanTaisteluKopio.mp / pelaajanTaisteluKopio.maxMp * 100 : 0}%`;
   document.getElementById("PelaajanMp2").style.width = `${pelaajanTaisteluKopio.mp > 0 ? pelaajanTaisteluKopio.mp / pelaajanTaisteluKopio.maxMp * 100 : 0}%`;
-  document.getElementById("pelaajaMpText").textContent = `${pelaajanTaisteluKopio.mp} / ${pelaajanTaisteluKopio.maxMp}`;
-  document.getElementById("aikaText").textContent = `${pelaajanTaisteluKopio.aika < 0 ? 0 : pelaajanTaisteluKopio.aika}s`;
+  document.getElementById("pelaajaMpText").textContent = `${pelaajanTaisteluKopio.mp}/${pelaajanTaisteluKopio.maxMp}`;
+  document.getElementById("PelaajanExp1").style.width = `${pelaajanTaisteluKopio.aika > 0 ? pelaajanTaisteluKopio.aika / pelaajanTaisteluKopio.maxAika * 100 : 0}%`;
+  document.getElementById("PelaajanExp2").style.width = `${pelaajanTaisteluKopio.aika > 0 ? pelaajanTaisteluKopio.aika / pelaajanTaisteluKopio.maxAika * 100 : 0}%`;
+  document.getElementById("lvlText").textContent = `${pelaajanTaisteluKopio.aika < 0 ? 0 : pelaajanTaisteluKopio.aika}s`;
   if(hp > +document.getElementById("pelaajaHpText").textContent.split("/")[0]) {
     document.getElementById("hpBox").classList = "down"
   } else document.getElementById("hpBox").classList = "up"
@@ -434,12 +437,14 @@ function lisaaVihollinen(nimi) {
       <div id = "vihollisen${num}Hp2" class = "vihollisenHp2"></div>
       <div class = "hpHohto"></div>
       <p id = "vihu${num}HpText" class = "vihuHpText">${Viholliset[nimi].hp}/${Viholliset[nimi].hp}</p>
+      <p class = "vihuHpText2">HP</p>
     </div>
     <div class = "mpbg">
       <div id = "vihollisen${num}Mp1" class = "vihollisenMp1"></div>
       <div id = "vihollisen${num}Mp2" class = "vihollisenMp2"></div>
       <div class = "mpHohto"></div>
       <p id = "vihu${num}MpText" class = "vihuMpText">${Viholliset[nimi].mp}/${Viholliset[nimi].mp}</p>
+      <p class = "vihuMpText2">MP</p>
     </div>
     <div class = "vihunNumeroBg">
       <p id = "vihu${num}Numero">${"0".repeat(3 - Viholliset[nimi].id.length)}${Viholliset[nimi].id}</p>
@@ -618,105 +623,159 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
 }
 
 function vihollisenAi2(num) {  
-  console.log(keraaTiedotKohteesta3(taisteltavatViholliset[num]))
-  console.log(keraaTiedotKohteesta3(pelaajanTaisteluKopio))
-  function keraaTiedotKohteesta(ko) {
-    let isoTaulu = [];
-    let tauluPohja = {
-      iskut: [],
-      aika: ko.aika,
-      mp: ko.mp,
-      parasDmg: 0,
-      huonoinDmg: 0,
-      keskiarvoDmg: 0,
-    }
-    return lisaaIskut(tauluPohja, ko)
-    function lisaaIskut(taulu, kohde) {
-      for(let i = 0; i < kohde.tavarat.length; i++) {
-        if(kohde.tavarat[i].taika > taulu.mp) continue;
-        if(taulu.aika - kohde.tavarat[i].nopeus <= 0) {
-          let iskut = taulu.iskut.slice();
-          iskut.push(i);
-          isoTaulu.push({
-            iskut, 
-            aika: taulu.aika - kohde.tavarat[i].nopeus,
-            parasDmg: laskeParasVahinko(kohde.tavarat[i], num),
-            mp: taulu.mp - kohde.tavarat[i].taika || 0
-          });
-          break;
-        }
-        let luvut = taulu.iskut.slice();
-        luvut.push(i);
-        lisaaIskut({
-          iskut: luvut, 
-          aika: taulu.aika - kohde.tavarat[i].nopeus,
-          parasDmg: laskeParasVahinko(kohde.tavarat[i], num),
-          mp: taulu.mp - kohde.tavarat[i].taika || 0
-        }, kohde);
-      } return isoTaulu;
-  
-      function laskeParasVahinko(ase, vihnum) {
-        if(!ase.minDmg) return 0;
-        let vahinko = ase.maxDmg || ase.minDmg;
-        return vahinko * taisteltavatViholliset[vihnum].critKerroin || 1;
-      }
-    }
-  }  
+  // console.log(keraaTiedotKohteesta3(taisteltavatViholliset[num]))
+  console.log(keraaTiedotKohteesta3(pelaajanTaisteluKopio, 10))
 
+  // let kopio = clone(keraaTiedotKohteesta3(pelaajanTaisteluKopio));
 
+  console.log(voikoKaikkiTappaaPelaajan("parasDmg"))
+  console.log(voikoKaikkiTappaaPelaajan("realistinenDmg"))
+  console.log(voikoKaikkiTappaaPelaajan("huonoinDmg"))
+  console.log(voikoKaikkiTappaaPelaajan("keskiarvoDmg"))
 
-  function keraaTiedotKohteesta2(ko) {
-    let isoTaulu = [];
-    let tauluPohja = {
-      iskut: [],
-      aika: ko.aika,
-      mp: ko.mp,
-      parasDmg: 0,
-      huonoinDmg: 0,
-      keskiarvoDmg: 0,
-    }
-    return lisaaIskut(tauluPohja, ko)
-    function lisaaIskut(taulu, kohde) {
-      let tauluKopio = clone(taulu);
-      let kohdeKopio = clone(kohde);
-      for(let i = 0; i < kohdeKopio.tavarat.length; i++) {
-        if(kohdeKopio.tavarat[i].taika > tauluKopio.mp) continue;
-        if(!kohdeKopio.tavarat[i].nopeus) continue;
-        if(tauluKopio.aika - kohdeKopio.tavarat[i].nopeus <= 0) {
-          let iskut = tauluKopio.iskut.slice();
-          iskut.push(i);
-          isoTaulu.push({
-            iskut, 
-            aika: tauluKopio.aika - (kohdeKopio.tavarat[i].nopeus || 0),
-            parasDmg: tauluKopio.parasDmg + laskeParasVahinko(kohdeKopio.tavarat[i], num),
-            mp: tauluKopio.mp - (kohdeKopio.tavarat[i].taika || 0)
-          });
-          continue;
-        }
-        let luvut = tauluKopio.iskut.slice();
-        luvut.push(i);
-        lisaaIskut({
-          iskut: luvut, 
-          aika: tauluKopio.aika - (kohdeKopio.tavarat[i].nopeus || 0),
-          parasDmg: tauluKopio.parasDmg + laskeParasVahinko(kohdeKopio.tavarat[i], num),
-          mp: tauluKopio.mp - (kohdeKopio.tavarat[i].taika || 0)
-        }, kohdeKopio);
-      } return isoTaulu;
-  
-      function laskeParasVahinko(ase, vihnum) {
-        if(!ase.minDmg) return 0;
-        let vahinko = ase.maxDmg || ase.minDmg;
-        return vahinko * taisteltavatViholliset[vihnum].critKerroin || 1;
-      }
-    }
+  function voikoKaikkiTappaaPelaajan(ai = "realistinenDmg") {
+    let total = 0;
+    for(let i = num; i < taisteltavatViholliset.length; i++) {
+      let taulu = keraaTiedotKohteesta3(taisteltavatViholliset[i]);
+      taulu = lajitteleTaulu(false, ai, false, taulu);
+      total += taulu[0][ai] || 0;
+    } return total > pelaajanTaisteluKopio.hp;
+  }
+
+  function kannattaakoParantaa() {
+    let pl = keraaTiedotKohteesta3(pelaajanTaisteluKopio);
+    pl = lajitteleTaulu(false, "parasDmg", false, pl);
   }
 
 
-  function keraaTiedotKohteesta3(ko) {
+
+
+
+
+
+  // console.log(lajitteleTaulu(false, "parasDmg", false, keraaTiedotKohteesta3(pelaajanTaisteluKopio)))
+  function lajitteleTaulu(reverse, filter, string, taulu) {
+    let kopio = clone(taulu);
+    return kopio.sort(function (a, b) {
+      let compareA;
+      let compareB;
+      if(string == true) {
+        compareA = a[filter].toUpperCase(); // ignore upper and lowercase
+        compareB = b[filter].toUpperCase(); // ignore upper and lowercase
+      } else if(string == false) {
+        compareA = a[filter];
+        compareB = b[filter];
+      }
+  
+      if(compareA < compareB) {
+        if(!reverse) return 1;
+        else return -1;
+      } if(compareA > compareB) {
+        if(!reverse) return -1;
+        else return 1;
+      } return 0;
+    });
+  }
+
+  // function keraaTiedotKohteesta(ko) {
+  //   let isoTaulu = [];
+  //   let tauluPohja = {
+  //     iskut: [],
+  //     aika: ko.aika,
+  //     mp: ko.mp,
+  //     parasDmg: 0,
+  //     huonoinDmg: 0,
+  //     keskiarvoDmg: 0,
+  //   }
+  //   return lisaaIskut(tauluPohja, ko)
+  //   function lisaaIskut(taulu, kohde) {
+  //     for(let i = 0; i < kohde.tavarat.length; i++) {
+  //       if(kohde.tavarat[i].taika > taulu.mp) continue;
+  //       if(taulu.aika - kohde.tavarat[i].nopeus <= 0) {
+  //         let iskut = taulu.iskut.slice();
+  //         iskut.push(i);
+  //         isoTaulu.push({
+  //           iskut, 
+  //           aika: taulu.aika - kohde.tavarat[i].nopeus,
+  //           parasDmg: laskeParasVahinko(kohde.tavarat[i], num),
+  //           mp: taulu.mp - kohde.tavarat[i].taika || 0
+  //         });
+  //         break;
+  //       }
+  //       let luvut = taulu.iskut.slice();
+  //       luvut.push(i);
+  //       lisaaIskut({
+  //         iskut: luvut, 
+  //         aika: taulu.aika - kohde.tavarat[i].nopeus,
+  //         parasDmg: laskeParasVahinko(kohde.tavarat[i], num),
+  //         mp: taulu.mp - kohde.tavarat[i].taika || 0
+  //       }, kohde);
+  //     } return isoTaulu;
+  
+  //     function laskeParasVahinko(ase, vihnum) {
+  //       if(!ase.minDmg) return 0;
+  //       let vahinko = ase.maxDmg || ase.minDmg;
+  //       return vahinko * taisteltavatViholliset[vihnum].critKerroin || 1;
+  //     }
+  //   }
+  // }  
+
+
+
+  // function keraaTiedotKohteesta2(ko) {
+  //   let isoTaulu = [];
+  //   let tauluPohja = {
+  //     iskut: [],
+  //     aika: ko.aika,
+  //     mp: ko.mp,
+  //     parasDmg: 0,
+  //     huonoinDmg: 0,
+  //     keskiarvoDmg: 0,
+  //   }
+  //   return lisaaIskut(tauluPohja, ko)
+  //   function lisaaIskut(taulu, kohde) {
+  //     let tauluKopio = clone(taulu);
+  //     let kohdeKopio = clone(kohde);
+  //     for(let i = 0; i < kohdeKopio.tavarat.length; i++) {
+  //       if(kohdeKopio.tavarat[i].taika > tauluKopio.mp) continue;
+  //       if(!kohdeKopio.tavarat[i].nopeus) continue;
+  //       if(tauluKopio.aika - kohdeKopio.tavarat[i].nopeus <= 0) {
+  //         let iskut = tauluKopio.iskut.slice();
+  //         iskut.push(i);
+  //         isoTaulu.push({
+  //           iskut, 
+  //           aika: tauluKopio.aika - (kohdeKopio.tavarat[i].nopeus || 0),
+  //           parasDmg: tauluKopio.parasDmg + laskeParasVahinko(kohdeKopio.tavarat[i], num),
+  //           mp: tauluKopio.mp - (kohdeKopio.tavarat[i].taika || 0)
+  //         });
+  //         continue;
+  //       }
+  //       let luvut = tauluKopio.iskut.slice();
+  //       luvut.push(i);
+  //       lisaaIskut({
+  //         iskut: luvut, 
+  //         aika: tauluKopio.aika - (kohdeKopio.tavarat[i].nopeus || 0),
+  //         parasDmg: tauluKopio.parasDmg + laskeParasVahinko(kohdeKopio.tavarat[i], num),
+  //         mp: tauluKopio.mp - (kohdeKopio.tavarat[i].taika || 0)
+  //       }, kohdeKopio);
+  //     } return isoTaulu;
+  
+  //     function laskeParasVahinko(ase, vihnum) {
+  //       if(!ase.minDmg) return 0;
+  //       let vahinko = ase.maxDmg || ase.minDmg;
+  //       return vahinko * taisteltavatViholliset[vihnum].critKerroin || 1;
+  //     }
+  //   }
+  // }
+
+
+  function keraaTiedotKohteesta3(ko, hp = 0) {
     let isoTaulu = [];
     let tauluPohja = {
       iskut: [],
       aika: ko.aika,
+      aikaTappamiseen: 0,
+      hp,
       mp: ko.mp,
       parasDmg: 0,
       huonoinDmg: 0,
@@ -734,16 +793,21 @@ function vihollisenAi2(num) {
         if(kohdeKopio.tavarat[i].maara <= 0) continue;
         if(tauluKopio.maara[i] <= 0) continue;
         if(!kohdeKopio.tavarat[i].nopeus) continue;
+        if(kohdeKopio.tavarat[i].nopeus <= 0) continue;
         if(tauluKopio.aika - kohdeKopio.tavarat[i].nopeus <= 0) {
           let iskut = tauluKopio.iskut.slice();
           let maara = tauluKopio.maara.slice();
           if(kohdeKopio.tavarat[i].maara) {
             maara[i] = (maara[i] || kohdeKopio.tavarat[i].maara) - 1;
           }
+          let tappamisAika = tauluKopio.aikaTappamiseen;
+          if(tauluKopio.hp > 0) tappamisAika += kohdeKopio.tavarat[i].nopeus || 0;
           iskut.push(i);
           isoTaulu.push({
             iskut, 
             aika: tauluKopio.aika - (kohdeKopio.tavarat[i].nopeus || 0),
+            aikaTappamiseen: tappamisAika,
+            hp: tauluKopio.hp - laskeVahinko(kohdeKopio.tavarat[i], kohdeKopio.critProsentti || 1).vahinko,
             parasDmg: tauluKopio.parasDmg + laskeParasVahinko(kohdeKopio.tavarat[i]),
             mp: tauluKopio.mp - (kohdeKopio.tavarat[i].taika || 0),
             huonoinDmg: tauluKopio.huonoinDmg + (kohdeKopio.tavarat[i].minDmg || 0),
@@ -759,10 +823,14 @@ function vihollisenAi2(num) {
         if(kohdeKopio.tavarat[i].maara) {
           maara[i] = (maara[i] || kohdeKopio.tavarat[i].maara) - 1;
         }
+        let tappamisAika = tauluKopio.aikaTappamiseen;
+        if(tauluKopio.hp > 0) tappamisAika += kohdeKopio.tavarat[i].nopeus || 0;
         iskut.push(i);
         lisaaIskut({
           iskut, 
           aika: tauluKopio.aika - (kohdeKopio.tavarat[i].nopeus || 0),
+          aikaTappamiseen: tappamisAika,
+          hp: tauluKopio.hp - laskeVahinko(kohdeKopio.tavarat[i], kohdeKopio.critProsentti || 1).vahinko,
           parasDmg: tauluKopio.parasDmg + laskeParasVahinko(kohdeKopio.tavarat[i]),
           mp: tauluKopio.mp - (kohdeKopio.tavarat[i].taika || 0),
           huonoinDmg: tauluKopio.huonoinDmg + (kohdeKopio.tavarat[i].minDmg || 0),
@@ -796,3 +864,11 @@ function clone(obj) {
     if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
   } return copy;
 }
+
+// window.addEventListener("beforeunload", function (e) {
+//   var confirmationMessage = 'It looks like you have been editing something. '
+//                           + 'If you leave before saving, your changes will be lost.';
+
+//   (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+//   return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+// });

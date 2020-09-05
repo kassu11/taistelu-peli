@@ -3,6 +3,7 @@
   <head>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href = "css/varit.css">
     <link rel = "stylesheet" href = "css/font.css">
     <link rel = "stylesheet" href = "css/animations.css">
     <link rel = "stylesheet" href = "css/tyyli.css">
@@ -11,6 +12,10 @@
   <body>
     <div id = "taisteluRuutu" class = "pelaaja">
       <div id = "popUpDmg"></div>
+
+      <div id = "luovutaBox">
+        <p id = "luovutaNappi">lopeta vuoro</p>
+      </div>
       
       <div id = "pelaaja">
         <div id = "hpBox">
@@ -19,6 +24,7 @@
             <div id = "PelaajanHp2"></div>
             <div class = "hpHohto"></div>
             <p id = "pelaajaHpText">100/100</p>
+            <p class = "pelaajaHpText2">HP</p>
           </div>
         </div>
         <div id = "mpBox">
@@ -27,21 +33,13 @@
             <div id = "PelaajanMp2"></div>
             <div class = "mpHohto"></div>
             <p id = "pelaajaMpText">100/100</p>
+            <p class = "pelaajaMpText2">MP</p>
           </div>
         </div>
         <div id = "slotBox"></div>
 
-        <div id = "aikaBox">
-          <p id = "aikaText">10s</p>
-        </div>
         <div id = "lvlBox">
-          <p id = "lvlText">1</p>
-        </div>
-        <div id = "luovutaBox">
-          <p id = "luovutaNappi">Vaihto</p>
-          <div class = "luovutaHover">
-            <p>Tämä nappi vaihtaa vuoron viholliselle. Sen ainoa tarkoitus on auttaa pelaajaa jos et voi tehdä iskuja enää esim. full mana build</p>
-          </div>
+          <p id = "lvlText"></p>
         </div>
         <div class = "PelaajanExpBg">
           <div id = "PelaajanExp1"></div>

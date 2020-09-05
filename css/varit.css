@@ -1,0 +1,43 @@
+:root {
+  --ruudun-bg: #151515;
+
+  --dmg-text-vari: #e4ff00;
+  --dmg-text-varjo: 0 0 9px #e4ff00d9, 5px 5px #4b5400, 5px 5px 9px #e4ff0096;
+  --dmg-crit-text-vari: #ff0000;
+  --dmg-crit-text-varjo: 0 0 9px #ff1919e0, 5px 5px #540000, 5px 5px 9px #ff0000;
+  --hp-text-vari: #00ff00;
+  --hp-text-varjo: 0 0 9px #21ff19e0, 5px 5px #005400, 5px 5px 9px #09ff00;
+
+  --vihollisen-bg: #313131;
+  --vihollisen-reuna: #464646;
+  --vihollisen-varjo: #000000;
+  --vihollisen-id-reuna: #880e4f;
+  --vihollisen-id-bg: #C2185B;
+  --vihollisen-id-text: white;
+  --vihollisen-id-text-varjo: #f06292;
+  --vihollisen-kuva-box-bg: #191919;
+  --vihollisen-kuva-box-varjo: inset 0 0 20px 0px #000000, 0 0 5px 2px #131313;
+  --vihollisen-kuva-reuna: #171717;
+
+  --hp-box-bg: linear-gradient(90deg, rgb(0, 102, 11) 0%, rgb(30, 194, 0) 100%);
+  --hp-box-fill: linear-gradient(90deg, rgb(60, 255, 33) 0%, rgb(108, 255, 106) 100%);
+  --hp-box-ero: linear-gradient(90deg, rgb(148, 255, 134) 0%, rgb(206, 255, 205) 100%);
+  --hp-box-hohto: #02b900;
+  --hp-box-rauna: #24d814;
+  --hp-box-varjo: #16ff1f;
+  --hp-info-text-vari: #daffc1;
+  --hp-info-text-varjo: #afffac;
+  --hp-maara-vari: #c5ffc1;
+  --hp-maara-varjo: #afffac;
+
+  --mp-box-bg: linear-gradient(90deg, rgb(0, 88, 128) 0%, rgb(0, 126, 200) 100%);
+  --mp-box-fill: linear-gradient(90deg, rgb(0, 129, 255) 0%, rgb(95, 196, 255) 100%);
+  --mp-box-ero: linear-gradient(90deg, rgb(91, 166, 255) 0%, rgba(190,220,255,1) 100%);
+  --mp-box-hohto: #00a5c1;
+  --mp-box-rauna: #0096d8;
+  --mp-box-varjo: #0087ff;
+  --mp-info-text-vari: #aadcff;
+  --mp-info-text-varjo: #aadcff;
+  --mp-maara-vari: #aadcff;
+  --mp-maara-varjo: #aadcff;
+}

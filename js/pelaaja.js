@@ -9,8 +9,8 @@ let Pelaaja = {
   statusEfektit: {
 
   },
-  mp: 100,
-  hp: 100,
+  mp: 50,
+  hp: 200,
   aika: 8,
   raha: 0,
   exp: 0,
