@@ -7,6 +7,8 @@
     <link rel = "stylesheet" href = "css/font.css">
     <link rel = "stylesheet" href = "css/animations.css">
     <link rel = "stylesheet" href = "css/tyyli.css">
+    <link rel = "stylesheet" href = "css/vihollisKortit.css">
+    <link rel="stylesheet" href="css/tavaroittenTeko.css">
     <title>Pohjola Remake</title>
   </head>
   <body>
@@ -59,43 +61,70 @@
       </div>
 
       <div id = "viholliset"></div>
+
+      <div id = "ruudunTummennus"></div>
+
+      <div id = "voittoRuutu">
+        <div class = "voittoOtsikko">
+          <p>Voitit Taistelun</p>
+        </div>
+  
+        <div class = "tavaraOtsikko">
+          <p>Tässä voittamasi tavarat</p>
+        </div>
+  
+        <div id = "voittoTavarat"></div>
+        <div id = "jatkaNappi">
+          <p>Valikko</p>
+        </div>
+        <div class = "aloitaAlustaNappi" onclick="reset()">
+          <p>Taistele</p>
+        </div>
+      </div>
+  
+      <div id = "havioRuutu">
+        <div class = "havioOtsikko">
+          <p>Hävisit Taistelun</p>
+        </div>
+  
+        <div class = "tavaraOtsikko">
+          <p>Noh, se olis voinu mennä paremmin!</p>
+        </div>
+        
+        <div id = "jatkaNappi">
+          <p>Valikko</p>
+        </div>
+        <div class = "aloitaAlustaNappi" onclick="reset()">
+          <p>Taistele</p>
+        </div>
+      </div>
+
     </div>
 
-    <div id = "ruudunTummennus"></div>
+    <div id="tavaroittenTekoRuutu" style = "display: none;">
+      <div id="sivuPalkki"></div>
 
-    <div id = "voittoRuutu">
-      <div class = "voittoOtsikko">
-        <p>Voitit Taistelun</p>
-      </div>
-
-      <div class = "tavaraOtsikko">
-        <p>Tässä voittamasi tavarat</p>
-      </div>
-
-      <div id = "voittoTavarat"></div>
-      <div id = "jatkaNappi">
-        <p>Valikko</p>
-      </div>
-      <div class = "aloitaAlustaNappi" onclick="reset()">
-        <p>Taistele</p>
-      </div>
-    </div>
-
-    <div id = "havioRuutu">
-      <div class = "havioOtsikko">
-        <p>Hävisit Taistelun</p>
+      <div id="craftInv">
+        <div class="craftYlaPalkki">
+          <div id="craftKaikkiNappiBox">Näytä kaikki</div>
+          <div id="craftHakuPalkki">Haku</div>
+          <div id="craftLajitteluBox">Lajittelu</div>
+        </div>
+        <div class="craftTavaraBox">
+          <div id="craftTavaraFlex"></div>
+        </div>
+        <div id="reseptiBox"></div>
       </div>
 
-      <div class = "tavaraOtsikko">
-        <p>Noh, se olis voinu mennä paremmin!</p>
+      <div id = "craftPopUp">
+        <div id = "craftPopUpBg" style = "display: none;">
+          <div id = "craftNuoli"></div>
+          <div id = "craftInfoboxSisalto">
+            <p id = "craftTavaraNimi"></p>
+          </div>
+        </div>
       </div>
-      
-      <div id = "jatkaNappi">
-        <p>Valikko</p>
-      </div>
-      <div class = "aloitaAlustaNappi" onclick="reset()">
-        <p>Taistele</p>
-      </div>
+
     </div>
   </body>
 </html>
@@ -105,3 +134,5 @@
 <script src = "js/pelaaja.js"></script>
 <script src = "js/viholliset.js"></script>
 <script src = "js/code.js"></script>
+<script src = "js/vihuAi.js"></script>
+<script src = "js/tavaranTekoRuutu.js"></script>

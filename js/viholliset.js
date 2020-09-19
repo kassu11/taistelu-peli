@@ -1,6 +1,7 @@
 let Viholliset = {
   "lvl0": {
     id: "0",
+    harvinaisuus: "normal",
     hp: 10,
     mp: 20,
     suoja: 10,
@@ -20,6 +21,7 @@ let Viholliset = {
   },
   "lvl1": {
     id: "1",
+    harvinaisuus: "rare",
     hp: 13,
     mp: 50,
     suoja: 10,
@@ -35,6 +37,7 @@ let Viholliset = {
   },
   "lvl2": {
     id: "2",
+    harvinaisuus: "epic",
     hp: 35,
     mp: 20,
     suoja: 10,
@@ -49,7 +52,21 @@ let Viholliset = {
       Tavarat.puumiekka,
       Tavarat.hpPottu,
     ]
-  }
+  },
+  "lvl3": {
+    id: "1",
+    harvinaisuus: "legendary",
+    hp: 13,
+    mp: 50,
+    suoja: 10,
+    aika: 10,
+    kuva: "https://image.winudf.com/v2/image1/Y29tLmFuaW1lbGlzdHdhbGxwYXBlcnMucm9ja29ubWFuX3NjcmVlbl82XzE1NzU1NTAzOTNfMDE1/screen-6.jpg?fakeurl=1&type=.jpg",
+    kuvaWidth: "249px",
+    manaRegen: 2,
+    tavarat: [
+      Tavarat.hpPottu2,
+    ]
+  },
 }
 
 for(let vihollinen in Viholliset) { // lisää soluja tauluun, joita ei tarvii joka kerta uudelleen kirjottaa :p
@@ -63,4 +80,5 @@ for(let vihollinen in Viholliset) { // lisää soluja tauluun, joita ei tarvii j
   if(!Viholliset[vihollinen].kuvaHeight) Viholliset[vihollinen]["kuvaHeight"] = ""
   if(!Viholliset[vihollinen].critKerroin) Viholliset[vihollinen]["critKerroin"] = 1
   if(!Viholliset[vihollinen].manaRegen) Viholliset[vihollinen]["manaRegen"] = 0
+  if(!Viholliset[vihollinen].harvinaisuus) Viholliset[vihollinen]["harvinaisuus"] = "normal" // normal rare epic legendary
 }

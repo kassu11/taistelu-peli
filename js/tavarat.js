@@ -28,7 +28,8 @@ let Tavarat = {
     minDmg: 6,
     nopeus: 8,
     critProsentti: 10,
-    taika: 9
+    taika: 9,
+    teko: [{tavara: "puutikku", maara: 5}, {tavara: "rauta", maara: 15}]
   },
   "test1": {
     nimi: "Testi 1",
@@ -78,5 +79,15 @@ let Tavarat = {
     nopeus: 5,
     maara: 3,
     taika: 3
+  },
+  "puutikku": {
+    nimi: "Puinen tikku",
+    tyyppi: "materiaali",
+    tyyppiText: "Materiaali",
+  },
+  "rauta": {
+    nimi: "Rauta",
+    tyyppi: "materiaali",
+    tyyppiText: "Materiaali",
   },
 }

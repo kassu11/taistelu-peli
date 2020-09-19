@@ -1,0 +1,47 @@
+.rare.vihollinen {
+  background-color: #332e12;
+  border: 5px solid #ffdb00;
+} .rare .vihollisenKuva {
+  border: 5px solid #debf00;
+  background-color: #debf00;
+} .rare .vihunNumeroBg {
+  background-color: #807210;
+  border: 6px solid #ffdb00;
+} .rare .vihunNumeroBg > p {
+  text-shadow: -4px -3px 0px #d8b900;
+} .pelaaja .rare.vihollinen:hover {
+  background-color: #332e12;
+  box-shadow: inset 0 0 53px -3px #000000, 0 0 26px 3px #ffdb008a;
+}
+
+.epic.vihollinen {
+  background-color: #311818;
+  border: 5px solid #ff3434;
+} .epic .vihollisenKuva {
+  border: 5px solid #d83737;
+  background-color: #d83737;
+} .epic .vihunNumeroBg {
+  background-color: #782525;
+  border: 6px solid #ff3434;
+} .epic .vihunNumeroBg > p {
+  text-shadow: -4px -3px 0px #ff5858;
+} .pelaaja .epic.vihollinen:hover {
+  background-color: #311818;
+  box-shadow: inset 0 0 53px -3px #000000, 0 0 26px 3px #ff3434b8;
+}
+
+.legendary.vihollinen {
+  background-color: #241327;
+  border: 5px solid #df00ff;
+} .legendary .vihollisenKuva {
+  background-color: #a200b9;
+  border: 5px solid #a200b9;
+} .legendary .vihunNumeroBg {
+  background-color: #4b1a55;
+  border: 6px solid #df00ff;
+} .legendary .vihunNumeroBg > p {
+  text-shadow: -4px -3px 0px #c62edc;
+} .pelaaja .legendary.vihollinen:hover {
+  background-color: #241327;
+  box-shadow: inset 0 0 53px -3px #000000, 0 0 26px 3px #df00ff
+}
