@@ -11,7 +11,18 @@ let pelaajanPikavalikkoNumero = 0;
 
 document.getElementById("luovutaBox").addEventListener("click", () => {
   if(pelaajanTaisteluKopio.aika <= 0) return;
+
+  for(let i = 0; i < taisteltavatViholliset.length; i++) {
+    if(taisteltavatViholliset[i].hp <= 0) continue;
+    if(taisteltavatViholliset[i].manaRegen) {
+      taisteltavatViholliset[i].mp += taisteltavatViholliset[i].manaRegen * pelaajanTaisteluKopio.aika;
+    } taisteltavatViholliset[i].mp = Math.min(taisteltavatViholliset[i].mp, taisteltavatViholliset[i].maxMp);
+  }
+
+  paivitaVisuaalisestiViholliset();
+
   pelaajanTaisteluKopio.aika = 0;
+  paivitaVisualPelaaja();
   setTimeout(vihollinenHyokkaa, 200);
   taisteluRuutu.classList = "vihu";
 })
@@ -37,12 +48,12 @@ function lisaaPelaajaSlots() {
   function loop() {
     let text = ``;
     for(let i = 0; i < 5; i++) {
-      let tavara = pelaajanTaisteluKopio.tavarat[i];
+      let tavara = pelaajanTaisteluKopio?.tavarat[i];
       text += `
       <div id = "slot${i}" class = "slot ${i == pelaajanPikavalikkoNumero ? "valittuSlot" : ""}">
         <p class = "slotNumero">${i + 1}</p>
-        <img id = "slot${i}Kuva" class = "slotKuva" src = ${tavara.nimi ? tavara.kuva || eiKuvaa : ""}>
-        <p id = "tavaraLuku${i}" class = "tavaraLuku">${tavara.maara || ""}</p>
+        <img id = "slot${i}Kuva" class = "slotKuva" src = ${tavara?.nimi ? tavara?.kuva || eiKuvaa : ""}>
+        <p id = "tavaraLuku${i}" class = "tavaraLuku">${tavara?.maara || ""}</p>
       </div>`
     } return text;
   }
@@ -148,8 +159,15 @@ function laskeVahinko(tavara, kerroin, kohde = null) {
 function vihollinenHyokkaa() {
   let vihu = vapaaVihollinen(taisteltavatViholliset);
   if(vihu == null) {lopetaVihollisenVuoro(); return}
-  let ase = vihollisenAi(vihu);
-  if(ase == undefined) {skippaaVihollinen(vihu); return}
+  // let ase = vihollisenAi(vihu);
+  let ase = vihollisenAi2(vihu);
+  if(ase == undefined) {
+    pelaajanTaisteluKopio.mp += pelaajanTaisteluKopio.manaRegen * taisteltavatViholliset[vihu].aika;
+    pelaajanTaisteluKopio.mp = Math.min(pelaajanTaisteluKopio.mp, pelaajanTaisteluKopio.maxMp);
+    paivitaVisualPelaaja();
+    skippaaVihollinen(vihu);
+    return;
+  }
 
   taisteltavatViholliset[vihu].aika
   let vahinko = laskeVahinko(taisteltavatViholliset[vihu].tavarat[ase], 1).vahinko || 0;
@@ -226,11 +244,11 @@ function skippaaVihollinen(num) {
 
 function luoSkippedText(num) {
   let p = document.createElement("p");
-  p.textContent = "Ei liikkeitä";
+  p.textContent = "Lopetti vuoronsa";
   p.classList.add("skippedTextPopup");
   document.getElementById(`vihollinen${num}`).appendChild(p);
 
-  // poistaElem(p, 1500);
+  poistaElem(p, 1500);
 }
 
 function lopetaVihollisenVuoro() {
@@ -386,15 +404,16 @@ function hotbarHover(e) {
   if(e.target.id !== "slotPopupDeley") {
     document.getElementById("hotbarPopUpBg").style.animationName = null;
     let valittu = pelaajanTaisteluKopio.tavarat[+e.target.id.substring(4)];
-    if(!valittu.nimi) document.getElementById("hotbarPopUpBg").style.display = "none";
-
-    document.getElementById("hotbarInfoboxSisalto").innerHTML = `
-    <p id = "hotbarTavaraNimi">${valittu.nimi || ""}</p>
-    <p>${valittu.tyyppiText ? "Tyyppi: " : ""}<span class = "hotbarTavaraTyyppi">${valittu.tyyppiText || ""}</span></p>
-    <p>${valittu.minDmg ? "Vahinko: " : ""} <span class = "hotbarTavaraVahinko">${valittu.minDmg || ""}${valittu.maxDmg ? "-"+valittu.maxDmg : ""}</span></p>
-    <p>${valittu.parannus ? "Parannus: " : ""} <span class = "hotbarTavaraVahinko">${valittu.parannus ? valittu.parannus + "hp" : ""}</span></p>
-    <p>${valittu.nopeus ? "Nopeus: " : ""}<span class = "hotbarTavaraNopeus">${valittu.nopeus ? valittu.nopeus+"s" : ""}</span></p>
-    <p>${valittu.taika ? "Manan kulutus: " : ""}<span class = "hotbarTavaraTaika">${valittu.taika ? valittu.taika + "m" : ""}</span></p>`
+    if(!valittu?.nimi) document.getElementById("hotbarPopUpBg").style.display = "none";
+    else {
+      document.getElementById("hotbarInfoboxSisalto").innerHTML = `
+      <p id = "hotbarTavaraNimi">${valittu.nimi || ""}</p>
+      <p>${valittu.tyyppiText ? "Tyyppi: " : ""}<span class = "hotbarTavaraTyyppi">${valittu.tyyppiText || ""}</span></p>
+      <p>${valittu.minDmg ? "Vahinko: " : ""} <span class = "hotbarTavaraVahinko">${valittu.minDmg || ""}${valittu.maxDmg ? "-"+valittu.maxDmg : ""}</span></p>
+      <p>${valittu.parannus ? "Parannus: " : ""} <span class = "hotbarTavaraVahinko">${valittu.parannus ? valittu.parannus + "hp" : ""}</span></p>
+      <p>${valittu.nopeus ? "Nopeus: " : ""}<span class = "hotbarTavaraNopeus">${valittu.nopeus ? valittu.nopeus+"s" : ""}</span></p>
+      <p>${valittu.taika ? "Manan kulutus: " : ""}<span class = "hotbarTavaraTaika">${valittu.taika ? valittu.taika + "m" : ""}</span></p>`
+    }
   } else document.getElementById("hotbarPopUpBg").style.animationName = "piilotaSlotPopup";
 
   let korkeus = document.getElementById("hotbarPopUpBg").getBoundingClientRect().height + 15;
@@ -419,7 +438,9 @@ function painaHotbar(e) {
 
 let total = 0;
 
-lisaaVihollinen("lvl0");
+lisaaVihollinen("lvl3");
+lisaaVihollinen("lvl3");
+lisaaVihollinen("lvl3");
 // lisaaVihollinen("lvl1");
 // lisaaVihollinen("lvl2");
 // lisaaVihollinen("lvl3");
@@ -442,8 +463,10 @@ function lisaaVihollinen(nimi) {
       <p id = "vihu${num}MpText" class = "vihuMpText">${Viholliset[nimi].mp}/${Viholliset[nimi].mp}</p>
       <p class = "vihuMpText2">MP</p>
     </div>
-    <div class = "vihunNumeroBg">
-      <p id = "vihu${num}Numero">${"0".repeat(3 - Viholliset[nimi].id.length)}${Viholliset[nimi].id}</p>
+    <div class = "vihuNumeroContainer">
+      <div class = "vihunNumeroBg">
+        <p id = "vihu${num}Numero">${"0".repeat(3 - Viholliset[nimi].id.length)}${Viholliset[nimi].id}</p>
+      </div>
     </div>
     <div class = "vihollisenKuva">
       <img src = "${Viholliset[nimi].kuva}" style = "left:${Viholliset[nimi].kuvaLeft}; top:${Viholliset[nimi].kuvaTop}; width:${Viholliset[nimi].kuvaWidth}; height:${Viholliset[nimi].kuvaHeight};">
@@ -458,14 +481,14 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
     mp += taisteltavatViholliset[i].maxAika * pelaajanTaisteluKopio.critKerroin;
   } mp = Math.min(pelaajanTaisteluKopio.mp, pelaajanTaisteluKopio.maxMp);
 
-  console.log(voikoKaikkiTappaaPelaajan())
-  console.log(parasTavaraDmgYhdistelma(num))
-  console.log(valitseSatunnainenTavaraV(taisteltavatViholliset[num]))
-  console.log(voikoPelaajaTappaa())
-  console.log(parasTavaraHpYhdistelma(num))
-  console.log(pieninAikaPelaajaTarvitseeTappamaan(taisteltavatViholliset[num].hp))
-  console.log(kannattaakoParantaa())
-  console.log("########################################")
+  // console.log(voikoKaikkiTappaaPelaajan())
+  // console.log(parasTavaraDmgYhdistelma(num))
+  // console.log(valitseSatunnainenTavaraV(taisteltavatViholliset[num]))
+  // console.log(voikoPelaajaTappaa())
+  // console.log(parasTavaraHpYhdistelma(num))
+  // console.log(pieninAikaPelaajaTarvitseeTappamaan(taisteltavatViholliset[num].hp))
+  // console.log(kannattaakoParantaa())
+  // console.log("########################################")
 
   if(voikoKaikkiTappaaPelaajan()) {
     return parasTavaraDmgYhdistelma(num).iskut[0];
@@ -572,7 +595,7 @@ function vihollisenAi(num) { // tulee palauttamaan parhaimman liikkeen
   function valitseSatunnainenTavaraP(array, mp) { // Palauttaa tavaran index numeron, jos ei ole palauttaa null
     array = array.tavarat;
     let taulu = [];
-    for(let i = 0; i < 5; i++) {
+    for(let i = 0; i < array.length; i++) {
       if(array[i].taika > mp) continue;
       if(!array[i].nimi) continue;
       if(array[i].maara <= 0) continue;

@@ -139,10 +139,10 @@
 }
 
 @keyframes skip {
-  0% {transform: scale(0) rotate(-48deg);}
-  10% {transform: scale(1) rotate(-48deg);}
-  90% {transform: scale(1) rotate(-48deg);}
-  100% {transform: scale(0) rotate(-48deg);}
+  0% {transform: scale(0) rotate(-23deg)}
+  10% {transform: scale(1) rotate(-23deg)}
+  90% {transform: scale(1) rotate(-23deg)}
+  100% {transform: scale(0) rotate(-23deg)}
 }
 
 @keyframes pelaajaShake0 {

@@ -3,7 +3,6 @@ paivitaCraftIkkuna()
 function paivitaCraftIkkuna() {
   document.getElementById("craftTavaraFlex").textContent = "";
   for(let tavara in Tavarat) {
-    console.log(Tavarat[tavara])
     document.getElementById("craftTavaraFlex").innerHTML += `
       <div class = "slot">
         <img class = "slotKuva" src = ${Tavarat[tavara].nimi ? Tavarat[tavara].kuva || eiKuvaa : ""}>

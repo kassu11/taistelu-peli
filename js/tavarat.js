@@ -67,8 +67,8 @@ let Tavarat = {
     tyyppiText: "Parannus",
     kuva: "https://static.wikia.nocookie.net/terraria_gamepedia/images/4/47/Healing_Potion.png/revision/latest/scale-to-width-down/20?cb=20200516213910",
     parannus: 50,
-    nopeus: 5,
-    maara: 3,
+    nopeus: 8,
+    maara: 1,
     taika: 3
   },
   "hpPottu2": {

@@ -1,19 +1,19 @@
 let Pelaaja = {
   tavarat: [
     Tavarat.test1,
-    Tavarat.puumiekka,
+    // Tavarat.puumiekka,
     Tavarat.hpPottu,
     Tavarat.taikasauva,
-    Tavarat.rautamiekka,
+    // Tavarat.rautamiekka,
   ],
   statusEfektit: {
 
   },
-  mp: 50,
+  mp: 125,
   hp: 200,
-  aika: 8,
+  aika: 10,
   raha: 0,
   exp: 0,
   critKerroin: 2,
-  manaRegen: 1
+  manaRegen: 3
 }

@@ -55,16 +55,25 @@ let Viholliset = {
   },
   "lvl3": {
     id: "1",
-    harvinaisuus: "legendary",
-    hp: 13,
-    mp: 50,
+    harvinaisuus: "normal",
+    hp: 30,
+    mp: 100,
     suoja: 10,
     aika: 10,
-    kuva: "https://image.winudf.com/v2/image1/Y29tLmFuaW1lbGlzdHdhbGxwYXBlcnMucm9ja29ubWFuX3NjcmVlbl82XzE1NzU1NTAzOTNfMDE1/screen-6.jpg?fakeurl=1&type=.jpg",
+    kuva: "./images/vihu3.png",
     kuvaWidth: "249px",
     manaRegen: 2,
     tavarat: [
+      Tavarat.rautamiekka,
       Tavarat.hpPottu2,
+      Tavarat.puumiekka,
+      Tavarat.taikasauva,
+      Tavarat.test1,
+      Tavarat.test2,
+      Tavarat.test3,
+      Tavarat.hpPottu,
+      Tavarat.hpPottu2,
+      Tavarat.tikku
     ]
   },
 }
