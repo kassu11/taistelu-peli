@@ -1,4 +1,4 @@
-let Tavarat = {
+const tavarat = {
   "puumiekka": {
     nimi: "Puumiekka",
     tyyppi: "ase",

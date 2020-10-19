@@ -89,7 +89,7 @@ body {
 }
 
 #viholliset {
-  top: 50px;
+  top: 100px;
   display: flex;
   position: absolute;
   left: 50%;
@@ -108,7 +108,7 @@ body {
   animation-iteration-count: 1;
   animation-timing-function: linear;
   user-select: none;
-  transition: margin .15s, box-shadow .15s, background-color .2s, transform .15s, top .15s, opacity .25s;
+  transition: margin .15s, box-shadow .15s, background-color .2s, transform .15s, opacity .25s;
   cursor: pointer;
   margin: 3px;
   transform: scale(1);
@@ -306,9 +306,10 @@ body {
 
 .vihollisenKuva {
   position: absolute;
-  width: 250px;
   height: 320px;
   left: 50%;
+  width: calc(100% - 20px);
+  max-width: 250px;
   bottom: 75px;
   background-color: var(--vihollisen-kuva-box-bg);
   border: 5px solid #2f2f2f;
@@ -317,15 +318,37 @@ body {
 }
 .vihollisenKuva > img {
   position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   width: 230px;
-  left: 0px;
   top: 0px;
   pointer-events: none;
   image-rendering: auto;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
+.vihollisenNimiBox {
+  opacity: 0;
+  position: absolute;
+  width: max-content;
+  left: 50%;
+  height: max-content;
+  background-color: #00000061;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  transition: opacity .2s;
+} .vihollisenNimiBox > p {
+  font-family: 'font3';
+  font-size: 30px;
+  text-align: center;
+  color: #fff;
+  padding: 0px 10px 0px 10px;
+}
 
+.vihollinen:hover .vihollisenNimiBox {
+  opacity: 1
+}
 
 .slotKuva {
   position: absolute;
@@ -426,46 +449,6 @@ body {
   transition: opacity .25s;
 }
 
-#hotbarPopUpBg {
-  position: absolute;
-  width: fit-content;
-  height: fit-content;
-  padding: 5px 8px 5px 6px;
-  background-color: black;
-  pointer-events: none;
-  opacity: .95;
-  animation-duration: .1s;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-}
-.vihu #hotbarPopUpBg {
-  opacity: .4;
-}
-#hotbarNuoli {
-  position: absolute;
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  border-right: 15px solid black;
-  left: -15px;
-  top: 5px;
-}
-
-#hotbarInfoboxSisalto > p {
-  position: relative;
-  font-family: font3;
-  color: white;
-}
-
-#hotbarInfoboxSisalto #hotbarTavaraNimi {
-  color: red;
-  font-size: 18px;
-  font-weight: 600;
-}
-.hotbarTavaraTyyppi {color: #ff9900}
-.hotbarTavaraVahinko {color: #ffe000}
-.hotbarTavaraNopeus {color: #41ee36}
-.hotbarTavaraTaika {color: #2eb3e0}
-
 #hpBox {
   position: absolute;
   left: 0px;
@@ -553,13 +536,18 @@ body {
   opacity: 0;
   transition: .2s opacity;
   transition-delay: .05s;
+  height: 55px;
+  width: calc(100% + 2px);
+  left: -11px;
+  top: -12px;
+  padding: 10px;
+  padding-top: 9px;
+  cursor: default;
 }
 .pelaajaHpText2 {
   position: absolute;
   font-family: font3;
   font-size: 48px;
-  top: -11px;
-  width: 100%;
   text-align: center;
   color: var(--hp-info-text-vari);
   text-shadow: 0 0 8px var(--hp-info-text-varjo);
@@ -567,6 +555,13 @@ body {
   transition: .2s opacity;
   transition-delay: .05s;
   font-weight: 800;
+  height: 55px;
+  width: calc(100% + 2px);
+  left: -11px;
+  top: -12px;
+  padding: 10px;
+  padding-top: 1px;
+  pointer-events: none;
 }
 .PelaajanHpBg:hover #pelaajaHpText {
   opacity: 1;
@@ -611,21 +606,24 @@ body {
   position: absolute;
   font-family: font2;
   font-size: 46px;
-  top: -3px;
-  width: 100%;
   text-align: center;
   color: #aadcff;
   text-shadow: 0 0 8px #aadcff;
   opacity: 0;
   transition: .2s opacity;
   transition-delay: .05s;
+  height: 55px;
+  width: calc(100% + 2px);
+  left: -11px;
+  top: -12px;
+  padding: 10px;
+  padding-top: 9px;
+  cursor: default;
 }
 .pelaajaMpText2 {
   position: absolute;
   font-family: font3;
   font-size: 48px;
-  top: -10px;
-  width: 100%;
   text-align: center;
   color: var(--mp-info-text-vari);
   text-shadow: 0 0 8px var(--mp-info-text-varjo);
@@ -633,6 +631,13 @@ body {
   transition: .2s opacity;
   transition-delay: .05s;
   font-weight: 800;
+  height: 55px;
+  width: calc(100% + 2px);
+  left: -11px;
+  top: -12px;
+  padding: 10px;
+  padding-top: 1px;
+  pointer-events: none;
 }
 .PelaajanMpBg:hover #pelaajaMpText {
   opacity: 1;

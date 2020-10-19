@@ -3,6 +3,7 @@
   <head>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href = "css/hover.css">
     <link rel = "stylesheet" href = "css/varit.css">
     <link rel = "stylesheet" href = "css/font.css">
     <link rel = "stylesheet" href = "css/animations.css">
@@ -12,7 +13,15 @@
     <title>Pohjola Remake</title>
   </head>
   <body>
-    <div id = "taisteluRuutu" class = "pelaaja">
+    <div id = "globalHoverBox">
+      <div id = "globalHoverBg" style = "display: none;">
+        <!-- <div id = "globalHoverNuoli"></div> -->
+        <div id = "globalHoverSisalto">
+          <p id = "hotbarTavaraNimi"></p>
+        </div>
+      </div>
+    </div>
+    <div id = "taisteluRuutu" class = "pelaaja" style = "display: none;">
       <div id = "popUpDmg"></div>
 
       <div id = "luovutaBox">
@@ -49,15 +58,6 @@
         </div>
 
         <div id = "hotbar"></div>
-      </div>
-
-      <div id = "hotbarPopUp">
-        <div id = "hotbarPopUpBg" style = "display: none;">
-          <div id = "hotbarNuoli"></div>
-          <div id = "hotbarInfoboxSisalto">
-            <p id = "hotbarTavaraNimi"></p>
-          </div>
-        </div>
       </div>
 
       <div id = "viholliset"></div>
@@ -130,9 +130,13 @@
 </html>
 
 <script src = "js/apu.js"></script>
+<script src = "js/hover.js"></script>
 <script src = "js/tavarat.js"></script>
 <script src = "js/pelaaja.js"></script>
 <script src = "js/viholliset.js"></script>
+<script src = "js/tasot.js"></script>
 <script src = "js/code.js"></script>
+<script src = "js/taistelu.js"></script>
+<script src = "js/avaaTaso.js"></script>
 <script src = "js/vihuAi.js"></script>
 <script src = "js/tavaranTekoRuutu.js"></script>

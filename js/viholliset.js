@@ -1,93 +1,93 @@
-let Viholliset = {
+const viholliset = {
   "lvl0": {
+    nimi: "Liha köntsä",
     id: "0",
-    harvinaisuus: "normal",
     hp: 10,
     mp: 20,
-    suoja: 10,
+    suojaus: 10,
     aika: 6,
-    kuva: "https://image.winudf.com/v2/image/Y29tLnN1YWRhaDA2MTEuYW5pbWVnaXJsa2F3YWlpYXBwX3NjcmVlbl8yXzE1MjM4OTA0OTRfMDI0/screen-2.jpg?fakeurl=1&type=.jpg",
+    kuva: "./images/vihu3.png",
     kuvaWidth: "249px",
     kuvaHeight: "320px",
     manaRegen: 2,
-    tavarat: [
-      Tavarat.test1,
-      Tavarat.test2,
-      Tavarat.test3,
-      Tavarat.puumiekka,
-      Tavarat.rautamiekka,
-      Tavarat.hpPottu2
+    hotborItems: [
+      tavarat.test1,
+      tavarat.test2,
+      tavarat.test3,
+      tavarat.puumiekka,
+      tavarat.rautamiekka,
+      tavarat.hpPottu2
     ]
   },
   "lvl1": {
     id: "1",
-    harvinaisuus: "rare",
+    nimi: "Kieli chad",
     hp: 13,
     mp: 50,
-    suoja: 10,
+    suojaus: 10,
     aika: 10,
-    kuva: "https://image.winudf.com/v2/image1/Y29tLmFuaW1lbGlzdHdhbGxwYXBlcnMucm9ja29ubWFuX3NjcmVlbl82XzE1NzU1NTAzOTNfMDE1/screen-6.jpg?fakeurl=1&type=.jpg",
+    kuva: "./images/vihu1.png",
     kuvaWidth: "249px",
+    kuvaTop: "-20px",
     manaRegen: 2,
-    tavarat: [
-      Tavarat.test1,
-      Tavarat.rautamiekka,
-      Tavarat.hpPottu2,
+    hotborItems: [
+      tavarat.test1,
+      tavarat.rautamiekka,
+      tavarat.hpPottu2,
     ]
   },
   "lvl2": {
     id: "2",
-    harvinaisuus: "epic",
+    nimi: "Heikko lima",
     hp: 35,
     mp: 20,
-    suoja: 10,
+    suojaus: 10,
     aika: 10,
-    kuva: "https://trikky.ru/wp-content/blogs.dir/1/files/2020/03/03/s1200-2.jpg",
+    kuva: "./images/vihu2.png",
     kuvaWidth: "280px",
-    kuvaLeft: "-8px",
+    kuvaLeft: "-2px",
     manaRegen: 2,
-    tavarat: [
-      Tavarat.test1,
-      Tavarat.test2,
-      Tavarat.puumiekka,
-      Tavarat.hpPottu,
+    hotborItems: [
+      tavarat.test1,
+      tavarat.test2,
+      tavarat.puumiekka,
+      tavarat.hpPottu,
     ]
   },
   "lvl3": {
     id: "1",
-    harvinaisuus: "normal",
     hp: 30,
     mp: 100,
-    suoja: 10,
+    suojaus: 10,
     aika: 10,
     kuva: "./images/vihu3.png",
     kuvaWidth: "249px",
     manaRegen: 2,
-    tavarat: [
-      Tavarat.rautamiekka,
-      Tavarat.hpPottu2,
-      Tavarat.puumiekka,
-      Tavarat.taikasauva,
-      Tavarat.test1,
-      Tavarat.test2,
-      Tavarat.test3,
-      Tavarat.hpPottu,
-      Tavarat.hpPottu2,
-      Tavarat.tikku
+    hotborItems: [
+      tavarat.rautamiekka,
+      tavarat.hpPottu2,
+      tavarat.puumiekka,
+      tavarat.taikasauva,
+      tavarat.test1,
+      tavarat.test2,
+      tavarat.test3,
+      tavarat.hpPottu,
+      tavarat.hpPottu2,
+      tavarat.tikku
     ]
   },
 }
 
-for(let vihollinen in Viholliset) { // lisää soluja tauluun, joita ei tarvii joka kerta uudelleen kirjottaa :p
-  if(!Viholliset[vihollinen].maxAika) Viholliset[vihollinen]["maxAika"] = Viholliset[vihollinen].aika;
-  if(!Viholliset[vihollinen].maxMp) Viholliset[vihollinen]["maxMp"] = Viholliset[vihollinen].mp;
-  if(!Viholliset[vihollinen].maxHp) Viholliset[vihollinen]["maxHp"] = Viholliset[vihollinen].hp;
-  if(!Viholliset[vihollinen].kuva) Viholliset[vihollinen]["kuva"] = eiKuvaa;
-  if(!Viholliset[vihollinen].kuvaTop) Viholliset[vihollinen]["kuvaTop"] = ""
-  if(!Viholliset[vihollinen].kuvaLeft) Viholliset[vihollinen]["kuvaLeft"] = ""
-  if(!Viholliset[vihollinen].kuvaWidth) Viholliset[vihollinen]["kuvaWidth"] = ""
-  if(!Viholliset[vihollinen].kuvaHeight) Viholliset[vihollinen]["kuvaHeight"] = ""
-  if(!Viholliset[vihollinen].critKerroin) Viholliset[vihollinen]["critKerroin"] = 1
-  if(!Viholliset[vihollinen].manaRegen) Viholliset[vihollinen]["manaRegen"] = 0
-  if(!Viholliset[vihollinen].harvinaisuus) Viholliset[vihollinen]["harvinaisuus"] = "normal" // normal rare epic legendary
+for(let vihollinen in viholliset) { // lisää soluja tauluun, joita ei tarvii joka kerta uudelleen kirjottaa :p
+  if(!viholliset[vihollinen].maxAika) viholliset[vihollinen]["maxAika"] = viholliset[vihollinen].aika;
+  if(!viholliset[vihollinen].maxMp) viholliset[vihollinen]["maxMp"] = viholliset[vihollinen].mp;
+  if(!viholliset[vihollinen].maxHp) viholliset[vihollinen]["maxHp"] = viholliset[vihollinen].hp;
+  if(!viholliset[vihollinen].suojaus) viholliset[vihollinen]["suojaus"] = 0
+  if(!viholliset[vihollinen].kuvaTop) viholliset[vihollinen]["kuvaTop"] = ""
+  if(!viholliset[vihollinen].kuvaLeft) viholliset[vihollinen]["kuvaLeft"] = ""
+  if(!viholliset[vihollinen].kuvaWidth) viholliset[vihollinen]["kuvaWidth"] = ""
+  if(!viholliset[vihollinen].kuvaHeight) viholliset[vihollinen]["kuvaHeight"] = ""
+  if(!viholliset[vihollinen].critKerroin) viholliset[vihollinen]["critKerroin"] = 1
+  if(!viholliset[vihollinen].manaRegen) viholliset[vihollinen]["manaRegen"] = 0
+  if(!viholliset[vihollinen].harvinaisuus) viholliset[vihollinen]["harvinaisuus"] = "normal" // normal rare epic legendary
 }

@@ -1,0 +1,43 @@
+.lineBreak::after {
+  content: "\a";
+  white-space: pre;
+}
+#globalHoverBox, #globalHoverBg {
+  z-index: 100;
+}
+#globalHoverBg {
+  position: absolute;
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 8px 5px 6px;
+  background-color: black;
+  pointer-events: none;
+  opacity: .95;
+  animation-duration: .1s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+#globalHoverNuoli {
+  position: absolute;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 15px solid black;
+  left: -15px;
+  top: 5px;
+}
+#globalHoverSisalto > p {
+  position: relative;
+  font-family: font3;
+  color: white;
+}
+
+/* #hotbarInfoboxSisalto #hotbarTavaraNimi {
+  color: red;
+  font-size: 18px;
+  font-weight: 600;
+}
+.hotbarTavaraTyyppi {color: #ff9900}
+.hotbarTavaraVahinko {color: #ffe000}
+.hotbarTavaraNopeus {color: #41ee36}
+.hotbarTavaraTaika {color: #2eb3e0} */
