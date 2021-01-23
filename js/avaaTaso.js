@@ -1,15 +1,17 @@
 let taisteltavatViholliset, pelaajanAseNum = 0;
 avaaTaso(tasot.taso1);
 function avaaTaso(tasoTieto) {
+  pelaaja.paivitaKertoimet();
   $("taisteluRuutu").style.display = "block";
-  taisteltavatViholliset = JSON.parse(JSON.stringify(tasoTieto));
+  taisteltavatViholliset = tasoTieto.map(e => new Vihollinen(e));
   
   paivitaPelaajanHotbar();
+  paivitaVisuaalisestiPelaaja();
 
   $("viholliset").textContent = "";
   taisteltavatViholliset.forEach((vihu, index) => {
     $("viholliset").innerHTML += 
-    `<div id = "vihollinen${index}" class = "vihollinen ${vihu.harvinaisuus}" onclick = "pelaajaHyokkaa(${index})">
+    `<div id = "vihollinen${index}" class = "vihollinen ${vihu.harvinaisuus}">
       <div class = "hpbg">
         <div id = "vihollisen${index}Hp1" class = "vihollisenHp1"></div>
         <div id = "vihollisen${index}Hp2" class = "vihollisenHp2"></div>
@@ -24,7 +26,7 @@ function avaaTaso(tasoTieto) {
       </div>
       <div class = "vihuNumeroContainer">
         <div class = "vihunNumeroBg">
-          <p id = "vihu${index}Numero">${"0".repeat(3 - vihu.id.length)}${vihu.id}</p>
+          <p id = "vihu${index}Numero">${vihu.id.padStart(3, "0")}</p>
         </div>
       </div>
       <div class = "vihollisenKuva">

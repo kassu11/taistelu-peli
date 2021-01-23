@@ -1,5 +1,5 @@
 const tasot = {
-  "taso1": [viholliset.lvl0, viholliset.lvl1, 
+  "taso1": [viholliset.lvl0, viholliset.lvl2, 
     // viholliset.lvl2, viholliset.lvl0,viholliset.lvl2,viholliset.lvl2
   ]
 }

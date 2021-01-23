@@ -393,8 +393,18 @@ body {
   top: 0px;
   cursor: pointer;
 }
-
-.valittuSlot {
+.slot:hover .slotNumero {
+  top: 15px;
+}
+.slot:hover {
+  width: 85px;
+  height: 130px;
+  border: 5px solid #6e6e6e;
+  background-color: #242424;
+  margin: 2.5px;
+  top: -5px;
+}
+.valittuSlot, .valittuSlot:hover {
   top: -20px;
   background-color: #171717;
   width: 100px;
@@ -429,20 +439,12 @@ body {
   transition: .05s;
 }
 
-.valittuSlot .slotNumero {
+.valittuSlot:hover .slotNumero, .valittuSlot .slotNumero {
   top: 20px;
 }
 
 .valittuSlot .tavaraLuku {
   font-size: 21px;
-}
-
-#slotPopupDeley {
-  position: absolute;
-  width: 440px;
-  left: 27px;
-  height: 130px;
-  top: 5px;
 }
 
 #hotbar {
@@ -675,6 +677,63 @@ body {
   background: linear-gradient(90deg, rgb(157, 0, 255) 0%, rgb(157, 95, 255) 100%);
 }
 
+#buffsBox {
+  position: absolute;
+  display: flex;
+  height: 50px;
+  left: 50%;
+  transform: translateX(45px);
+  bottom: 220px;
+}
+.buffs {
+  position: relative;
+  width: 60px;
+  height: 50px;
+  filter: drop-shadow(0px 0px 4px #57ff6d);
+} .buffs > img {
+  position: absolute;
+  width: calc(100% - 15px);
+  pointer-events: none;
+} .buffs > p {
+  color: #fff;
+  font-family: 'font1';
+  font-size: 15px;
+  position: absolute;
+  right: 5px;
+  font-weight: 600;
+  bottom: -5px;
+  text-shadow: 0 0 4px black;
+  pointer-events: none;
+}
+#nerfsBox {
+  position: absolute;
+  display: flex;
+  height: 50px;
+  right: 50%;
+  transform: translateX(-45px);
+  bottom: 220px;
+  flex-direction: row-reverse;
+}.nerfs {
+  position: relative;
+  width: 60px;
+  height: 50px;
+  filter: drop-shadow(0px 0px 4px #ff5757);
+} .nerfs > img {
+  position: absolute;
+  width: calc(100% - 15px);
+  pointer-events: none;
+  right: 0px;
+} .nerfs > p {
+  color: #fff;
+  font-family: 'font1';
+  font-size: 15px;
+  position: absolute;
+  left: 10px;
+  font-weight: 600;
+  bottom: -5px;
+  text-shadow: 0 0 4px black;
+  pointer-events: none;
+}
 #lvlBox {
   position: absolute;
   width: 60px;

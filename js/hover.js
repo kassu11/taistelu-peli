@@ -135,7 +135,6 @@ function luoTextiSyntaxt(syn) {
   return p;
 }
 
-
 // <fs> <fs> = font size
 // <br> = line break
 // <css> <css> = raw css
@@ -150,5 +149,24 @@ function luoTextiSyntaxt(syn) {
 // ], undefined, ["shiftKey", "ctrlKey"])
 
 luoGlobalHover("luovutaBox", ["Voit lopettaa vuorosi <br> § painamalla tätä nappia"]);
-luoGlobalHover("pelaajaHpText", ["<c>$p.style.fontSize = '15px'<c> § <fs>20px<fs><c>#42f55a<c>Pelaajan terveyspisteet <br> § <br> Mittari kertoo paljon sinä voit vielä §  <br> ottaa iskuja vastaan ennen §  <br> kuin kuolet. Jos elämäpisteesi §  <br> menevät nollaan häviät taistelun § • Sinulla on  §$pelaaja.maxHp!$hp <css>font-weight: 700<css><c>#42f55a<c> <br>§ • Jäljellä §$(pelaaja.hp / pelaaja.maxHp * 100).toFixed(1)!$% <c>$pelaaja.hp / pelaaja.maxHp >= 0.85 ? '#34eb4c' : pelaaja.hp / pelaaja.maxHp >= 0.5 ? '#e5eb34' : pelaaja.hp / pelaaja.maxHp >= 0.25 ? '#eba834' : '#eb3434'<c>  <css>font-weight: 700<css> <br> § [SHIFT] piilota menu <fs>12px<fs><c>yellow<c>"], ["e.shiftKey == false"]);
-luoGlobalHover("pelaajaMpText", ["<c>$p.style.fontSize = '15px'<c> § <fs>20px<fs><c>#34b4eb<c>Pelaajan taikamittari <br> §  <br> Mittari kertoo paljon pelaaja voit §  <br> käyttää manaa vaativia tavaroita. §  Mana kerääntyy takaisin itsestään <br>§ • Sinun mana kerääntyy §$pelaaja.manaRegen!$m/s <br> <css>font-weight: 700<css>  <c>#34b4eb<c> § • Sinulla on  § §$pelaaja.maxMp!$mp <css>font-weight: 700<css><c>#34b4eb<c> <br>§ • Jäljellä §$(pelaaja.mp / pelaaja.maxMp * 100).toFixed(1)!$% <c>$pelaaja.mp / pelaaja.maxMp >= 0.85 ? '#34b4eb' : pelaaja.mp / pelaaja.maxMp >= 0.5 ? '#9f34eb' : pelaaja.mp / pelaaja.maxMp >= 0.25 ? '#eb34b4' : '#eb3434'<c>  <css>font-weight: 700<css> <br>§ [SHIFT] piilota menu <fs>12px<fs><c>yellow<c>"], ["e.shiftKey == false"]);
+luoGlobalHover("pelaajaHpText", [`
+<c>$p.style.fontSize = '15px'<c> § 
+<fs>20px<fs><c>#42f55a<c>Pelaajan terveyspisteet <br> § 
+<br> Mittari kertoo paljon sinä voit vielä §  
+<br> ottaa iskuja vastaan ennen §  
+<br> kuin kuolet. Jos elämäpisteesi §  
+<br> menevät nollaan häviät taistelun § 
+• Maksimi kapasiteetti §$pelaaja.laskeMaxHp()!$hp <css>font-weight: 700<css><c>#42f55a<c> <br>§ 
+• Sinulla on §$pelaaja.laskeHp()!$hp <css>font-weight: 700<css><c>$pelaaja.laskeHp() / pelaaja.laskeMaxHp() >= 0.85 ? '#34eb4c' : pelaaja.laskeHp() / pelaaja.laskeMaxHp() >= 0.5 ? '#e5eb34' : pelaaja.laskeHp() / pelaaja.laskeMaxHp() >= 0.25 ? '#eba834' : '#eb3434'<c> <br>§ 
+• Jäljellä §$(pelaaja.laskeHp() / pelaaja.laskeMaxHp() * 100).toFixed(1)!$% <c>$pelaaja.laskeHp() / pelaaja.laskeMaxHp() >= 0.85 ? '#34eb4c' : pelaaja.laskeHp() / pelaaja.laskeMaxHp() >= 0.5 ? '#e5eb34' : pelaaja.laskeHp() / pelaaja.laskeMaxHp() >= 0.25 ? '#eba834' : '#eb3434'<c>  <css>font-weight: 700<css> <br> § 
+[SHIFT] piilota menu <fs>12px<fs><c>yellow<c>`], ["e.shiftKey == false"]);
+luoGlobalHover("pelaajaMpText", [`
+<c>$p.style.fontSize = '15px'<c> § 
+<fs>20px<fs><c>#34b4eb<c>Pelaajan taikamittari <br> §  
+<br> Mittari kertoo paljon pelaaja voit §  <br> käyttää manaa vaativia tavaroita. §  
+Mana kerääntyy takaisin itsestään <br>§ 
+• Sinun mana kerääntyy §$pelaaja.manaRegen!$m/s <br> <css>font-weight: 700<css>  <c>#34b4eb<c> § 
+• Maksimi kapasiteetti § §$pelaaja.laskeMaxMp()!$mp <css>font-weight: 700<css><c>#34b4eb<c> <br>§ 
+• Sinulla on  § §$pelaaja.laskeMp()!$mp <css>font-weight: 700<css><c>$pelaaja.laskeMp() / pelaaja.laskeMaxMp() >= 0.85 ? '#34b4eb' : pelaaja.laskeMp() / pelaaja.laskeMaxMp() >= 0.5 ? '#9f34eb' : pelaaja.laskeMp() / pelaaja.laskeMaxMp() >= 0.25 ? '#eb34b4' : '#eb3434'<c> <br>§ 
+• Jäljellä §$(pelaaja.laskeMp() / pelaaja.laskeMaxMp() * 100).toFixed(1)!$% <c>$pelaaja.laskeMp() / pelaaja.laskeMaxMp() >= 0.85 ? '#34b4eb' : pelaaja.laskeMp() / pelaaja.laskeMaxMp() >= 0.5 ? '#9f34eb' : pelaaja.laskeMp() / pelaaja.laskeMaxMp() >= 0.25 ? '#eb34b4' : '#eb3434'<c>  <css>font-weight: 700<css> <br>§ 
+[SHIFT] piilota menu <fs>12px<fs><c>yellow<c>`], ["e.shiftKey == false"]);
