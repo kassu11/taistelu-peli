@@ -1,138 +1,36 @@
 <!DOCTYPE html>
-<html lang = "fi">
+<html lang="en">
   <head>
-    <meta charset = "UTF-8">
-    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
-    <link rel = "stylesheet" href = "css/varit.css">
-    <link rel = "stylesheet" href = "css/font.css">
-    <link rel = "stylesheet" href = "css/animations.css">
-    <link rel = "stylesheet" href = "css/tyyli.css">
-    <link rel = "stylesheet" href = "css/vihollisKortit.css">
-    <link rel="stylesheet" href="css/tavaroittenTeko.css">
-    <title>Pohjola Remake</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="sass/font.css">
+    <link rel="stylesheet" href="sass/particles.css">
+    <link rel="stylesheet" href="sass/figtingScreen.css">
+    <title>Fighting Game</title>
   </head>
-  <body>
-    <div id = "taisteluRuutu" class = "pelaaja">
-      <div id = "popUpDmg"></div>
-
-      <div id = "luovutaBox">
-        <p id = "luovutaNappi">lopeta vuoro</p>
+  <body class="figtingMode">
+    <div id="figtingScreen">
+      <div class="effectContainer"></div>
+      <div class="roundInfoBox">
+        <p>Round: 1</p>
+        <button>Skip round</button>
+        <button>End fight</button>
+        <p>time: 00:15</p>
       </div>
-      
-      <div id = "pelaaja">
-        <div id = "hpBox">
-          <div class = "PelaajanHpBg">
-            <div id = "PelaajanHp1"></div>
-            <div id = "PelaajanHp2"></div>
-            <div class = "hpHohto"></div>
-            <p id = "pelaajaHpText">100/100</p>
-            <p class = "pelaajaHpText2">HP</p>
-          </div>
-        </div>
-        <div id = "mpBox">
-          <div class = "PelaajanMpBg">
-            <div id = "PelaajanMp1"></div>
-            <div id = "PelaajanMp2"></div>
-            <div class = "mpHohto"></div>
-            <p id = "pelaajaMpText">100/100</p>
-            <p class = "pelaajaMpText2">MP</p>
-          </div>
-        </div>
-        <div id = "slotBox"></div>
-
-        <div id = "lvlBox">
-          <p id = "lvlText"></p>
-        </div>
-        <div class = "PelaajanExpBg">
-          <div id = "PelaajanExp1"></div>
-          <div id = "PelaajanExp2"></div>
-        </div>
-
-        <div id = "hotbar"></div>
+      <div class="enemyContainer">
+        <div class="enemyBox"></div>
       </div>
+      <div class="playerBox">
 
-      <div id = "hotbarPopUp">
-        <div id = "hotbarPopUpBg" style = "display: none;">
-          <div id = "hotbarNuoli"></div>
-          <div id = "hotbarInfoboxSisalto">
-            <p id = "hotbarTavaraNimi"></p>
-          </div>
-        </div>
       </div>
-
-      <div id = "viholliset"></div>
-
-      <div id = "ruudunTummennus"></div>
-
-      <div id = "voittoRuutu">
-        <div class = "voittoOtsikko">
-          <p>Voitit Taistelun</p>
-        </div>
-  
-        <div class = "tavaraOtsikko">
-          <p>Tässä voittamasi tavarat</p>
-        </div>
-  
-        <div id = "voittoTavarat"></div>
-        <div id = "jatkaNappi">
-          <p>Valikko</p>
-        </div>
-        <div class = "aloitaAlustaNappi" onclick="reset()">
-          <p>Taistele</p>
-        </div>
-      </div>
-  
-      <div id = "havioRuutu">
-        <div class = "havioOtsikko">
-          <p>Hävisit Taistelun</p>
-        </div>
-  
-        <div class = "tavaraOtsikko">
-          <p>Noh, se olis voinu mennä paremmin!</p>
-        </div>
-        
-        <div id = "jatkaNappi">
-          <p>Valikko</p>
-        </div>
-        <div class = "aloitaAlustaNappi" onclick="reset()">
-          <p>Taistele</p>
-        </div>
-      </div>
-
-    </div>
-
-    <div id="tavaroittenTekoRuutu" style = "display: none;">
-      <div id="sivuPalkki"></div>
-
-      <div id="craftInv">
-        <div class="craftYlaPalkki">
-          <div id="craftKaikkiNappiBox">Näytä kaikki</div>
-          <div id="craftHakuPalkki">Haku</div>
-          <div id="craftLajitteluBox">Lajittelu</div>
-        </div>
-        <div class="craftTavaraBox">
-          <div id="craftTavaraFlex"></div>
-        </div>
-        <div id="reseptiBox"></div>
-      </div>
-
-      <div id = "craftPopUp">
-        <div id = "craftPopUpBg" style = "display: none;">
-          <div id = "craftNuoli"></div>
-          <div id = "craftInfoboxSisalto">
-            <p id = "craftTavaraNimi"></p>
-          </div>
-        </div>
-      </div>
-
     </div>
   </body>
 </html>
 
-<script src = "js/apu.js"></script>
-<script src = "js/tavarat.js"></script>
-<script src = "js/pelaaja.js"></script>
-<script src = "js/viholliset.js"></script>
-<script src = "js/code.js"></script>
-<script src = "js/vihuAi.js"></script>
-<script src = "js/tavaranTekoRuutu.js"></script>
+<script src="js/helpFunctions.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/items.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/enemies.js"></script>
+<script src="js/player.js"></script>
+<script src="js/fightScreen.js"></script>
