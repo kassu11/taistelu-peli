@@ -1,11 +1,11 @@
 let player = new Player({
-  hp: 5,
-  mp: 5,
-  maxHp: 10,
-  maxMp: 10,
+  hp: 100,
+  mp: 50,
+  maxHp: 100,
+  maxMp: 50,
   hotbar: {
     "slot1": items["wooden_sword"],
-    "slot2": {},
+    "slot2": items["weak_stick"],
     "slot3": {},
     "slot4": {},
     "slot5": {}

@@ -1,3 +1,15 @@
+for(let i = 0; i < 5; i++) {
+  const slotBox = document.querySelector("#figtingScreen .playerBox .hotbarBox");
+  slotBox.innerHTML += `
+  <div class="slot">
+    <p class="slotNumber">${i + 1}</p>
+    <img src="" class="slotImage">
+    <p class="itemAmount"></p>
+  </div>`
+}
+
+updatePlayersHotbar();
+
 startLevel("level_1");
 
 
@@ -6,7 +18,6 @@ function startLevel(lvlId) {
   const selectedLevel = levels[lvlId];
   const currentEnemies = selectedLevel.enemys?.map(name => new Enemy(enemies[name]));
   currentEnemies?.forEach(enemy => addEnemyCard(enemy));
-  console.log(currentEnemies);
 }
 
 function addEnemyCard(enemy) {
@@ -18,12 +29,14 @@ function addEnemyCard(enemy) {
   <div class="hpBox">
     <div class="hpBG1"></div>
     <div class="hpBG2"></div>
-    <div class="hpText">${enemy.hp} HP</div>
+    <p class="hpText">${enemy.hp}/${enemy.maxHp}</p>
+    <p class="hpInfoText">HP</p>
   </div>
   <div class="mpBox">
     <div class="mpBG1"></div>
     <div class="mpBG2"></div>
-    <div class="mpText">${enemy.mp} MP</div>
+    <p class="mpText">${enemy.mp}/${enemy.maxMp}</p>
+    <p class="mpInfoText">MP</p>
   </div>
   <div class="enemyImageBox">
     <img src="${enemy.img ? "./images/" + enemy.img : ''}">
@@ -34,7 +47,10 @@ function addEnemyCard(enemy) {
     </div>
   </div>`
 
-  console.log(enemyCard)
+  if(enemy.imgLeft) enemyCard.querySelector("img").style.left = `calc(50% + ${enemy.imgLeft}px)`;
+  if(enemy.imgTop) enemyCard.querySelector("img").style.top = `calc(50% + ${enemy.imgTop}px)`;
+  if(enemy.imgWidth) enemyCard.querySelector("img").style.width = enemy.imgWidth + "px";
+  if(enemy.imgHeight) enemyCard.querySelector("img").style.height = enemy.imgHeight + "px";
 
   box.append(enemyCard)
 
@@ -42,21 +58,110 @@ function addEnemyCard(enemy) {
 }
 
 document.querySelector(".enemyContainer .enemyBox").addEventListener("click", e => {
-  const target = e.target;
-  const curItem = player.hotbar[player.currentSlot];
-  if(!target.classList.contains("enemyCard") || !curItem.id) return;
+  let target = e.target;
+  while(!target.classList.contains("enemyCard")) {
+    target = target?.parentElement;
+    if(target.classList.contains("enemyContainer") || target == null) return;
+  } 
+  const item = player.hotbar[player.currentSlot];
   const enemy = currentLevel.enemies.get(target);
-  enemy.hp -= curItem.calcDamage().meleDmg;
+  if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds > 0) return;
+  
+  currentLevel.enemyRounds = item.useTime ?? 1;
+  currentLevel.roundNum += 1;
+  document.querySelector("#figtingScreen #roundNumber").textContent = currentLevel.roundNum;
 
-  playersBattleParciles({x: e.x, y: e.y}, "explosion");
+  const dmg = item.calcDamage().meleDmg;
+  enemy.hp -= dmg;
 
-  if(enemy.hp <= 0) removeElement(target, 200);
+  if(item.particle) playersBattleParciles({x: e.x, y: e.y}, item.particle);
+  playersBattleParciles({x: e.x, y: e.y, dmg}, "meleDmg");
 
-  target.querySelector(".hpText").textContent = enemy.hp + " HP";
-  target.querySelector(".mpText").textContent = enemy.mp + " MP";
+  target.style.animationName = 'none';
+  target.offsetHeight; /* trigger reflow */
+  target.style.animationName = "shake" + random(0, 9);
+  
+  updateEnemyCard(target);
+  
+  if(enemy.hp <= 0) {
+    removeElement(target, 2500);
+    
+    currentLevel.enemies.delete(target);
 
-  countAllEnemyMoves(2, enemy);
+    target.classList.add("deathAnimation");
+    target.style.animationName = "deathAnimation";
+    setTimeout(startEnemyTurn, 1900);
+  } else startEnemyTurn();  
 });
+
+function updateEnemyCard(target) {
+  const enemy = currentLevel.enemies.get(target);
+  if(enemy?.id == null) return;
+
+  const hpPercentage = Math.max(enemy.hp / enemy.maxHp, 0) * 100;
+  const mpPercentage = Math.max(enemy.mp / enemy.maxMp, 0) * 100;
+
+  target.querySelector(".hpText").textContent = enemy.hp + "/" + enemy.maxHp;
+  target.querySelector(".mpText").textContent = enemy.mp + "/" + enemy.maxMp;
+
+  target.querySelector(".hpBG1").style.width = hpPercentage + "%";
+  target.querySelector(".hpBG2").style.width = hpPercentage + "%";
+  target.querySelector(".mpBG1").style.width = mpPercentage + "%";
+  target.querySelector(".mpBG2").style.width = mpPercentage + "%";
+}
+
+function updatePlayerBars() {
+  const target = document.querySelector("#figtingScreen .playerBox");
+  const hpPercentage = Math.max(player.hp / player.maxHp, 0) * 100;
+  const mpPercentage = Math.max(player.mp / player.maxMp, 0) * 100;
+
+  target.querySelector(".hpText").textContent = player.hp + "/" + player.maxHp;
+  target.querySelector(".mpText").textContent = player.mp + "/" + player.maxMp;
+
+  target.querySelector(".hpBG1").style.width = hpPercentage + "%";
+  target.querySelector(".hpBG2").style.width = hpPercentage + "%";
+  target.querySelector(".mpBG1").style.width = mpPercentage + "%";
+  target.querySelector(".mpBG2").style.width = mpPercentage + "%";
+}
+
+async function startEnemyTurn() {
+  await sleep(200);
+  document.querySelector("#figtingScreen").classList.add("enemyTurn");
+  while(currentLevel.enemyRounds > 0) {
+    await sleep(350);
+    for(const [card, enemy] of currentLevel.enemies) {
+      const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
+      const {left, width, bottom} = card.getBoundingClientRect();
+      const hotbarHeight = document.querySelector("#figtingScreen .playerBox .hotbarBox").getBoundingClientRect().height;
+      const cardLeft = window.innerWidth / 2 - left - width / 2;
+      const cardTop = window.innerHeight - bottom - hotbarHeight / 2;
+      const item = enemy.items[results.bestDmgMoves[0]];
+
+      card.classList.add("enemyAttacks");
+
+      await sleep(300);
+      card.style.left = cardLeft + "px";
+      card.style.top = cardTop + "px";
+
+      const dmg = item?.calcDamage().meleDmg;
+
+      player.hp -= dmg ?? 0;
+      if(dmg) updatePlayerBars();
+
+      setTimeout(e => {
+        card.style.left = null;
+        card.style.top = null;
+      }, 150);
+      setTimeout(e => card.classList.remove("enemyAttacks"), 350);
+
+      await sleep(300);
+    }
+    currentLevel.roundNum += 1;
+    document.querySelector("#figtingScreen #roundNumber").textContent = currentLevel.roundNum;
+    currentLevel.enemyRounds--;
+  };
+  document.querySelector("#figtingScreen").classList.remove("enemyTurn");
+}
 
 function countAllEnemyMoves(numberOfMoves, enemy) {
   const itemsNum = enemy.items.length;
@@ -98,5 +203,28 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
     }
   }
 
-  console.log(bestResults)
+  return bestResults
+}
+
+window.addEventListener("keydown", e => {
+  if(e.code.startsWith("Digit") || e.code.startsWith("Numpad")) {
+    const keyNumber = +e.code.replace("Digit", "").replace("Numpad", "");
+
+    if(keyNumber > 0 && keyNumber < 6) player.currentSlot = "slot" + keyNumber;
+    updatePlayersHotbar();
+  }
+});
+
+function updatePlayersHotbar() {
+  const hotbarSlots = document.querySelectorAll("#figtingScreen .playerBox .centerContainer .slot");
+
+  hotbarSlots.forEach((slot, index) => {
+    const slotName = "slot" + (index + 1);
+    const item = player.hotbar[slotName];
+    const imgSrc = "./images/" + item.image;
+    slot.querySelector("img").src = item.image ? imgSrc : "";
+    slot.querySelector(".itemAmount").textContent = item.amount ?? "";
+    if(player.currentSlot == slotName) slot.classList.add("selected");
+    else slot.classList.remove("selected");
+  });
 }

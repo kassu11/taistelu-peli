@@ -7,7 +7,7 @@ html {
 }
 
 .figtingMode {
-  background: #333;
+  background: rgb(15, 15, 15);
   color: white;
 
   #figtingScreen {
@@ -17,88 +17,626 @@ html {
     width: 100%;
     height: 100%;
 
-    .effectContainer {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 100;
-      pointer-events: none;
-      user-select: none;
-    }
-
     .roundInfoBox {
       position: absolute;
       width: 400px;
-      height: 75px;
+      height: 45px;
       left: 50%;
-      margin-left: -200px;
-      background: purple;
+      margin-left: -205px;
+      background: rgb(58, 58, 58);
       display: flex;
+      border: 5px solid #909090;
+      box-sizing: content-box;
+      box-shadow: inset 0 0 20px 5px black;
+      border-radius: 0px 0px 10px 10px;
+
+      .endFightBox {
+        position: absolute;
+        background: rgb(32, 32, 32);
+        width: 130px;
+        height: 30px;
+        top: 5px;
+        left: 7px;
+        border: 2px solid currentColor;
+        text-shadow: 2px -2px rgb(32, 32, 32);
+        cursor: pointer;
+        transition: color .2s, background .2s, text-shadow .2s;
+
+        p {
+          position: relative;
+          font-family: font3;
+          font-size: 23px;
+          width: 100%;
+          text-align: center;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        &:hover {
+          color: red;
+          background: rgb(8, 8, 8);
+          text-shadow: 2px -2px rgb(148, 0, 0);
+        }
+      }
+
+      .roundBox {
+        position: absolute;
+        width: 100px;
+        height: 65px;
+        left: 50%;
+        margin-left: -50px;
+        background: #301138;
+        box-shadow: 0 0 0 5px #f09dff, inset 0 0 9px 1px #f09dff52;
+
+        p {
+          font-family: font1;
+          position: absolute;
+          width: 100%;
+          text-align: center;
+          margin: 0;
+        }
+        .round {
+          font-size: 20px;
+          top: 2px;
+          left: -1px;
+          color: #ff85f0;
+          text-shadow: 2px -2px #a7439a;
+        }
+        #roundNumber {
+          font-size: 25px;
+          bottom: 0px;
+          color: #fff;
+          text-shadow: 3px -2px #9a9a9a;
+          left: -2px;
+        }
+      }
+
+      .skipRoundBox {
+        position: absolute;
+        background: rgb(32, 32, 32);
+        width: 130px;
+        height: 30px;
+        top: 5px;
+        right: 7px;
+        border: 2px solid currentColor;
+        text-shadow: 2px -2px rgb(32, 32, 32);
+        cursor: pointer;
+        transition: color .2s, background .2s, text-shadow .2s;
+
+        p {
+          position: relative;
+          font-family: font3;
+          font-size: 23px;
+          width: 100%;
+          text-align: center;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        &:hover {
+          color: yellow;
+          background: rgb(8, 8, 8);
+          text-shadow: 2px -2px rgb(165, 162, 0);
+        }
+      }
     }
 
     .enemyContainer {
       position: absolute;
       width: 100%;
-      background: red;
-      height: 400px;
-      top: 200px;
+      height: 500px;
+      top: 150px;
       display: grid;
       place-items: center;
 
       .enemyBox {
-        position: relative;
+        position: absolute;
         width: max-content;
         height: max-content;
         max-width: 100%;
         max-height: 100%;
-        background: tomato;
         display: flex;
 
         .enemyCard {
           position: relative;
-          height: 350px;
-          width: 240px;
-          background: yellowgreen;
-          margin: 10px;
-          border: 5px solid black;
+          width: 320px;
+          height: 480px;
+          background: #151515;
+          margin: 10px 5px;
+          border: 5px solid #464646;
+          animation-duration: .2s;
+          animation-timing-function: ease-in-out;
+          cursor: pointer;
+          top: 0px;
+          left: 0px;
+          transition: transform .15s, top .15s, left .15s, box-shadow .3s, z-index 0s .2s;
+          z-index: 2;
+
+          &:hover {
+            z-index: 1;
+            transform: scale(1.04);
+            box-shadow: inset 0 0 20px 2px black, 
+                        0 0 24px 4px #a7a7a763
+          }
+
+          &.deathAnimation {
+            animation-duration: 3s;
+            animation-fill-mode: forwards;
+
+            @keyframes deathAnimation {
+              0% {left: 2px; top: 8px}
+              2% {left: 4px; top: -9px}
+              4% {left: -9px; top: -3px}
+              6% {left: 3px; top: 8px}
+              8% {left: 7px; top: 3px}
+              10% {left: 3px; top: 0px}
+              12% {left: 2px; top: -1px}
+              14% {left: -2px; top: -5px}
+              16% {left: -9px; top: -6px}
+              18% {left: 2px; top: 4px}
+              20% {left: -6px; top: -6px}
+              22% {left: -5px; top: 5px}
+              24% {left: 6px; top: 1px}
+              26% {left: -8px; top: 0px}
+              28% {left: -4px; top: -6px}
+              30% {left: 8px; top: 6px}
+              32% {left: 9px; top: 2px}
+              34% {left: -2px; top: 5px}
+              36% {left: -3px; top: -9px}
+              38% {left: 1px; top: -2px}
+              40% {opacity: 1; top: 0px}
+              60% {
+                opacity: 0;
+                top: -100px;
+                width: 320px;
+                margin: 10px 5px;
+                border: 5px solid #464646;
+              }
+              70% {width: 0px; margin: 0px; border: 0px}
+              100% {opacity: 0; width: 0px; margin: 0px; border: 0px}
+            }
+          }
 
           .hpBox {
-            background: red;
             position: absolute;
-            width: calc(100% - 20px);
-            left: 10px;
-            top: 10px;
-            height: 40px;
+            width: calc(100% - 60px);
+            left: 30px;
+            top: 20px;
+            height: 35px;
             overflow: hidden;
+            box-shadow: 0 0 0 5px #24D814;
+            display: grid;
 
             > div {
               position: absolute;
               width: 100%;
               height: 100%;
-              background: rgba(0, 0, 0, .3);
 
               &.hpBG1 {
-                width: 50%;
+                transition: width .5s cubic-bezier(0, 0, 0.23, 0.94) 0.12s;
+                opacity: .1;
+                background: linear-gradient(90deg, #94ff86 0%, #ceffcd 100%);
               }
+
               &.hpBG2 {
-                width: 50%;
+                opacity: .3;
+                background: linear-gradient(90deg, #3cff21 0%, #6cff6a 100%);
               }
+            }
+
+            > p {
+              margin: 0px;
+              width: 100%;
+              text-align: center;
+              transition: opacity .25s;
+            }
+
+            .hpInfoText {
+              position: absolute;
+              font-family: font3;
+              color: #b2ffab;
+              font-weight: 900;
+              top: -11px;
+              font-size: 44px;
+            }
+
+            .hpText {
+              position: relative;
+              font-family: font3;
+              color: #b2ffab;
+              font-weight: 600;
+              font-size: 20px;
+              opacity: 0;
+              line-height: 0.9;
+              vertical-align: middle;
+              place-self: center;
+              text-shadow: 0 0 3px rgba(255, 255, 255, 0.541);
+            }
+
+            &:hover {
+              .hpText {opacity: 1}
+              .hpInfoText {opacity: 0}
             }
           }
 
-          // > * {
-          //   pointer-events: none;
-          // }
+          .enemyImageBox {
+            position: absolute;
+            width: calc(100% - 60px);
+            height: calc(100% - 160px);
+            left: 30px;
+            top: 80px;
+            background: gray;
+            box-shadow: 0 0 0 5px rgb(44, 44, 44);
+            overflow: hidden;
+
+            > img {
+              position: absolute;
+              width: 252px;
+              image-rendering: pixelated;
+              transform: translateX(-50%) translateY(-50%);
+              left: 50%;
+              top: 50%;
+              pointer-events: none;
+              user-select: none;
+            }
+          }
+
+          .mpBox {
+            position: absolute;
+            width: calc(100% - 60px);
+            left: 30px;
+            bottom: 20px;
+            height: 35px;
+            overflow: hidden;
+            box-shadow: 0 0 0 5px #0096D8;
+            display: grid;
+
+            > div {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+
+              &.mpBG1 {
+                opacity: .1;
+                background: linear-gradient(90deg, rgb(91, 166, 255) 0%, rgba(190, 220, 255, 1) 100%);
+              }
+              &.mpBG2 {
+                opacity: .3;
+                background: linear-gradient(90deg, #0081ff 0%, #5fc4ff 100%);
+              }
+            }
+
+            > p {
+              margin: 0px;
+              width: 100%;
+              text-align: center;
+              transition: opacity .25s;
+            }
+
+            .mpInfoText {
+              position: absolute;
+              font-family: font3;
+              color: #bdebff;
+              font-weight: 900;
+              top: -11px;
+              font-size: 44px;
+            }
+
+            .mpText {
+              position: relative;
+              font-family: font3;
+              color: #bdebff;
+              font-weight: 600;
+              font-size: 20px;
+              opacity: 0;
+              top: -1px;
+              line-height: 0.9;
+              vertical-align: middle;
+              place-self: center;
+              text-shadow: 0 0 3px rgba(255,255,255,0.541);
+            }
+
+            &:hover {
+              .mpText {opacity: 1}
+              .mpInfoText {opacity: 0}
+            }
+          }
+        }
+      }
+    }
+
+    &.enemyTurn {
+      .enemyContainer {
+        .enemyBox {
+          .enemyCard {
+            opacity: .6;
+            transform: scale(.95);
+            transition: transform .15s, top .15s, left .15s, box-shadow .3s, z-index 0s .2s, opacity .15s;
+
+            &.enemyAttacks {
+              z-index: 3;
+              transition: transform .15s, top .15s, left .15s, box-shadow .3s, z-index 0s, opacity .15s;
+              opacity: 1;
+              top: -20px;
+              transform: scale(1.05);
+            }
+          }
         }
       }
     }
 
     .playerBox {
-      background: blue;
       position: absolute;
       width: 100%;
-      height: 100px;
+      height: 250px;
       bottom: 0px;
+
+      .leftContainer, .rightContainer {
+        position: absolute;
+        width: calc(50% - 260px);
+        height: 100px;
+        bottom: 0px;
+
+        .hpBox, .mpBox {
+          position: absolute;
+          width: calc(100% - 30px);
+          bottom: 20px;
+          height: 35px;
+          overflow: hidden;
+          display: grid;
+          cursor: default;
+
+          > div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+          }
+
+          > p {
+            margin: 0px;
+            width: 100%;
+            text-align: center;
+            transition: opacity .25s;
+          }
+
+          .infoText {
+            position: absolute;
+            font-family: font3;
+            font-weight: 900;
+            top: -11px;
+            font-size: 44px;
+          }
+
+          .hpText, .mpText {
+            position: relative;
+            font-family: font3;
+            font-weight: 600;
+            font-size: 25px;
+            opacity: 0;
+            line-height: 0.9;
+            vertical-align: middle;
+            place-self: center;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.541);
+          }
+
+          &:hover {
+            .hpText, .mpText {opacity: 1}
+            .infoText {opacity: 0}
+          }
+        }
+      }
+
+      .leftContainer {
+        left: 0px;
+
+        .hpBox {
+          left: 15px;
+          box-shadow: 0 0 0 5px #24D814;
+          
+          > div {
+
+            &.hpBG1 {
+              transition: width .5s cubic-bezier(0, 0, 0.23, 0.94) 0.12s;
+              opacity: .1;
+              background: linear-gradient(90deg, #94ff86 0%, #ceffcd 100%);
+            }
+            &.hpBG2 {
+              opacity: .3;
+              background: linear-gradient(90deg, #3cff21 0%, #6cff6a 100%);
+            }
+          }
+
+          .infoText {color: #b2ffab}
+          .hpText {color: #b2ffab}
+        }
+      }
+
+      .rightContainer {
+        right: 0px;
+
+        .mpBox {
+          right: 15px;
+          box-shadow: 0 0 0 5px #0096D8;
+
+          > div {
+            right: 0px;
+
+            &.mpBG1 {
+              opacity: .1;
+              background: linear-gradient(-90deg, rgb(91, 166, 255) 0%, rgba(190, 220, 255, 1) 100%);
+            }
+            &.mpBG2 {
+              opacity: .3;
+              background: linear-gradient(-90deg, #0081ff 0%, #5fc4ff 100%);
+            }
+          }
+
+          .infoText {
+            color: #bdebff;
+          }
+
+          .mpText {
+            color: #bdebff;
+          }
+        }
+      }
+
+
+      .centerContainer {
+        position: absolute;
+        left: 50%;
+        width: 545px;
+        height: 175px;
+        // background: #1d1d1d;
+        margin-left: -272.5px;
+        // border: 5px solid black;
+        bottom: 10px;
+        // box-shadow: inset 0 0 40px black;
+        overflow: hidden;
+
+        .hotbarContainer {
+          position: absolute;
+          width: 100%;
+          bottom: 2px;
+          display: grid;
+          place-items: center;
+
+          .hotbarBox {
+            display: flex;
+
+            .slot {
+              position: relative;
+              width: 100px;
+              margin: 3px;
+              height: 150px;
+              top: 0px;
+              background: #131313;
+              border: 5px solid #3d3d3d;
+              box-shadow: inset 0 0 30px black;
+              transition: top .15s, background .15s;
+
+              > p {
+                position: absolute;
+                margin: 0px;
+              }
+
+              img {
+                image-rendering: pixelated;
+                position: absolute;
+                width: calc(100% - 10px);
+                left: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+              }
+
+              .slotNumber {
+                pointer-events: none;
+                user-select: none;
+                font-family: font1;
+                font-size: 75px;
+                width: 100%;
+                top: 4px;
+                left: 4px;
+                text-align: center;
+                opacity: .05;
+                transition: color .3s, opacity .15s;
+              }
+
+              &.selected {
+                border: 5px solid #616161;
+                top: -4px;
+                background: #2d2d2d;
+                box-shadow: inset 0 0 30px black;
+
+                .slotNumber {
+                  opacity: .3;
+                  color: white;
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
+}
+
+@keyframes shake0 {
+  0% {left: 1px; top: 4px}
+  25% {left: -1px; top: -9px}
+  50% {left: 1px; top: -4px}
+  75% {left: -5px; top: -10px}
+  100% {left: -9px; top: 8px}
+}
+
+@keyframes shake1 {
+  0% {left: 9px; top: -9px}
+  25% {left: 4px; top: -6px}
+  50% {left: 8px; top: -1px}
+  75% {left: -1px; top: -10px}
+  100% {left: 0px; top: -9px}
+}
+
+@keyframes shake2 {
+  0% {left: 10px; top: -6px}
+  25% {left: 4px; top: -2px}
+  50% {left: 8px; top: -9px}
+  75% {left: -8px; top: 2px}
+  100% {left: 7px; top: 8px}
+}
+
+@keyframes shake3 {
+  0% {left: -4px; top: -2px}
+  25% {left: 6px; top: 9px}
+  50% {left: 8px; top: 1px}
+  75% {left: 4px; top: 9px}
+  100% {left: 9px; top: -4px}
+}
+
+@keyframes shake4 {
+  0% {left: 7px; top: 8px}
+  25% {left: 0px; top: 8px}
+  50% {left: -5px; top: 2px}
+  75% {left: 0px; top: -10px}
+  100% {left: -3px; top: 4px}
+}
+
+@keyframes shake5 {
+  0% {left: 4px; top: -9px}
+  25% {left: -10px; top: 1px}
+  50% {left: -1px; top: -8px}
+  75% {left: -4px; top: -9px}
+  100% {left: 2px; top: -4px}
+}
+
+@keyframes shake6 {
+  0% {left: 2px; top: 8px}
+  25% {left: 4px; top: -9px}
+  50% {left: -9px; top: -3px}
+  75% {left: 3px; top: 8px}
+  100% {left: 7px; top: 3px}
+}
+
+@keyframes shake7 {
+  0% {left: 3px; top: 0px}
+  25% {left: 2px; top: -1px}
+  50% {left: -2px; top: -5px}
+  75% {left: -9px; top: -6px}
+  100% {left: 2px; top: 4px}
+}
+
+@keyframes shake8 {
+  0% {left: -6px; top: -6px}
+  25% {left: -5px; top: 5px}
+  50% {left: 6px; top: 1px}
+  75% {left: -8px; top: 0px}
+  100% {left: -4px; top: -6px}
+}
+
+@keyframes shake9 {
+  0% {left: 8px; top: 6px}
+  25% {left: 9px; top: 2px}
+  50% {left: -2px; top: 5px}
+  75% {left: -3px; top: -9px}
+  100% {left: 1px; top: -2px}
 }

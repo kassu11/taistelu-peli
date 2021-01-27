@@ -11,16 +11,49 @@
   <body class="figtingMode">
     <div id="figtingScreen">
       <div class="effectContainer"></div>
+
       <div class="roundInfoBox">
-        <p>Round: 1</p>
-        <button>Skip round</button>
-        <button>End fight</button>
-        <p>time: 00:15</p>
+        <div class="endFightBox">
+          <p>End Fight</p>
+        </div>
+        <div class="roundBox">
+          <p class="round">Round</p>
+          <p id="roundNumber">1</p>
+        </div>
+        <div class="skipRoundBox">
+          <p>Skip Round</p>
+        </div>
       </div>
+
       <div class="enemyContainer">
         <div class="enemyBox"></div>
       </div>
+
       <div class="playerBox">
+
+        <div class="leftContainer">
+          <div class="hpBox">
+            <div class="hpBG1"></div>
+            <div class="hpBG2"></div>
+            <p class="hpText">100/100</p>
+            <p class="infoText">HP</p>
+          </div>
+        </div>
+
+        <div class="centerContainer">
+          <div class="hotbarContainer">
+            <div class="hotbarBox"></div>
+          </div>
+        </div>
+
+        <div class="rightContainer">
+          <div class="mpBox">
+            <div class="mpBG1"></div>
+            <div class="mpBG2"></div>
+            <p class="mpText">100/100</p>
+            <p class="infoText">MP</p>
+          </div>
+        </div>
 
       </div>
     </div>

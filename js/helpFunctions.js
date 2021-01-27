@@ -7,3 +7,5 @@ function removeElement(elem, time) {
     elem.remove();
   }, time);
 }
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
