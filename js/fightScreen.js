@@ -74,8 +74,8 @@ document.querySelector(".enemyContainer .enemyBox").addEventListener("click", e 
   const dmg = item.calcDamage().meleDmg;
   enemy.hp -= dmg;
 
-  if(item.particle) playersBattleParciles({x: e.x, y: e.y}, item.particle);
-  playersBattleParciles({x: e.x, y: e.y, dmg}, "meleDmg");
+  if(item.particle) AddBattleParciles({x: e.x, y: e.y}, item.particle);
+  AddBattleParciles({x: e.x, y: e.y, dmg}, "meleDmg");
 
   target.style.animationName = 'none';
   target.offsetHeight; /* trigger reflow */
@@ -130,27 +130,49 @@ async function startEnemyTurn() {
   while(currentLevel.enemyRounds > 0) {
     await sleep(350);
     for(const [card, enemy] of currentLevel.enemies) {
+      const playerBox = document.querySelector("#figtingScreen .playerBox")
       const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
       const {left, width, bottom} = card.getBoundingClientRect();
-      const hotbarHeight = document.querySelector("#figtingScreen .playerBox .hotbarBox").getBoundingClientRect().height;
-      const cardLeft = window.innerWidth / 2 - left - width / 2;
-      const cardTop = window.innerHeight - bottom - hotbarHeight / 2;
+      const {height: hotbarHeight, width: hotbarWidth} = playerBox.querySelector(".hotbarBox").getBoundingClientRect();
+      const cardLeft = window.innerWidth / 2 - left - width / 2,
+            cardLeftoffset = random(0, hotbarWidth - 250) - (hotbarWidth - 250) / 2;
+      const cardTop = window.innerHeight - bottom - hotbarHeight / 2,
+            cardTopOffset = random(-hotbarHeight / 3, hotbarHeight / 3);
       const item = enemy.items[results.bestDmgMoves[0]];
 
       card.classList.add("enemyAttacks");
 
       await sleep(300);
-      card.style.left = cardLeft + "px";
-      card.style.top = cardTop + "px";
+      card.style.left = cardLeft + cardLeftoffset + "px";
+      card.style.top = cardTop + cardTopOffset + "px";
 
       const dmg = item?.calcDamage().meleDmg;
 
       player.hp -= dmg ?? 0;
-      if(dmg) updatePlayerBars();
+      if(dmg) {
+        playerBox.querySelector(".centerContainer").style.animationName = 'none';
+        playerBox.querySelector(".centerContainer").offsetHeight; /* trigger reflow */
+        playerBox.querySelector(".centerContainer").style.animationName = "hotbarShake" + random(0, 3);
+
+        playerBox.querySelector(".leftContainer").style.animationName = 'none';
+        playerBox.querySelector(".leftContainer").offsetHeight; /* trigger reflow */
+        playerBox.querySelector(".leftContainer").style.animationName = "playerBarsShake" + random(0, 3);
+
+        playerBox.querySelector(".rightContainer").style.animationName = 'none';
+        playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
+        playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
+      }
 
       setTimeout(e => {
+        const particleX = window.innerWidth / 2 + cardLeftoffset;
+        const particleY = window.innerHeight - hotbarHeight / 2 + cardTopOffset;
         card.style.left = null;
         card.style.top = null;
+        if(dmg) {
+          updatePlayerBars();
+          AddBattleParciles({x: particleX, y: particleY - 100, dmg}, "enemyMeleDmg");
+        }
+        if(item.particle) AddBattleParciles({x: particleX, y: particleY}, item.particle);
       }, 150);
       setTimeout(e => card.classList.remove("enemyAttacks"), 350);
 
@@ -228,3 +250,16 @@ function updatePlayersHotbar() {
     else slot.classList.remove("selected");
   });
 }
+
+
+const maxKerrat = 4;
+let text = `@keyframes playerBarsShake {`
+
+for(let i = 0; i <= maxKerrat; i++) {
+  const nText = (Math.round(i / maxKerrat * 100)).toString() + "%" + ` {transform: translate(${random(-10, 10)}px, ${random(-10, 10)}px)}`;
+  text += "\n\t" + nText;
+}
+
+text += "\n}";
+
+console.log(text);

@@ -26,6 +26,10 @@
       50% {opacity: 1}
       100% {opacity: 0; width: 250px}
     }
+
+    .enemyTurn & {
+      filter: opacity(.5);
+    }
   }
 
   .meleDmgPopUp {
@@ -37,7 +41,7 @@
     pointer-events: none;
     user-select: none;
     position: absolute;
-    text-shadow: 4px -4px #989800;
+    text-shadow: 0 0 9px #e4ff00d9, 5px 5px #4b5400, 5px 5px 9px #e4ff0096;
     animation-name: dmgDrop0;
     animation-duration: 2s;
     animation-fill-mode: forwards;

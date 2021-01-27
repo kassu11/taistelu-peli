@@ -16,6 +16,7 @@ html {
     top: 0px;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 
     .roundInfoBox {
       position: absolute;
@@ -150,7 +151,87 @@ html {
           top: 0px;
           left: 0px;
           transition: transform .15s, top .15s, left .15s, box-shadow .3s, z-index 0s .2s;
-          z-index: 2;
+          z-index: 4;
+
+          @keyframes shake0 {
+            0% {left: 1px; top: 4px}
+            25% {left: -1px; top: -9px}
+            50% {left: 1px; top: -4px}
+            75% {left: -5px; top: -10px}
+            100% {left: -9px; top: 8px}
+          }
+
+          @keyframes shake1 {
+            0% {left: 9px; top: -9px}
+            25% {left: 4px; top: -6px}
+            50% {left: 8px; top: -1px}
+            75% {left: -1px; top: -10px}
+            100% {left: 0px; top: -9px}
+          }
+
+          @keyframes shake2 {
+            0% {left: 10px; top: -6px}
+            25% {left: 4px; top: -2px}
+            50% {left: 8px; top: -9px}
+            75% {left: -8px; top: 2px}
+            100% {left: 7px; top: 8px}
+          }
+
+          @keyframes shake3 {
+            0% {left: -4px; top: -2px}
+            25% {left: 6px; top: 9px}
+            50% {left: 8px; top: 1px}
+            75% {left: 4px; top: 9px}
+            100% {left: 9px; top: -4px}
+          }
+
+          @keyframes shake4 {
+            0% {left: 7px; top: 8px}
+            25% {left: 0px; top: 8px}
+            50% {left: -5px; top: 2px}
+            75% {left: 0px; top: -10px}
+            100% {left: -3px; top: 4px}
+          }
+
+          @keyframes shake5 {
+            0% {left: 4px; top: -9px}
+            25% {left: -10px; top: 1px}
+            50% {left: -1px; top: -8px}
+            75% {left: -4px; top: -9px}
+            100% {left: 2px; top: -4px}
+          }
+
+          @keyframes shake6 {
+            0% {left: 2px; top: 8px}
+            25% {left: 4px; top: -9px}
+            50% {left: -9px; top: -3px}
+            75% {left: 3px; top: 8px}
+            100% {left: 7px; top: 3px}
+          }
+
+          @keyframes shake7 {
+            0% {left: 3px; top: 0px}
+            25% {left: 2px; top: -1px}
+            50% {left: -2px; top: -5px}
+            75% {left: -9px; top: -6px}
+            100% {left: 2px; top: 4px}
+          }
+
+          @keyframes shake8 {
+            0% {left: -6px; top: -6px}
+            25% {left: -5px; top: 5px}
+            50% {left: 6px; top: 1px}
+            75% {left: -8px; top: 0px}
+            100% {left: -4px; top: -6px}
+          }
+
+          @keyframes shake9 {
+            0% {left: 8px; top: 6px}
+            25% {left: 9px; top: 2px}
+            50% {left: -2px; top: 5px}
+            75% {left: -3px; top: -9px}
+            100% {left: 1px; top: -2px}
+          }
 
           &:hover {
             z-index: 1;
@@ -212,15 +293,13 @@ html {
               width: 100%;
               height: 100%;
 
-              &.hpBG1 {
-                transition: width .5s cubic-bezier(0, 0, 0.23, 0.94) 0.12s;
-                opacity: .1;
-                background: linear-gradient(90deg, #94ff86 0%, #ceffcd 100%);
+              &.hpBG1, &.hpBG2 {
+                background: linear-gradient(90deg, #2a6b21 0%, #3b6b3b 100%);
               }
 
-              &.hpBG2 {
-                opacity: .3;
-                background: linear-gradient(90deg, #3cff21 0%, #6cff6a 100%);
+              &.hpBG1 {
+                transition: width .5s cubic-bezier(0, 0, 0.23, 0.94) 0.12s;
+                filter: brightness(2);
               }
             }
 
@@ -296,13 +375,12 @@ html {
               width: 100%;
               height: 100%;
 
-              &.mpBG1 {
-                opacity: .1;
-                background: linear-gradient(90deg, rgb(91, 166, 255) 0%, rgba(190, 220, 255, 1) 100%);
+              &.mpBG1, &.mpBG2 {
+                background: linear-gradient(90deg, #143f6a 0%, #38586b 100%);
               }
-              &.mpBG2 {
-                opacity: .3;
-                background: linear-gradient(90deg, #0081ff 0%, #5fc4ff 100%);
+              &.mpBG1 {
+                transition: width .5s cubic-bezier(0, 0, 0.23, 0.94) 0.12s;
+                filter: brightness(2);
               }
             }
 
@@ -346,6 +424,18 @@ html {
     }
 
     &.enemyTurn {
+      .playerBox {
+        .leftContainer, .rightContainer {
+          filter: grayscale(.6);
+          opacity: .4;
+          transition: opacity .15s, filter .15s;
+        }
+
+        .centerContainer {
+          opacity: .3;
+        }
+      }
+
       .enemyContainer {
         .enemyBox {
           .enemyCard {
@@ -354,7 +444,7 @@ html {
             transition: transform .15s, top .15s, left .15s, box-shadow .3s, z-index 0s .2s, opacity .15s;
 
             &.enemyAttacks {
-              z-index: 3;
+              z-index: 5;
               transition: transform .15s, top .15s, left .15s, box-shadow .3s, z-index 0s, opacity .15s;
               opacity: 1;
               top: -20px;
@@ -376,12 +466,47 @@ html {
         width: calc(50% - 260px);
         height: 100px;
         bottom: 0px;
+        animation-duration: .15s;
+        animation-delay: .15s;
+        transition: opacity .15s .1s, filter .25s;
+
+        @keyframes playerBarsShake0 {
+          0% {transform: translate(-3px, -5px)}
+          25% {transform: translate(-2px, 9px)}
+          50% {transform: translate(1px, 4px)}
+          75% {transform: translate(6px, 0px)}
+          100% {transform: translate(6px, 5px)}
+        }
+        
+        @keyframes playerBarsShake1 {
+          0% {transform: translate(-3px, 0px)}
+          25% {transform: translate(-10px, 6px)}
+          50% {transform: translate(6px, 8px)}
+          75% {transform: translate(10px, 6px)}
+          100% {transform: translate(-9px, 0px)}
+        }
+        
+        @keyframes playerBarsShake2 {
+          0% {transform: translate(9px, 3px)}
+          25% {transform: translate(-7px, -10px)}
+          50% {transform: translate(8px, 0px)}
+          75% {transform: translate(5px, -8px)}
+          100% {transform: translate(-9px, -7px)}
+        }
+        
+        @keyframes playerBarsShake3 {
+          0% {transform: translate(0px, -2px)}
+          25% {transform: translate(-9px, 3px)}
+          50% {transform: translate(-10px, 8px)}
+          75% {transform: translate(-4px, -2px)}
+          100% {transform: translate(6px, 3px)}
+        }
 
         .hpBox, .mpBox {
           position: absolute;
           width: calc(100% - 30px);
           bottom: 20px;
-          height: 35px;
+          height: 45px;
           overflow: hidden;
           display: grid;
           cursor: default;
@@ -390,6 +515,11 @@ html {
             position: absolute;
             width: 100%;
             height: 100%;
+
+            &.hpBG1, &.mpBG1 {
+              transition: width .5s cubic-bezier(0, 0, 0.23, 0.94) 0.12s;
+              filter: brightness(2);
+            }
           }
 
           > p {
@@ -403,8 +533,8 @@ html {
             position: absolute;
             font-family: font3;
             font-weight: 900;
-            top: -11px;
-            font-size: 44px;
+            top: -14px;
+            font-size: 55px;
           }
 
           .hpText, .mpText {
@@ -434,15 +564,8 @@ html {
           box-shadow: 0 0 0 5px #24D814;
           
           > div {
-
-            &.hpBG1 {
-              transition: width .5s cubic-bezier(0, 0, 0.23, 0.94) 0.12s;
-              opacity: .1;
-              background: linear-gradient(90deg, #94ff86 0%, #ceffcd 100%);
-            }
-            &.hpBG2 {
-              opacity: .3;
-              background: linear-gradient(90deg, #3cff21 0%, #6cff6a 100%);
+            &.hpBG1, &.hpBG2 {
+              background: linear-gradient(90deg, #2a6b21 0%, #3b6b3b 100%);
             }
           }
 
@@ -461,13 +584,8 @@ html {
           > div {
             right: 0px;
 
-            &.mpBG1 {
-              opacity: .1;
-              background: linear-gradient(-90deg, rgb(91, 166, 255) 0%, rgba(190, 220, 255, 1) 100%);
-            }
-            &.mpBG2 {
-              opacity: .3;
-              background: linear-gradient(-90deg, #0081ff 0%, #5fc4ff 100%);
+            &.mpBG1, &.mpBG2 {
+              background: linear-gradient(90deg, #143f6a 0%, #38586b 100%);
             }
           }
 
@@ -481,18 +599,49 @@ html {
         }
       }
 
-
       .centerContainer {
         position: absolute;
         left: 50%;
         width: 545px;
         height: 175px;
-        // background: #1d1d1d;
         margin-left: -272.5px;
-        // border: 5px solid black;
         bottom: 10px;
-        // box-shadow: inset 0 0 40px black;
         overflow: hidden;
+        transition: opacity .15s;
+        animation-duration: .25s;
+        z-index: 2;
+
+        @keyframes hotbarShake0 {
+          0% {transform: translate(7px, 15px)}
+          25% {transform: translate(-4px, 0px)}
+          50% {transform: translate(9px, 17px)}
+          75% {transform: translate(-1px, 3px)}
+          100% {transform: translate(-9px, 10px)}
+        }
+        
+        @keyframes hotbarShake1 {
+          0% {transform: translate(6px, -3px)}
+          25% {transform: translate(-9px, 10px)}
+          50% {transform: translate(-1px, -3px)}
+          75% {transform: translate(-15px, -8px)}
+          100% {transform: translate(-7px, 7px)}
+        }
+        
+        @keyframes hotbarShake2 {
+          0% {transform: translate(6px, -20px)}
+          25% {transform: translate(-7px, -4px)}
+          50% {transform: translate(-18px, 19px)}
+          75% {transform: translate(4px, -3px)}
+          100% {transform: translate(-8px, -6px)}
+        }
+        
+        @keyframes hotbarShake3 {
+          0% {transform: translate(19px, -13px)}
+          25% {transform: translate(12px, 2px)}
+          50% {transform: translate(1px, -16px)}
+          75% {transform: translate(-2px, -8px)}
+          100% {transform: translate(-16px, -10px)}
+        }
 
         .hotbarContainer {
           position: absolute;
@@ -559,84 +708,4 @@ html {
       }
     }
   }
-}
-
-@keyframes shake0 {
-  0% {left: 1px; top: 4px}
-  25% {left: -1px; top: -9px}
-  50% {left: 1px; top: -4px}
-  75% {left: -5px; top: -10px}
-  100% {left: -9px; top: 8px}
-}
-
-@keyframes shake1 {
-  0% {left: 9px; top: -9px}
-  25% {left: 4px; top: -6px}
-  50% {left: 8px; top: -1px}
-  75% {left: -1px; top: -10px}
-  100% {left: 0px; top: -9px}
-}
-
-@keyframes shake2 {
-  0% {left: 10px; top: -6px}
-  25% {left: 4px; top: -2px}
-  50% {left: 8px; top: -9px}
-  75% {left: -8px; top: 2px}
-  100% {left: 7px; top: 8px}
-}
-
-@keyframes shake3 {
-  0% {left: -4px; top: -2px}
-  25% {left: 6px; top: 9px}
-  50% {left: 8px; top: 1px}
-  75% {left: 4px; top: 9px}
-  100% {left: 9px; top: -4px}
-}
-
-@keyframes shake4 {
-  0% {left: 7px; top: 8px}
-  25% {left: 0px; top: 8px}
-  50% {left: -5px; top: 2px}
-  75% {left: 0px; top: -10px}
-  100% {left: -3px; top: 4px}
-}
-
-@keyframes shake5 {
-  0% {left: 4px; top: -9px}
-  25% {left: -10px; top: 1px}
-  50% {left: -1px; top: -8px}
-  75% {left: -4px; top: -9px}
-  100% {left: 2px; top: -4px}
-}
-
-@keyframes shake6 {
-  0% {left: 2px; top: 8px}
-  25% {left: 4px; top: -9px}
-  50% {left: -9px; top: -3px}
-  75% {left: 3px; top: 8px}
-  100% {left: 7px; top: 3px}
-}
-
-@keyframes shake7 {
-  0% {left: 3px; top: 0px}
-  25% {left: 2px; top: -1px}
-  50% {left: -2px; top: -5px}
-  75% {left: -9px; top: -6px}
-  100% {left: 2px; top: 4px}
-}
-
-@keyframes shake8 {
-  0% {left: -6px; top: -6px}
-  25% {left: -5px; top: 5px}
-  50% {left: 6px; top: 1px}
-  75% {left: -8px; top: 0px}
-  100% {left: -4px; top: -6px}
-}
-
-@keyframes shake9 {
-  0% {left: 8px; top: 6px}
-  25% {left: 9px; top: 2px}
-  50% {left: -2px; top: 5px}
-  75% {left: -3px; top: -9px}
-  100% {left: 1px; top: -2px}
 }

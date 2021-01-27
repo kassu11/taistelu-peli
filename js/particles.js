@@ -1,4 +1,4 @@
-function playersBattleParciles({x, y, dmg} = {}, type) {
+function AddBattleParciles({x, y, dmg} = {}, type) {
   const box = document.querySelector("#figtingScreen .effectContainer");
   const getTime = new Date().getTime();
   if(type == "explosion") {
@@ -9,7 +9,7 @@ function playersBattleParciles({x, y, dmg} = {}, type) {
     img.style.top = y + "px";
     removeElement(img, 1300);
     box.append(img);
-  } else if(type == "meleDmg") {
+  } else if(type == "meleDmg" || type == "enemyMeleDmg") {
     if(dmg == null || dmg <= 0) return;
     const min = 100,
           max = 300;
@@ -22,7 +22,8 @@ function playersBattleParciles({x, y, dmg} = {}, type) {
     p.style.animationName = "dmgDrop" + random(0, 2);
     p.style.left = x + "px";
     p.style.top = y - 60 + "px";
-    p.style.fontSize = random(45, 70) + "px";
+    if(type == "meleDmg") p.style.fontSize = random(45, 70) + "px";
+    else p.style.fontSize = random(70, 100) + "px";
     setTimeout(v => {
       p.style.marginLeft = num + "px";
       p.style.transform = `translateX(-50%) rotate(${random(-20, 20)}deg)`;
