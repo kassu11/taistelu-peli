@@ -8,12 +8,10 @@ for(let i = 0; i < 5; i++) {
   </div>`
 }
 
-updatePlayersHotbar();
-
 startLevel("level_1");
 
-
 function startLevel(lvlId) {
+  updatePlayersHotbar();
   currentLevel.id = lvlId;
   const selectedLevel = levels[lvlId];
   const currentEnemies = selectedLevel.enemys?.map(name => new Enemy(enemies[name]));
@@ -56,6 +54,12 @@ function addEnemyCard(enemy) {
 
   currentLevel.enemies.set(enemyCard, enemy);
 }
+
+document.querySelector("#figtingScreen .skipRoundBox").addEventListener("click", () => {
+  if(currentLevel.enemyRounds !== 0) return;
+  currentLevel.enemyRounds = 1;
+  startEnemyTurn();
+});
 
 document.querySelector(".enemyContainer .enemyBox").addEventListener("click", e => {
   let target = e.target;
@@ -252,14 +256,24 @@ function updatePlayersHotbar() {
 }
 
 
+document.querySelector("#figtingScreen .playerBox .hotbarBox").addEventListener("click", e => {
+  if(!e.target.classList.contains("slot")) return;
+  const allSlots = document.querySelectorAll("#figtingScreen .playerBox .slot");
+  const index = Array.from(allSlots).indexOf(e.target) + 1;
+  player.currentSlot = "slot" + index;
+  updatePlayersHotbar();
+});
+
+/* ===================================
+
 const maxKerrat = 4;
 let text = `@keyframes playerBarsShake {`
 
 for(let i = 0; i <= maxKerrat; i++) {
   const nText = (Math.round(i / maxKerrat * 100)).toString() + "%" + ` {transform: translate(${random(-10, 10)}px, ${random(-10, 10)}px)}`;
   text += "\n\t" + nText;
-}
-
-text += "\n}";
+} text += "\n}";
 
 console.log(text);
+
+========================================== */

@@ -28,6 +28,27 @@ const enemies = {
     ],
     img: "vihu3.png",
     imgTop: 7,
+  },
+  octopus: {
+    id: "octopus",
+    maxHp: 40,
+    maxMp: 50,
+    items: [
+      items["wooden_sword"],
+      items["weak_stick"],
+    ],
+    img: "octopus.png",
+    imgTop: 7,
+  },
+  fish_dude: {
+    id: "fish_dude",
+    maxHp: 40,
+    maxMp: 50,
+    items: [
+      items["wooden_sword"],
+    ],
+    img: "enemy4.png",
+    imgTop: 7,
   }
 }
 

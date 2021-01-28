@@ -7,7 +7,7 @@ const currentLevel = {
 
 const levels = {
   level_1: {
-    enemys: ["tongue_monster", "week_slime", "red_guy"],
+    enemys: ["octopus", "fish_dude"],
     victoryDrop: []
   }
 }
