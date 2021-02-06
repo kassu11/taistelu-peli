@@ -6,7 +6,7 @@ let player = new Player({
   hotbar: {
     "slot1": items["wooden_sword"],
     "slot2": items["weak_stick"],
-    "slot3": {},
+    "slot3": items["stone_sword"],
     "slot4": {},
     "slot5": {}
   },
@@ -16,13 +16,13 @@ let player = new Player({
 
 
 
-function Player(current) {
-  this.hp = current.hp;
-  this.mp = current.mp;
-  this.maxHp = current.maxHp;
-  this.maxMp = current.maxMp;
+function Player(arr) {
+  this.hp = arr.hp;
+  this.mp = arr.mp;
+  this.maxHp = arr.maxHp;
+  this.maxMp = arr.maxMp;
 
-  this.currentSlot = current.currentSlot;
+  this.currentSlot = arr.currentSlot;
 
   this.hotbar = {
     "slot1": {},
@@ -33,7 +33,7 @@ function Player(current) {
   };
   
   for(let slotNumber in this.hotbar) {
-    const hbar = current.hotbar;
+    const hbar = arr.hotbar;
     const curItem = hbar[slotNumber];
     if(curItem?.id) this.hotbar[slotNumber] = new Item(curItem, this);
   }

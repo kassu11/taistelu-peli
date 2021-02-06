@@ -3,15 +3,46 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/font.css">
-    <link rel="stylesheet" href="css/particles.css">
-    <link rel="stylesheet" href="css/figtingScreen.css">
+    <link rel="stylesheet" href="sass/font.css">
+    <link rel="stylesheet" href="sass/hover.css">
+    <link rel="stylesheet" href="sass/particles.css">
+    <link rel="stylesheet" href="sass/figtingScreen.css">
     <title>Fighting Game</title>
   </head>
   <body class="figtingMode">
     <div id="hoverBox"></div>
     <div id="figtingScreen">
       <div class="effectContainer"></div>
+      <div id="figthEndScreen" class="hidden">
+        <div class="victoryBox">
+          <div class="header">
+            <p>VICTORY</p>
+          </div>
+          <div class="body">
+            <p>Job well done!</p>
+            <div class="backButton">
+              <p>Back</p>
+            </div>
+            <div class="fightButton">
+              <p>Fight</p>
+            </div>
+          </div>
+        </div>
+        <div class="defeatBox">
+          <div class="header">
+            <p>DEFEAT</p>
+          </div>
+          <div class="body">
+            <p>Better luck next time!</p>
+            <div class="backButton">
+              <p>Back</p>
+            </div>
+            <div class="fightButton">
+              <p>Fight</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="roundInfoBox">
         <div class="endFightBox">
@@ -62,6 +93,7 @@
 </html>
 
 <script src="js/helpFunctions.js"></script>
+<script src="js/effects.js"></script>
 <script src="js/hover.js"></script>
 <script src="js/particles.js"></script>
 <script src="js/items.js"></script>

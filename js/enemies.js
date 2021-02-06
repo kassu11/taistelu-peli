@@ -36,6 +36,15 @@ const enemies = {
     items: [
       items["wooden_sword"],
       items["weak_stick"],
+      items["dmgBooster"],
+    ],
+    effects: [
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
     ],
     img: "octopus.png",
     imgTop: 7,
@@ -52,16 +61,25 @@ const enemies = {
   }
 }
 
-function Enemy(current) {
-  this.id = current.id;
-  this.hp = current.maxHp;
-  this.maxHp = current.maxHp;
-  this.mp = current.maxMp;
-  this.maxMp = current.maxMp;
-  this.items = current.items?.map(item => new Item(item, this)) || [];
-  this.img = current.img;
-  this.imgLeft = current.imgLeft;
-  this.imgTop = current.imgTop;
-  this.imgWidth = current.imgWidth;
-  this.imgHeight = current.imgHeight;
+function Enemy(enemy) {
+  this.id = enemy.id;
+  this.hp = enemy.maxHp;
+  this.maxHp = enemy.maxHp;
+  this.mp = enemy.maxMp;
+  this.maxMp = enemy.maxMp;
+  this.items = enemy.items?.map(item => new Item(item, this)) || [];
+  this.img = enemy.img;
+  this.imgLeft = enemy.imgLeft;
+  this.imgTop = enemy.imgTop;
+  this.imgWidth = enemy.imgWidth;
+  this.imgHeight = enemy.imgHeight;
+
+  this.effects = enemy.effects?.map(effect => new Effect(effect)) || [];
+}
+
+Enemy.prototype.effect = function(name, power, duration) {
+  const effectSlotNumber = this.effects?.findIndex(({id}) => id == name);
+  const effectSlot = effectSlotNumber == -1 ? this.effects.length : effectSlotNumber;
+
+  this.effects[effectSlot] = new Effect({id: name, power, duration});
 }

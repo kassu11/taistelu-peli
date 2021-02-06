@@ -9,6 +9,14 @@ function AddBattleParciles({x, y, dmg} = {}, type) {
     img.style.top = y + "px";
     removeElement(img, 1300);
     box.append(img);
+  } else if(type == "explosion2") {
+    const img = document.createElement("img");
+    img.src = "./images/uus.gif?" + getTime;
+    img.classList = "explosion2"
+    img.style.left = x + "px";
+    img.style.top = y + "px";
+    removeElement(img, 2000);
+    box.append(img);
   } else if(type == "meleDmg" || type == "enemyMeleDmg") {
     if(dmg == null || dmg <= 0) return;
     const min = 100,
@@ -28,6 +36,6 @@ function AddBattleParciles({x, y, dmg} = {}, type) {
       p.style.marginLeft = num + "px";
       p.style.transform = `translateX(-50%) rotate(${random(-20, 20)}deg)`;
     }, 20);
-    // removeElement(p, 2000);
+    removeElement(p, 2000);
   }
 }

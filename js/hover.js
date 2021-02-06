@@ -1,49 +1,83 @@
-const hoverBgBox = document.querySelector("#hoverBox");
+const hoverBox = document.querySelector("#hoverBox");
 const globalHoverHiiri = {x: 0, y: 0};
-
 
 // let testiTaulu = [
 //   "<css> text-shadow: 2px -6px #0014ff; <css> <c>red<c> <fs>30px<fs> Moro miten menee loladasdasd § <c>white<c> miten § <fs>50px<fs> menee<br> <c>blue<c> § <c>white<c> <fs>20px<fs> Kaunis päivä § paiva <fs>50px<fs> <c>red<c>"
 // ]
 // document.querySelector("popUpDmg").appendChild(luoTextiSyntaxt(testiTaulu[0]));
 
-function luoTextiSyntaxt(syn) {
-  let p = document.createElement("pre");
-  let text = syn.split("§");
-  text.forEach(e => {
-    let span = document.createElement("span");
-    if(e.indexOf("<fs>") !== -1) {
-      let taulu = e.split("<fs>");
-      span.style.fontSize = taulu.splice(1, 1)[0];
-      e = taulu.join("");
-    }; if(e.indexOf("<c>") !== -1) {
-      let taulu = e.split("<c>");
-      if(taulu[1].startsWith("$")) {
-        try {taulu[1] = eval(taulu[1].substring(1))} 
-        catch {console.error("Tuntematon variable:", taulu[1].substring(1))};
-      }   
-      span.style.color = taulu.splice(1, 1)[0];
-      e = taulu.join("");
-    }; if(e.indexOf("<br>") !== -1) {
-      e = e.split("<br>").join("");
-      span.classList.add("lineBreak");
-    }; if(e.indexOf("<css>") !== -1) {
-      let taulu = e.split("<css>");
-      span.style.cssText += taulu.splice(1, 1)[0];
-      e = taulu.join("");
-    }; if(e.startsWith("$")) {
-      let taulu = e.split("!$");
-      try {e = eval(taulu[0].substring(1)) + (taulu[1] || "")} 
-      catch {console.error("Tuntematon variable:", taulu[0].substring(1))};
-    };
-    span.textContent = e;
-    p.append(span);
-  });
-  return p;
+addHover(".playerBox .hpBox", ["default", "ctrl\n\n\n\nasdasdasdhasdakjsdh", "alt", "shift"], ["ctrlKey", "altKey", "shiftKey"]);
+addHover(".playerBox .mpBox", "asdasdasd\nasdasd");
+
+function addHover(target, texts = [], keys = ["default"], logic = "true") {
+  const div = document.createElement("div");
+  if(Array.isArray(target) && target[1]) div.setAttribute(target[1], target[2] ?? "");
+  const borderPaddin = 10;
+
+  if(!Array.isArray(target)) target = [target];
+  if(typeof target[0] == "string") target[0] = document.querySelector(target[0]);
+  if(typeof texts == "string") texts = [texts];
+  if(typeof keys == "string") keys = [keys];
+  if(keys.indexOf("default") == -1) keys.unshift("default");
+
+  target[0].addEventListener("mouseenter", mouseEnter);
+  target[0].addEventListener("mousemove", mouseMove);
+  target[0].addEventListener("mouseout", mouseOut);
+
+  moveHoverBlock();
+
+  function mouseEnter({ctrlKey, altKey, shiftKey}) {
+    window.onkeydown = null;
+    window.onkeyup = null;
+    window.onkeydown = ({ctrlKey, altKey, shiftKey, repeat}) => keyUpAndDown({ctrlKey, altKey, shiftKey, repeat});
+    window.onkeyup = ({ctrlKey, altKey, shiftKey, repeat}) => keyUpAndDown({ctrlKey, altKey, shiftKey, repeat});
+
+    hoverBox.innerHTML = "";
+    div.innerHTML = "";
+
+    if(ctrlKey) div.append(customTextSyntax(texts[keys.indexOf("ctrlKey")]));
+    else if(altKey) div.append(customTextSyntax(texts[keys.indexOf("altKey")]));
+    else if(shiftKey) div.append(customTextSyntax(texts[keys.indexOf("shiftKey")]));
+    else div.append(customTextSyntax(texts[keys.indexOf("default")]));
+    hoverBox.append(div);
+
+    div.style.display = div.querySelector("pre").textContent ? null : "none";
+  }
+
+  function keyUpAndDown(keyMetaData) {
+    if(keyMetaData.repeat) return;
+    div.innerHTML = "";
+
+    for(const key of keys) {
+      if(!keyMetaData[key]) continue;
+      div.append(customTextSyntax(texts[keys.indexOf(key)]));
+    } if(!div.innerHTML) div.append(customTextSyntax(texts[keys.indexOf("default")]));
+    div.style.display = div.querySelector("pre").textContent ? null : "none";
+    moveHoverBlock();
+  }
+
+  function mouseMove({x, y}) {
+    globalHoverHiiri.x = x, globalHoverHiiri.y = y;
+    moveHoverBlock();
+  }
+
+  function moveHoverBlock() {
+    const {x, y} = globalHoverHiiri;
+    const {height, width} = div.getBoundingClientRect();
+    const maxTop = window.innerHeight - height - borderPaddin;
+    const maxleft = window.innerWidth - width - borderPaddin;
+    div.style.left = Math.min(x + 20, maxleft) + "px";
+    div.style.top = Math.min(y, maxTop) + "px";
+  }
+
+  function mouseOut() {
+    window.onkeydown = null;
+    window.onkeyup = null;
+    hoverBox.innerHTML = ""
+  }
 }
 
-
-function customTextSyntax(syn) {
+function customTextSyntax(syn = "") {
   const pre = document.createElement("pre");
   const lines = syn.split("§");
 
@@ -57,8 +91,6 @@ function customTextSyntax(syn) {
       const currentLine = line.substring(index);
       const nspan = document.createElement("span");
       let [lineText] = currentLine.split("<");
-
-      console.log(currentLine.indexOf("\n"));
       
       if(currentLine.startsWith("<c>")) {
         const [,color, text=""] = currentLine.split("<c>");
@@ -78,6 +110,33 @@ function customTextSyntax(syn) {
         } selectedSpan.style.fontSize = runVariableTest(fontSize);
         index = line.indexOf("<f>", index + 1);
         if(index == -1) return console.error(`"<f>" has no closing!`);
+      } else if(currentLine.startsWith("<b>")) {
+        const [,fontWeight, text=""] = currentLine.split("<b>");
+        [lineText] = text.split("<");
+        if(line.indexOf("<b>") !== index) {
+          selectedSpan.append(nspan);
+          selectedSpan = nspan;
+        } selectedSpan.style.fontWeight = runVariableTest(fontWeight);
+        index = line.indexOf("<b>", index + 1);
+        if(index == -1) return console.error(`"<b>" has no closing!`);
+      } else if(currentLine.startsWith("<cl>")) {
+        const [,classList, text=""] = currentLine.split("<cl>");
+        [lineText] = text.split("<");
+        if(line.indexOf("<cl>") !== index) {
+          selectedSpan.append(nspan);
+          selectedSpan = nspan;
+        } selectedSpan.classList = runVariableTest(classList);
+        index = line.indexOf("<cl>", index + 1);
+        if(index == -1) return console.error(`"<cl>" has no closing!`);
+      } else if(currentLine.startsWith("<ff>")) {
+        const [,fontFamily, text=""] = currentLine.split("<ff>");
+        [lineText] = text.split("<");
+        if(line.indexOf("<ff>") !== index) {
+          selectedSpan.append(nspan);
+          selectedSpan = nspan;
+        } selectedSpan.style.fontFamily = runVariableTest(fontFamily);
+        index = line.indexOf("<ff>", index + 1);
+        if(index == -1) return console.error(`"<ff>" has no closing!`);
       } else if(currentLine.startsWith("<css>")) {
         const [,rawCss, text=""] = currentLine.split("<css>");
         [lineText] = text.split("<");
@@ -126,23 +185,9 @@ function customTextSyntax(syn) {
   }
 }
 
-// hoverBgBox.append(customTextSyntax(`moi<c> red <c><css>position: relative<css> olen kasper <c> <v> 6 > 5 ? "yel" : "blue"<v><v>1 > 0 ? "low" : "green"<v> <c> miten<f>50px<f> menee <c> green <c>lol '
-// § olen default teksti <bcss>position: absolute<bcss>ilman väriä
-// <v>100 + 10<v> | <v>null ?? 5 <v>
-// <css>left:<v>random(0, 9)<v>px<css>`));
-
-// hoverBgBox.append(customTextSyntax(`<c> red <c><f> 30px <f>lol<c> green <c>hei<c> yellow <c>terve`));
-// hoverBgBox.append(customTextSyntax(`<c> red <c><f> 30px <f>asdasd asdjasdkl jaskdjkads § asdasdasjh ashdjashd`));
-hoverBgBox.append(customTextSyntax(`<c>red<c> <f>24px<f> Your health §
-<f>18px<f> Your health represents the amount of hits you can take.
-When your health reaches 0 points, you are defeated.
-§ - Your maximum health is <c>red<c>
-`));
-
-const lol = 5;
-let text1 = "<c>$p.style.cssText='font-size:10px'<c> asd<fs>30px<fs> olen teksti asdasd <br> § extra <c>red<c> §"
-
-hoverBgBox.append(luoTextiSyntaxt(text1))
+document.__proto__.test = function() {
+  console.log("???")
+}
 
 // <f><f> = font size
 // \n = line break
@@ -150,14 +195,10 @@ hoverBgBox.append(luoTextiSyntaxt(text1))
 // <c><c> = color
 // <v><v> = variable
 // <bcss><bcss> = raw css on base pre element
+// <cl><cl> = set classlist on span
+// <b><b> = fontweight
+// <ff><ff> = font-family
 // § = new span
-
-// <fs> <fs> = font size
-// <br> = line break
-// <css> <css> = raw css
-// <c> <c> = color
-// $ = variable
-// $ !$= variable
 
 // luoGlobalHover("pelaaja", [
 //   "<css> color: #f00; font-size: 18px; font-weight: 600; <css> Parannus pullo <br>§ Tyyppi: §Taika<c>#f90<c> <br> § Vahinko: §10 - 50<c>#ffe000<c> <br> § Nopeus: §5s<c>#41ee36<c> <br> § Manan kulutus: §50m<c>#2eb3e0<c> <br> § lisatietoja paina [shift] <c>#4d4d4d<c> <fs>12px<fs>",
