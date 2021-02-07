@@ -491,10 +491,38 @@ html {
           }
 
           &:hover {
-            z-index: 1;
             transform: scale(1.04);
             box-shadow: inset 0 0 20px 2px black, 
                         0 0 24px 4px #a7a7a763
+          }
+
+          &.creatingAnimation {
+            animation-name: enemyCreationAnimation;
+            animation-fill-mode: forwards;
+            opacity: 0;
+
+            @keyframes enemyCreationAnimation {
+              0% {opacity: 0;}
+              40% {
+                opacity: 0;
+                top: -100px;
+              }
+              100% {opacity: 1; top: 0px}
+            }
+          }
+
+          &.resetAnimation {
+            animation-name: enemyReset;
+            animation-duration: .2s;
+            animation-fill-mode: forwards;
+
+            @keyframes enemyReset {
+              0% {opacity: 1; top: 0px}
+              100% {
+                opacity: 0;
+                top: 100px;
+              }
+            }
           }
 
           &.deathAnimation {

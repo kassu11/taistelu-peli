@@ -19,7 +19,7 @@ function updateHotbarHovers() {
 
 startLevel("level_1");
 
-function startLevel(lvlId) {
+function startLevel(lvlId, time) {
   updateHotbarHovers();
   currentLevel.id = lvlId;
   currentLevel.enemies.clear();
@@ -28,10 +28,13 @@ function startLevel(lvlId) {
   document.querySelector("#figtingScreen .enemyBox").innerHTML = "";
   const selectedLevel = levels[lvlId];
   const currentEnemies = selectedLevel.enemys?.map(name => new Enemy(enemies[name]));
-  currentEnemies?.forEach(enemy => addEnemyCard(enemy));
+  for(const i in currentEnemies) {
+    if(time == null) addEnemyCard(currentEnemies[i]);
+    else addEnemyCard(currentEnemies[i], time * i);
+  }
 }
 
-function addEnemyCard(enemy) {
+function addEnemyCard(enemy, time) {
   const box = document.querySelector(".enemyContainer .enemyBox");
 
   const enemyCard = document.createElement("div");
@@ -67,7 +70,14 @@ function addEnemyCard(enemy) {
   if(enemy.imgHeight) enemyCard.querySelector("img").style.height = enemy.imgHeight + "px";
 
   box.append(enemyCard);
-  currentLevel.enemies.set(enemyCard, enemy);
+  if(time != null) {
+    enemyCard.classList.add("creatingAnimation");
+    enemyCard.style.animationDelay = time + "ms";
+    setTimeout(() => {
+      enemyCard.classList.remove("creatingAnimation")
+      enemyCard.style.animationDelay = null;
+    }, time + 200);
+  } currentLevel.enemies.set(enemyCard, enemy);
   updateEnemyCard(enemyCard);
 }
 
@@ -343,22 +353,24 @@ document.querySelector("#figtingScreen .playerBox .hotbarBox").addEventListener(
 Array.from(document.querySelectorAll("#figthEndScreen .fightButton")).forEach(button => button.addEventListener("click", () => {
   document.querySelector("#figthEndScreen").classList = "hidden";
   document.querySelector("#roundNumber").textContent = 1;
+  const levelEnemies = levels[currentLevel.id]?.enemys ?? [];
   player.hp = player.maxHp;
   player.mp = player.maxMp;
-  startLevel(currentLevel.id);
   updatePlayerBars();
+
+  if(currentLevel.enemies.size == 0) {
+    startLevel(currentLevel.id, 50);
+  } else if(levelEnemies.length == currentLevel.enemies.size) {
+    startLevel(currentLevel.id);
+  } else {
+    const enemyCardsArray = Array.from(document.querySelectorAll("#figtingScreen .enemyCard"));
+    for(const i in enemyCardsArray) {
+      const card = enemyCardsArray[i];
+      card.style.animationName = null;
+      card.style.animationDelay = i * 50 + "ms";
+      card.classList.add("resetAnimation");
+    } 
+    
+    setTimeout(v => startLevel(currentLevel.id, 50), enemyCardsArray.length * 50 + 100);
+  }
 }));
-
-/* ===================================
-
-const maxKerrat = 4;
-let text = `@keyframes playerBarsShake {`
-
-for(let i = 0; i <= maxKerrat; i++) {
-  const nText = (Math.round(i / maxKerrat * 100)).toString() + "%" + ` {transform: translate(${random(-10, 10)}px, ${random(-10, 10)}px)}`;
-  text += "\n\t" + nText;
-} text += "\n}";
-
-console.log(text);
-
-========================================== */
