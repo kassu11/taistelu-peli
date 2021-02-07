@@ -637,6 +637,7 @@ html {
               position: absolute;
               width: 252px;
               image-rendering: pixelated;
+              image-rendering: optimizespeed;
               transform: translateX(-50%) translateY(-50%);
               left: 50%;
               top: 50%;
@@ -1011,6 +1012,7 @@ html {
 
               img {
                 image-rendering: pixelated;
+                image-rendering: optimizespeed;
                 position: absolute;
                 width: calc(100% - 10px);
                 left: 5px;
