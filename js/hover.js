@@ -155,7 +155,9 @@ function customTextSyntax(syn = "") {
       } else if(currentLine.startsWith("<v>")) {
         const [,variable, text=""] = currentLine.split("<v>");
         [lineText] = text.split("<");
-        try {lineText = eval(variable) + lineText}
+        console.log(variable)
+        console.log(selectedSpan)
+        try {lineText = eval(variable) ?? "" + lineText}
         catch {return console.error(`"${variable}" is not defined`)}
         index = line.indexOf("<v>", index + 1);
         if(index == -1) return console.error(`"<v>" has no closing!`);
@@ -175,7 +177,7 @@ function customTextSyntax(syn = "") {
       if(currentLine.startsWith("<v>")) {
         const [,variable, text=""] = currentLine.split("<v>");
         [lineText] = text.split("<");
-        try {lineText = eval(variable) + lineText}
+        try {lineText = eval(variable) ?? "" + lineText}
         catch {return console.error(`"${variable}" is not defined`)}
         index = data.indexOf("<v>", index + 1);
         if(index == -1) return console.error(`"<v>" has no closing!`);

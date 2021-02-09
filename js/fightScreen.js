@@ -10,17 +10,19 @@ function updateHotbarHovers() {
     </div>`
   }
 
-  Array.from(slotBox.querySelectorAll(".slot")).forEach((currentSlot, i) => {
+  slotBox.querySelectorAll(".slot").forEach((currentSlot, i) => {
     addHover(currentSlot, [player.hotbar["slot" + (i + 1)].hoverText?.() ?? ""], []);
   });
 
   updatePlayersHotbar();
 }
 
-startLevel("level_1");
-
 function startLevel(lvlId, time) {
+  player.hp = player.maxHp;
+  player.mp = player.maxMp;
   updateHotbarHovers();
+  updatePlayerBars();
+  document.body.classList = "figtingMode";
   currentLevel.id = lvlId;
   currentLevel.enemies.clear();
   currentLevel.roundNum = 0;
@@ -350,13 +352,10 @@ document.querySelector("#figtingScreen .playerBox .hotbarBox").addEventListener(
   updatePlayersHotbar();
 });
 
-Array.from(document.querySelectorAll("#figthEndScreen .fightButton")).forEach(button => button.addEventListener("click", () => {
+document.querySelectorAll("#figthEndScreen .fightButton").forEach(button => button.addEventListener("click", () => {
   document.querySelector("#figthEndScreen").classList = "hidden";
   document.querySelector("#roundNumber").textContent = 1;
   const levelEnemies = levels[currentLevel.id]?.enemys ?? [];
-  player.hp = player.maxHp;
-  player.mp = player.maxMp;
-  updatePlayerBars();
 
   if(currentLevel.enemies.size == 0) {
     startLevel(currentLevel.id, 50);
@@ -373,4 +372,10 @@ Array.from(document.querySelectorAll("#figthEndScreen .fightButton")).forEach(bu
     
     setTimeout(v => startLevel(currentLevel.id, 50), enemyCardsArray.length * 50 + 100);
   }
+}));
+
+document.querySelectorAll("#figthEndScreen .backButton").forEach(button => button.addEventListener("click", () => {
+  document.querySelector("#figthEndScreen").classList = "hidden";
+  document.querySelector("#roundNumber").textContent = 1;
+  document.body.classList = "levelMenu";
 }));

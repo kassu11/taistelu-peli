@@ -1,0 +1,11 @@
+#levelMenu {
+  display: none;
+}
+
+.levelMenu {
+  background: wheat;
+
+  #levelMenu {
+    display: unset;
+  }
+}
