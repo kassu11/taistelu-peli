@@ -1,5 +1,7 @@
+const figtingScreen = document.querySelector("#figtingScreen");
+
 function updateHotbarHovers() {
-  const slotBox = document.querySelector("#figtingScreen .playerBox .hotbarBox");
+  const slotBox = figtingScreen.querySelector(".playerBox .hotbarBox");
   slotBox.innerHTML = "";
   for(let i = 0; i < 5; i++) {
     slotBox.innerHTML += `
@@ -20,6 +22,7 @@ function updateHotbarHovers() {
 function startLevel(lvlId, time) {
   player.hp = player.maxHp;
   player.mp = player.maxMp;
+  figtingScreen.querySelectorAll(".playerBox > div").forEach(container => container.style = null);
   updateHotbarHovers();
   updatePlayerBars();
   document.body.classList = "figtingMode";
@@ -27,9 +30,9 @@ function startLevel(lvlId, time) {
   currentLevel.enemies.clear();
   currentLevel.roundNum = 0;
   currentLevel.enemyRounds = 0;
-  document.querySelector("#figtingScreen .enemyBox").innerHTML = "";
+  figtingScreen.querySelector(".enemyBox").innerHTML = "";
   const selectedLevel = levels[lvlId];
-  const currentEnemies = selectedLevel.enemys?.map(name => new Enemy(enemies[name]));
+  const currentEnemies = selectedLevel.enemies?.map(name => new Enemy(enemies[name]));
   for(const i in currentEnemies) {
     if(time == null) addEnemyCard(currentEnemies[i]);
     else addEnemyCard(currentEnemies[i], time * i);
@@ -83,12 +86,12 @@ function addEnemyCard(enemy, time) {
   updateEnemyCard(enemyCard);
 }
 
-document.querySelector("#figtingScreen .endFightBox").addEventListener("click", () => {
+figtingScreen.querySelector(".endFightBox").addEventListener("click", () => {
   player.hp = 0;
   document.querySelector("#figthEndScreen").classList = "defeat";
 });
 
-document.querySelector("#figtingScreen .skipRoundBox").addEventListener("click", () => {
+figtingScreen.querySelector(".skipRoundBox").addEventListener("click", () => {
   if(currentLevel.enemyRounds !== 0) return;
   currentLevel.enemyRounds = 1;
   startEnemyTurn();
@@ -107,7 +110,7 @@ document.querySelector(".enemyContainer .enemyBox").addEventListener("click", e 
   currentLevel.enemyRounds = item.useTime ?? 1;
   currentLevel.roundNum += 1;
   currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
-  document.querySelector("#figtingScreen #roundNumber").textContent = currentLevel.roundNum;
+  figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
 
   const dmg = item.calcDamage().meleDmg;
   enemy.hp -= dmg;
@@ -189,7 +192,7 @@ function updateEffectHovers() {
 }
 
 function updatePlayerBars() {
-  const target = document.querySelector("#figtingScreen .playerBox");
+  const target = figtingScreen.querySelector(".playerBox");
   const hpPercentage = Math.max(player.hp / player.maxHp, 0) * 100;
   const mpPercentage = Math.max(player.mp / player.maxMp, 0) * 100;
 
@@ -204,11 +207,11 @@ function updatePlayerBars() {
 
 async function startEnemyTurn() {
   await sleep(200);
-  document.querySelector("#figtingScreen").classList.add("enemyTurn");
+  figtingScreen.classList.add("enemyTurn");
   while(currentLevel.enemyRounds > 0) {
     await sleep(350);
     for(const [card, enemy] of currentLevel.enemies) {
-      const playerBox = document.querySelector("#figtingScreen .playerBox")
+      const playerBox = figtingScreen.querySelector(".playerBox");
       const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
       const {left, width, bottom} = card.getBoundingClientRect();
       const {height: hotbarHeight, width: hotbarWidth} = playerBox.querySelector(".hotbarBox").getBoundingClientRect();
@@ -259,14 +262,14 @@ async function startEnemyTurn() {
       await sleep(300);
 
       if(player.hp <= 0) {
-        document.querySelector("#figtingScreen").classList.remove("enemyTurn");
+        figtingScreen.classList.remove("enemyTurn");
         await sleep(500);
         document.querySelector("#figthEndScreen").classList = "defeat";
         return;
       }
     }
     currentLevel.roundNum += 1;
-    document.querySelector("#figtingScreen #roundNumber").textContent = currentLevel.roundNum;
+    figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
     currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
     currentLevel.enemies.forEach((enemy, card) => updateEnemyCard(card));
     updateEffectHovers();
@@ -355,7 +358,7 @@ document.querySelector("#figtingScreen .playerBox .hotbarBox").addEventListener(
 document.querySelectorAll("#figthEndScreen .fightButton").forEach(button => button.addEventListener("click", () => {
   document.querySelector("#figthEndScreen").classList = "hidden";
   document.querySelector("#roundNumber").textContent = 1;
-  const levelEnemies = levels[currentLevel.id]?.enemys ?? [];
+  const levelEnemies = levels[currentLevel.id]?.enemies ?? [];
 
   if(currentLevel.enemies.size == 0) {
     startLevel(currentLevel.id, 50);

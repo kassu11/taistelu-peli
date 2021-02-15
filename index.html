@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="sass/particles.css">
     <link rel="stylesheet" href="sass/figtingScreen.css">
     <link rel="stylesheet" href="sass/levelMenu.css">
+    <link rel="stylesheet" href="sass/itemsMenu.css">
     <title>Fighting Game</title>
   </head>
   <body class="levelMenu">
@@ -97,6 +98,18 @@
       <button onclick="startLevel('level_3')">Level 3</button>
       <button onclick="startLevel('level_4')">Level 4</button>
       <button onclick="startLevel('level_5')">Level 5</button>
+
+      <button id="inventoryButton">Inventory</button>
+    </div>
+
+    <div id="itemsMenu">
+      <div class="inventoryContainer">
+        <button id="levelsMenuButton">Levels menu</button>
+        <div class="inventoryBox"></div>
+      </div>
+      <div class="hotbarContainer">
+        <div class="hotbarBox"></div>
+      </div>
     </div>
   </body>
 </html>
@@ -110,3 +123,4 @@
 <script src="js/enemies.js"></script>
 <script src="js/player.js"></script>
 <script src="js/fightScreen.js"></script>
+<script src="js/itemsMenu.js"></script>

@@ -7,23 +7,27 @@ const currentLevel = {
 
 const levels = {
   level_1: {
-    enemys: ["week_slime"],
+    enemies: ["week_slime"],
     victoryDrop: []
   },
   level_2: {
-    enemys: ["red_guy", "tongue_monster"],
+    enemies: ["red_guy", "tongue_monster"],
     victoryDrop: []
   },
   level_3: {
-    enemys: ["week_slime", "week_slime", "week_slime"],
+    enemies: ["week_slime", "week_slime", "week_slime"],
     victoryDrop: []
   },
   level_4: {
-    enemys: ["octopus", "red_guy"],
+    enemies: ["octopus", "red_guy"],
     victoryDrop: []
   },
   level_5: {
-    enemys: ["week_slime", "fish_dude", "week_slime"],
+    enemies: ["week_slime", "fish_dude", "week_slime"],
     victoryDrop: []
   },
 }
+
+document.querySelector("#inventoryButton").addEventListener("click", e => {
+  document.body.classList = "itemsMenu"
+});

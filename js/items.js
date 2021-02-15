@@ -13,6 +13,7 @@ const items = {
     minMeleDmg: 15,
     maxMeleDmg: 25,
     useTime: 0,
+    image: "heikkous.png",
     particle: "explosion2"
   },
   weak_stick: {
@@ -49,6 +50,7 @@ function Item(item, user) {
   this.useTime = base.useTime;
   this.image = base.image;
   this.particle = base.particle;
+  this.slot = item.slot;
 
   this.selfEffect = item.selfEffect?.map(effect => new Effect(effect)) ?? [];
   this.giveEffect = item.giveEffect?.map(effect => new Effect(effect)) ?? [];

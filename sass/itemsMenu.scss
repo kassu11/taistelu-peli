@@ -1,0 +1,139 @@
+#itemsMenu {
+  display: none;
+}
+
+.itemsMenu {
+  background: green;
+
+  #itemsMenu {
+    display: unset;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    color: white;
+
+    .inventoryContainer {
+      position: absolute;
+      height: 100%;
+      width: calc(100% - 550px);
+      background: red;
+      overflow: hidden;
+      overflow-y: auto;
+
+      .inventoryBox {
+        position: absolute;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        top: 50px;
+        left: 0px;
+        background: rgba(0, 0, 0, 0.295);
+
+        > div {
+          position: relative;
+          width: 70px;
+          height: 70px;
+          background: gray;
+          margin: 5px 2.5px;
+          border: 5px solid black;
+
+          * {
+            pointer-events: none;
+            user-select: none;
+          }
+
+          .hotbarNum {
+            background: #00d600;
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            margin: 0px;
+            padding: 0px 3px;
+            height: 30px;
+            width: 18px;
+            font-family: font3;
+            font-size: 22px;
+            z-index: 1;
+            text-shadow: 0 0 3px black;
+            font-weight: 900;
+            border-radius: 0px 0px 5px 0px;
+          }
+
+          img {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            max-width: calc(100% - 6px);
+            max-height: calc(100% - 6px);
+            object-fit: contain;
+            width: 1000%;
+            image-rendering: pixelated;
+            image-rendering: optimizespeed;
+          }
+        }
+      }
+    }
+
+    .hotbarContainer {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      width: 550px;
+      height: 180px;
+      background: blue;
+      display: grid;
+      place-items: center;
+
+      .hotbarBox {
+        display: flex;
+
+        .slot {
+          position: relative;
+          width: 100px;
+          margin: 3px;
+          height: 150px;
+          top: 0px;
+          background: #131313;
+          border: 5px solid #3d3d3d;
+          box-shadow: inset 0 0 30px black;
+          transition: top .15s, background .15s;
+          cursor: pointer;
+
+          > p {
+            position: absolute;
+            margin: 0px;
+            color: white;
+          }
+
+          img {
+            image-rendering: pixelated;
+            image-rendering: optimizespeed;
+            position: absolute;
+            width: calc(100% - 10px);
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            user-select: none;
+          }
+
+          .slotNumber {
+            pointer-events: none;
+            user-select: none;
+            font-family: font1;
+            font-size: 75px;
+            width: 100%;
+            top: 4px;
+            left: 4px;
+            text-align: center;
+            opacity: .05;
+            transition: color .3s, opacity .15s;
+          }
+        }
+      }
+    }
+  }
+}
