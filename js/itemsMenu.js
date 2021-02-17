@@ -1,10 +1,13 @@
 const itemsMenu = document.querySelector("#itemsMenu");
+let itemsMenuArray = [];
 
-generateItemsOnGrid(player.inventory);
+generateItemsOnGrid(player.inventory.slice().sort(v => random(-1, 1)));
 
 function generateItemsOnGrid(items) {
+  itemsMenuArray = items;
   if(!Array.isArray(items)) return;
   const itemBox = itemsMenu.querySelector(".inventoryContainer .inventoryBox");
+  itemBox.innerHTML = "";
 
   items.forEach(item => {
     let itemHover = item.hoverText?.() ?? "";
@@ -56,3 +59,80 @@ function updateItemsMenuHotbar() {
 itemsMenu.querySelector("#levelsMenuButton").addEventListener("click", e => {
   document.body.classList = "levelMenu"
 });
+
+itemsMenu.addEventListener("click", e => {
+  const container = itemsMenu.querySelector("#itemMenuPopUp .container");
+  for(let i = 0, parent = e.target; i < 10; i++, parent = parent?.parentNode) {
+    if(parent?.classList?.contains("container")) return;
+  } if(!e.target.parentNode?.classList.contains("inventoryBox")) return closePopUp();
+
+  const itemElements = itemsMenu.querySelector(".inventoryBox").childNodes;
+  const index = Array.from(itemElements).indexOf(e.target);
+  const item = itemsMenuArray[index];
+
+  if(container.getAttribute("index") !== "" && index == container.getAttribute("index")) return closePopUp();
+  
+  container.innerHTML = `
+  <div class="equipBox">
+    <p>Equip to hotbar:</p>
+  </div>`
+
+  for(let i = 1; i <= Object.keys(player.hotbar).length; i++) {
+    const hotbarItem = player.hotbar["slot" + i] ?? {};
+    const num = item.slot?.startsWith("hotbarSlot") ? +item.slot.substr(10) : -1;
+    const div = document.createElement("div");
+    div.classList.add("equipHotbar");
+    if(num == i) {
+      div.classList.add("remove");
+      div.innerHTML = `
+      <p class="slotText">\xa0\xa0• ${hotbarItem.name ?? ""}</p>
+      <p class="hoverText">\xa0\xa0• Unequip slot ${i}</p>`
+    } else if(hotbarItem.id) {
+      div.classList.add("replace");
+      div.innerHTML = `
+      <p class="slotText">\xa0\xa0• Replace item on slot ${i}</p>
+      <p class="hoverText">\xa0\xa0• ${hotbarItem.name ?? ""}</p>`
+    } else if(num !== -1) {
+      div.classList.add("switch");
+      div.innerHTML = `<p class="slotText">\xa0\xa0• Swith to hotbar slot ${i}</p>`
+    } else {
+      div.classList.add("add");
+      div.innerHTML = `<p class="slotText">\xa0\xa0• Add to hotbar slot ${i}</p>`
+    }
+
+    div.addEventListener("click", (e, slot = i) => {
+      if(num > -1) player.hotbar["slot" + num] = {};
+      player.hotbar["slot" + slot].slot = null;
+      player.hotbar["slot" + slot] = item;
+      item.slot = "hotbarSlot" + slot;
+
+      if(num == slot) {
+        player.hotbar["slot" + slot] = {};
+        item.slot = null;
+      }
+
+      updateItemsMenuHotbar();
+      generateItemsOnGrid(itemsMenuArray);
+      closePopUp();
+    });
+
+    container.append(div);
+  }
+
+  container.style.left = e.x + 10 + "px";
+  container.style.top = e.y - 10 + "px";
+  container.setAttribute("index", index);
+
+  function closePopUp() {
+    container.setAttribute("index", "");
+    container.innerHTML = "";
+  }
+});
+
+itemsMenuInventoryResize();
+window.addEventListener("resize", itemsMenuInventoryResize);
+function itemsMenuInventoryResize() {
+  const num1 = (innerWidth - 550);
+  itemsMenu.querySelector(".inventoryContainer").style.width = num1 - 70 - num1 % 80 + "px";
+  console.log(innerWidth)
+}
