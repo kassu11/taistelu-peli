@@ -34,30 +34,24 @@
       .container {
         position: absolute;
         z-index: 3;
-        background: black;
+        background: rgb(14, 14, 14);
         cursor: pointer;
         padding-top: 3px;
         padding-bottom: 3px;
 
         &:not([index=""]) {
-          border: 2px solid rgb(190, 190, 190)
+          border: 2px solid rgb(0, 0, 0);
         }
 
         div {
           padding: 2px 5px;
           position: relative;
-          width: 200px;
-          height: 20px;
         }
 
         p {
-          position: absolute;
           left: 5px;
           margin: 0px;
           padding: 0px;
-          width: calc(100% - 10px);
-          top: 50%;
-          transform: translateY(-50%);
           font-family: font3;
           font-weight: 500;
           overflow: hidden;
@@ -65,45 +59,44 @@
           text-overflow: ellipsis;
         }
 
+        .equipBox {
+          p {
+            font-weight: 600;
+            color: rgb(236, 236, 236);
+          }
+        }
+
         .equipHotbar {
+          transition: .1s background, .1s padding;
+          padding: 0px;
+          padding-right: 7px;
+          padding-left: 10px;
+
+          > p {
+            transition: .1s text-shadow;
+          }
+
+          &:hover {
+            background: #000000;
+            padding-left: 12px;
+            padding-right: 5px;
+
+            > p {
+              text-shadow: 0 0 5px currentColor;
+            }
+          }
           
-          &.add {
+          &.add, &.switch {
             color: rgb(73, 255, 73);
           }
-
+          &.swap {
+            color: rgb(0, 194, 0);
+          }
           &.replace {
             color: rgb(255, 109, 109);
-            &:hover {
-              color: #0000;
-              .hoverText {
-                color: yellow;
-              }
-            }
           }
-
           &.remove {
-            color: rgb(255, 255, 255);
-
-            .slotText {
-              font-weight: 800;
-            }
-
-            &:hover {
-              color: #0000;
-              .hoverText {
-                color: rgb(255, 94, 255);
-                font-weight: 500;
-              }
-            }
-          }
-
-          &.switch {
-            color: rgb(255, 255, 122);
-          }
-
-          .hoverText {
-            color: #0000;
-            font-weight: 800;
+            color: rgb(255, 66, 255);
           }
         }
       }

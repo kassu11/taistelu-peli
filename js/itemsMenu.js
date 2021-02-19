@@ -62,16 +62,21 @@ itemsMenu.querySelector("#levelsMenuButton").addEventListener("click", e => {
 
 itemsMenu.addEventListener("click", e => {
   const container = itemsMenu.querySelector("#itemMenuPopUp .container");
+  const hasSlot = e.target.classList.contains("slot");
   for(let i = 0, parent = e.target; i < 10; i++, parent = parent?.parentNode) {
     if(parent?.classList?.contains("container")) return;
-  } if(!e.target.parentNode?.classList.contains("inventoryBox")) return closePopUp();
+  } if(!e.target.parentNode?.classList.contains("inventoryBox") && !hasSlot) return closePopUp();
 
   const itemElements = itemsMenu.querySelector(".inventoryBox").childNodes;
-  const index = Array.from(itemElements).indexOf(e.target);
-  const item = itemsMenuArray[index];
+  const hotbarElements = itemsMenu.querySelectorAll(".hotbarContainer .hotbarBox .slot");
+  const hotbarIndex = Array.from(hotbarElements).indexOf(e.target) + 1;
+  const index = hasSlot ? "hotbar" + hotbarIndex : Array.from(itemElements).indexOf(e.target);
+  const item = hotbarIndex != 0 ? player.hotbar["slot" + hotbarIndex] : itemsMenuArray[index] ?? {};
 
   if(container.getAttribute("index") !== "" && index == container.getAttribute("index")) return closePopUp();
+  if(hasSlot && item.id == null) return closePopUp();
   
+  if(document.querySelector("#hoverBox div")) document.querySelector("#hoverBox div").style.opacity = 0;
   container.innerHTML = `
   <div class="equipBox">
     <p>Equip to hotbar:</p>
@@ -84,24 +89,29 @@ itemsMenu.addEventListener("click", e => {
     div.classList.add("equipHotbar");
     if(num == i) {
       div.classList.add("remove");
-      div.innerHTML = `
-      <p class="slotText">\xa0\xa0• ${hotbarItem.name ?? ""}</p>
-      <p class="hoverText">\xa0\xa0• Unequip slot ${i}</p>`
-    } else if(hotbarItem.id) {
+      div.innerHTML = `<p class="slotText">${i}. Unequip ${hotbarItem.name ?? ""}</p>`
+    } else if(hotbarItem.id && num == -1) {
       div.classList.add("replace");
-      div.innerHTML = `
-      <p class="slotText">\xa0\xa0• Replace item on slot ${i}</p>
-      <p class="hoverText">\xa0\xa0• ${hotbarItem.name ?? ""}</p>`
+      div.innerHTML = `<p class="slotText">${i}. Replace ${hotbarItem.name ?? ""}</p>`
+    } else if(hotbarItem.id && num !== -1) {
+      div.classList.add("swap");
+      div.innerHTML = `<p class="slotText">${i}. Swap with ${hotbarItem.name ?? ""}</p>`
     } else if(num !== -1) {
       div.classList.add("switch");
-      div.innerHTML = `<p class="slotText">\xa0\xa0• Swith to hotbar slot ${i}</p>`
+      div.innerHTML = `<p class="slotText">${i}. Switch to empty</p>`
     } else {
       div.classList.add("add");
-      div.innerHTML = `<p class="slotText">\xa0\xa0• Add to hotbar slot ${i}</p>`
+      div.innerHTML = `<p class="slotText">${i}. Add to empty</p>`
     }
 
     div.addEventListener("click", (e, slot = i) => {
-      if(num > -1) player.hotbar["slot" + num] = {};
+      if(num > -1 && num != slot) {
+        if(player.hotbar["slot" + slot].id) {
+          player.hotbar["slot" + num] = player.hotbar["slot" + slot];
+          player.hotbar["slot" + num].slot = "hotbarSlot" + num;
+          player.hotbar["slot" + slot] = {};
+        } else player.hotbar["slot" + num] = {};
+      }
       player.hotbar["slot" + slot].slot = null;
       player.hotbar["slot" + slot] = item;
       item.slot = "hotbarSlot" + slot;
@@ -119,13 +129,16 @@ itemsMenu.addEventListener("click", e => {
     container.append(div);
   }
 
-  container.style.left = e.x + 10 + "px";
-  container.style.top = e.y - 10 + "px";
+  const maxY = innerHeight - container.getBoundingClientRect().height - 10;
+  const maxX = innerWidth - container.getBoundingClientRect().width - 10;
+  container.style.left = Math.min(e.x + 10, maxX) + "px";
+  container.style.top = Math.min(e.y + 10, maxY) + "px";
   container.setAttribute("index", index);
 
   function closePopUp() {
     container.setAttribute("index", "");
     container.innerHTML = "";
+    if(document.querySelector("#hoverBox div")) document.querySelector("#hoverBox div").style.opacity = 1;
   }
 });
 
@@ -134,5 +147,4 @@ window.addEventListener("resize", itemsMenuInventoryResize);
 function itemsMenuInventoryResize() {
   const num1 = (innerWidth - 550);
   itemsMenu.querySelector(".inventoryContainer").style.width = num1 - 70 - num1 % 80 + "px";
-  console.log(innerWidth)
 }
