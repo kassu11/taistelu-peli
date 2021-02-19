@@ -67,8 +67,8 @@ Item.prototype.calcDamage = function() {
 
   return {
     meleDmg: Math.max( Math.floor( random(minMeleDmg, maxMeleDmg) ), 0 ),
-    minMeleDmg,
-    maxMeleDmg
+    minMeleDmg: Math.floor(minMeleDmg),
+    maxMeleDmg: Math.floor(maxMeleDmg)
   }
 }
 
