@@ -6,6 +6,14 @@ const enemies = {
     items: [
       items["weak_stick"],
     ],
+    effects: [
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+      // {id: "Strength", power: 1, duration: 3},
+    ],
     img: "vihu1.png",
     imgTop: 1,
   },

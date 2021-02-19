@@ -39,7 +39,7 @@
         padding-top: 3px;
         padding-bottom: 3px;
 
-        &:not([index=""]) {
+        &:not([index=""])[index] {
           border: 2px solid rgb(0, 0, 0);
         }
 

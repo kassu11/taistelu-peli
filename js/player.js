@@ -4,9 +4,9 @@ let player = new Player({
   maxHp: 100,
   maxMp: 50,
   inventory: [
-    {...items["wooden_sword"], slot: "hotbarSlot1"},
+    {...items["wooden_sword"], slot: "hotbarSlot4"},
     {...items["weak_stick"], slot: "hotbarSlot2"},
-    items["dmgBooster"],
+    {...items["dmgBooster"], slot: "hotbarSlot1"},
     {...items["stone_sword"], slot: "hotbarSlot3"},
     items["stone_sword"],
     items["weak_stick"],
@@ -101,7 +101,31 @@ let player = new Player({
     items["dmgBooster"],
     items["wooden_sword"],
   ],
-  currentSlot: "slot1"
+  currentSlot: "slot1",
+  effects: [
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+    // {id: "Strength", power: 1, duration: 3},
+  ]
 });
 
 
@@ -112,6 +136,8 @@ function Player(arr) {
   this.maxMp = arr.maxMp;
 
   this.currentSlot = arr.currentSlot;
+
+  this.effects = arr.effects?.map(effect => new Effect(effect)) || [];
 
   this.hotbar = {
     "slot1": {},
@@ -129,6 +155,13 @@ function Player(arr) {
   }) ?? [];
 }
 
+
+Player.prototype.effect = function(name, power, duration) {
+  const effectSlotNumber = this.effects?.findIndex(({id}) => id == name);
+  const effectSlot = effectSlotNumber == -1 ? this.effects.length : effectSlotNumber;
+
+  this.effects[effectSlot] = new Effect({id: name, power, duration});
+}
 // hotbarSlot1
 
 

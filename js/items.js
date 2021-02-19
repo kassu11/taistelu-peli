@@ -28,15 +28,16 @@ const items = {
   dmgBooster: {
     id: "dmgBooster",
     name: "Damage booster",
-    useTime: 2,
+    useTime: 1,
     image: "voimaLääke.png",
     // particle: "explosion",
     selfEffect: [
-      {id: "Strength", power: 5, duration: 2}
+      {id: "Strength", power: 5, duration: 3}
     ],
     giveEffect: [
       {id: "Strength", power: 50, duration: 20}
-    ]
+    ],
+    needTarget: false
   }
 }
 
@@ -52,6 +53,8 @@ function Item(item, user) {
   this.particle = base.particle;
   this.slot = item.slot;
 
+  this.needTarget = item.needTarget ?? true;
+
   this.selfEffect = item.selfEffect?.map(effect => new Effect(effect)) ?? [];
   this.giveEffect = item.giveEffect?.map(effect => new Effect(effect)) ?? [];
 }
@@ -63,14 +66,17 @@ Item.prototype.calcDamage = function() {
   const maxMeleDmg = (this.maxMeleDmg ?? 0) * dmgPercentage;
 
   return {
-    meleDmg: Math.max( Math.floor( random(minMeleDmg, maxMeleDmg) ), 0 )
+    meleDmg: Math.max( Math.floor( random(minMeleDmg, maxMeleDmg) ), 0 ),
+    minMeleDmg,
+    maxMeleDmg
   }
 }
 
 Item.prototype.hoverText = function() {
   let text = `<cl>itemTitle<cl>${this.name}§`;
-  if(this.minMeleDmg && this.maxMeleDmg) text +=`\nDamage: §<c>#ff3636<c><css>font-weight: 600<css>${this.minMeleDmg}-${this.maxMeleDmg}§`;
-  else if(this.minMeleDmg || this.maxMeleDmg) text +=`\nDamage: §<c>#ff3636<c><css>font-weight: 600<css>${this.minMeleDmg ?? this.maxMeleDmg}§`;
+  const calcDmg = this.calcDamage();
+  if(calcDmg.minMeleDmg && calcDmg.maxMeleDmg) text +=`\nDamage: §<c>#ff3636<c><css>font-weight: 600<css>${calcDmg.minMeleDmg}-${calcDmg.maxMeleDmg}§`;
+  else if(calcDmg.minMeleDmg || calcDmg.maxMeleDmg) text +=`\nDamage: §<c>#ff3636<c><css>font-weight: 600<css>${calcDmg.minMeleDmg ?? calcDmg.maxMeleDmg}§`;
   if(this.useTime) text += `\nUse time: §${this.useTime} Rounds <c>yellow<c>§`;
 
   return text;

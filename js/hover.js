@@ -42,6 +42,7 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
     hoverBox.append(div);
 
     div.style.display = div.querySelector("pre").textContent ? null : "none";
+    moveHoverBlock();
   }
 
   function keyUpAndDown(keyMetaData) {

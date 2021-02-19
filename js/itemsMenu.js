@@ -60,17 +60,17 @@ itemsMenu.querySelector("#levelsMenuButton").addEventListener("click", e => {
   document.body.classList = "levelMenu"
 });
 
-itemsMenu.addEventListener("click", e => {
+itemsMenu.addEventListener("click", ({target, x, y}) => {
   const container = itemsMenu.querySelector("#itemMenuPopUp .container");
-  const hasSlot = e.target.classList.contains("slot");
-  for(let i = 0, parent = e.target; i < 10; i++, parent = parent?.parentNode) {
+  const hasSlot = target.classList.contains("slot");
+  for(let i = 0, parent = target; i < 10; i++, parent = parent?.parentNode) {
     if(parent?.classList?.contains("container")) return;
-  } if(!e.target.parentNode?.classList.contains("inventoryBox") && !hasSlot) return closePopUp();
+  } if(!target.parentNode?.classList.contains("inventoryBox") && !hasSlot) return closePopUp();
 
   const itemElements = itemsMenu.querySelector(".inventoryBox").childNodes;
   const hotbarElements = itemsMenu.querySelectorAll(".hotbarContainer .hotbarBox .slot");
-  const hotbarIndex = Array.from(hotbarElements).indexOf(e.target) + 1;
-  const index = hasSlot ? "hotbar" + hotbarIndex : Array.from(itemElements).indexOf(e.target);
+  const hotbarIndex = Array.from(hotbarElements).indexOf(target) + 1;
+  const index = hasSlot ? "hotbar" + hotbarIndex : Array.from(itemElements).indexOf(target);
   const item = hotbarIndex != 0 ? player.hotbar["slot" + hotbarIndex] : itemsMenuArray[index] ?? {};
 
   if(container.getAttribute("index") !== "" && index == container.getAttribute("index")) return closePopUp();
@@ -104,7 +104,7 @@ itemsMenu.addEventListener("click", e => {
       div.innerHTML = `<p class="slotText">${i}. Add to empty</p>`
     }
 
-    div.addEventListener("click", (e, slot = i) => {
+    div.addEventListener("click", ({}, slot = i) => {
       if(num > -1 && num != slot) {
         if(player.hotbar["slot" + slot].id) {
           player.hotbar["slot" + num] = player.hotbar["slot" + slot];
@@ -131,8 +131,8 @@ itemsMenu.addEventListener("click", e => {
 
   const maxY = innerHeight - container.getBoundingClientRect().height - 10;
   const maxX = innerWidth - container.getBoundingClientRect().width - 10;
-  container.style.left = Math.min(e.x + 10, maxX) + "px";
-  container.style.top = Math.min(e.y + 10, maxY) + "px";
+  container.style.left = Math.min(x + 10, maxX) + "px";
+  container.style.top = Math.min(y + 10, maxY) + "px";
   container.setAttribute("index", index);
 
   function closePopUp() {

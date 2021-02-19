@@ -19,6 +19,8 @@ function updateHotbarHovers() {
   updatePlayersHotbar();
 }
 
+startLevel("level_3");
+
 function startLevel(lvlId, time) {
   player.hp = player.maxHp;
   player.mp = player.maxMp;
@@ -94,38 +96,51 @@ figtingScreen.querySelector(".endFightBox").addEventListener("click", () => {
 figtingScreen.querySelector(".skipRoundBox").addEventListener("click", () => {
   if(currentLevel.enemyRounds !== 0) return;
   currentLevel.enemyRounds = 1;
+  currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
+  player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
   startEnemyTurn();
 });
 
-document.querySelector(".enemyContainer .enemyBox").addEventListener("click", e => {
+document.querySelector(".enemyContainer").addEventListener("click", e => {
+  const item = player.hotbar[player.currentSlot];
   let target = e.target;
-  while(!target.classList.contains("enemyCard")) {
+  const hasNotTarget = (e.target.classList.contains("clickZone") && !item.needTarget);
+  while(!target.classList.contains("enemyCard") && !hasNotTarget) {
     target = target?.parentElement;
     if(target.classList.contains("enemyContainer") || target == null) return;
   } 
-  const item = player.hotbar[player.currentSlot];
-  const enemy = currentLevel.enemies.get(target);
-  if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds > 0) return;
+  const enemy = hasNotTarget ? new Enemy(enemies["octopus"]) : currentLevel.enemies.get(target);
+  if(hasNotTarget) {
+    if(currentLevel.enemyRounds > 0) return;
+  } else if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds > 0) return;
   
   currentLevel.enemyRounds = item.useTime ?? 1;
   currentLevel.roundNum += 1;
-  currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
-  figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
 
+  item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
+
+  figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
+  
+  
   const dmg = item.calcDamage().meleDmg;
   enemy.hp -= dmg;
-
-  if(item.particle) AddBattleParciles({x: e.x, y: e.y}, item.particle);
-  AddBattleParciles({x: e.x, y: e.y, dmg}, "meleDmg");
-
-  target.style.animationName = 'none';
-  target.offsetHeight; /* trigger reflow */
-  target.style.animationName = "shake" + random(0, 9);
+  
+  if(!hasNotTarget) {
+    if(item.particle) AddBattleParciles({x: e.x, y: e.y}, item.particle);
+    AddBattleParciles({x: e.x, y: e.y, dmg}, "meleDmg");
+    target.style.animationName = 'none';
+    target.offsetHeight; /* trigger reflow */
+    target.style.animationName = "shake" + random(0, 9);
+  }
+  
+  currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
+  player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
 
   updateHotbarHovers();
   currentLevel.enemies.forEach((enemy, card) => updateEnemyCard(card));
   updateEffectHovers();
-  
+  updatePlayerEffectBox();
+
   if(enemy.hp <= 0) {
     removeElement(target, 2500);
     currentLevel.enemies.delete(target);
@@ -163,29 +178,60 @@ function updateEnemyCard(target) {
 
     let text = `<c>yellow<c>${effect.title} <f>20px<f> § \n •  Effect lasts ${effect.duration} rounds`;
 
-
     addHover([div, "enemyEffect", `${index}§${effect.title}§${effect.duration}`], text);
     target.querySelector(".effectContainer .effectBox").append(div);
+  });
+}
+
+function updatePlayerEffectBox() {
+  figtingScreen.querySelector(".playerBox .centerContainer .effectBox").innerHTML = "";
+  player.effects.forEach((effect, index) => {
+    const div = document.createElement("div");
+    const img = document.createElement("img");
+    img.src = effect.img ?? "";
+    const p = document.createElement("p");
+    p.textContent = effect.duration;
+    div.append(img, p);
+
+    let text = `<c>yellow<c>${effect.title} <f>20px<f> § \n •  Effect lasts ${effect.duration} rounds`;
+
+    addHover([div, "playerEffect", `${index}§${effect.title}§${effect.duration}`], text);
+    figtingScreen.querySelector(".playerBox .centerContainer .effectBox").append(div);
   });
 }
 
 function updateEffectHovers() {
   const hover = document.querySelector("#hoverBox div");
   const enemyValues = hover?.getAttribute("enemyEffect");
-  if(hover == null || enemyValues == null) return;
+  const playerValues = hover?.getAttribute("playerEffect");
+  if(hover == null || (enemyValues == null && playerValues == null)) return;
   hover.style.display = "none";
+
+  console.log(hover)
+  console.log(enemyValues)
+  console.log(playerValues)
 
   if(enemyValues) {
     const [index, title, duration] = enemyValues.split("§");
 
     for(const [card, enemy] of currentLevel.enemies) {
       const effect = enemy.effects[+index];
-      console.log(effect)
-      if(effect?.title == title && effect?.title == duration) {
+      if(effect?.title == title && effect?.duration == duration) {
         hover.style.display = null;
         return;
       }
     }
+    window.onkeydown = null;
+    window.onkeyup = null;
+  } else if(playerValues) {
+    const [index, title, duration] = playerValues.split("§");
+
+    const effect = player.effects[+index];
+    if(effect?.title == title && effect?.duration == duration) {
+      hover.style.display = null;
+      return;
+    }
+    
     window.onkeydown = null;
     window.onkeyup = null;
   }
@@ -271,8 +317,11 @@ async function startEnemyTurn() {
     currentLevel.roundNum += 1;
     figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
     currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
+    player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
     currentLevel.enemies.forEach((enemy, card) => updateEnemyCard(card));
     updateEffectHovers();
+    updateHotbarHovers();
+    updatePlayerEffectBox();
     currentLevel.enemyRounds--;
   };
   document.querySelector("#figtingScreen").classList.remove("enemyTurn");
