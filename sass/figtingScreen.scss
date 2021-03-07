@@ -1054,6 +1054,19 @@ html {
                 transition: color .3s, opacity .15s;
               }
 
+              .itemAmount {
+                background: #989898;
+                font-family: font2;
+                font-size: 23px;
+                padding-right: 13px;
+                padding-left: 3px;
+                clip-path: polygon(0 0, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
+                letter-spacing: -1px;
+                text-shadow: 0 0 5px black;
+                min-width: 30px;
+                pointer-events: none;
+              }
+
               &.selected {
                 border: 5px solid #616161;
                 top: -4px;

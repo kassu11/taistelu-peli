@@ -188,9 +188,6 @@ function customTextSyntax(syn = "") {
   }
 }
 
-document.__proto__.test = function() {
-  console.log("???")
-}
 
 // <f><f> = font size
 // \n = line break

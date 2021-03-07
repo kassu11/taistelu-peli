@@ -20,11 +20,13 @@ function updateHotbarHovers() {
 }
 
 function startLevel(lvlId, time) {
-  player.hp = player.maxHp;
+  player.hp = player.maxHpF();
   player.mp = player.maxMp;
+  if(!(time > 0)) player.effects = [];
   figtingScreen.querySelectorAll(".playerBox > div").forEach(container => container.style = null);
   updateHotbarHovers();
   updatePlayerBars();
+  updatePlayerEffectBox();
   document.body.classList = "figtingMode";
   currentLevel.id = lvlId;
   currentLevel.enemies.clear();
@@ -105,7 +107,7 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
   const hasNotTarget = (e.target.classList.contains("clickZone") && !item.needTarget);
   while(!target.classList.contains("enemyCard") && !hasNotTarget) {
     target = target?.parentElement;
-    if(target.classList.contains("enemyContainer") || target == null) return;
+    if(target?.classList.contains("enemyContainer") || target == null) return;
   } 
   const enemy = hasNotTarget ? new Enemy(enemies["octopus"]) : currentLevel.enemies.get(target);
   if(hasNotTarget) {
@@ -119,9 +121,14 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
 
   figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
   
-  
   const dmg = item.calcDamage().meleDmg;
   enemy.hp -= dmg;
+
+  if(item.amount && --item.amount <= 0) {
+    const index = player.inventory.findIndex(e => e.slot == item.slot);
+    if(index != -1) player.inventory.splice(index, 1);
+    player.hotbar[player.currentSlot] = {};
+  }
   
   if(!hasNotTarget) {
     if(item.particle) AddBattleParciles({x: e.x, y: e.y}, item.particle);
@@ -130,7 +137,7 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
     target.offsetHeight; /* trigger reflow */
     target.style.animationName = "shake" + random(0, 9);
   }
-  
+
   currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
   player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
 
@@ -145,7 +152,7 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
     target.classList.add("deathAnimation");
     target.style.animationName = "deathAnimation";
     if(currentLevel.enemies.size == 0) {
-      setTimeout(() => document.querySelector("#figthEndScreen").classList = "victory", 1900)
+      setTimeout(() => document.querySelector("#figthEndScreen").classList = "victory", 1900);
     } else setTimeout(startEnemyTurn, 1900);
   } else startEnemyTurn();  
 });
@@ -237,10 +244,10 @@ function updateEffectHovers() {
 
 function updatePlayerBars() {
   const target = figtingScreen.querySelector(".playerBox");
-  const hpPercentage = Math.max(player.hp / player.maxHp, 0) * 100;
+  const hpPercentage = Math.max(player.hp / player.maxHpF(), 0) * 100;
   const mpPercentage = Math.max(player.mp / player.maxMp, 0) * 100;
 
-  target.querySelector(".hpText").textContent = player.hp + "/" + player.maxHp;
+  target.querySelector(".hpText").textContent = player.hp + "/" + player.maxHpF();
   target.querySelector(".mpText").textContent = player.mp + "/" + player.maxMp;
 
   target.querySelector(".hpBG1").style.width = hpPercentage + "%";
@@ -289,6 +296,8 @@ async function startEnemyTurn() {
         playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
         playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
       }
+
+      if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
 
       setTimeout(e => {
         const particleX = window.innerWidth / 2 + cardLeftoffset;
@@ -428,4 +437,5 @@ document.querySelectorAll("#figthEndScreen .backButton").forEach(button => butto
   document.querySelector("#figthEndScreen").classList = "hidden";
   document.querySelector("#roundNumber").textContent = 1;
   document.body.classList = "levelMenu";
+  player.effects = [];
 }));

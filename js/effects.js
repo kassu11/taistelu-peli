@@ -3,6 +3,7 @@ function Effect(effect) {
   this.power = effect.power;
   this.title = `${effect.id} ${effect.power}`;
   this.duration = effect.duration;
+  this.effectStatus = effect.effectStatus ?? "good";
 
   switch(effect.id) {
     case "Strength":

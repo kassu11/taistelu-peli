@@ -43,6 +43,21 @@
           border: 2px solid rgb(0, 0, 0);
         }
 
+        .itemInfo {
+          margin-bottom: 15px;
+
+          pre {
+            background: #1e1e1e;
+            border-radius: 5px;
+            font-family: font3;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 0px;
+            margin: 0px;
+            padding: 1px 8px 5px 5px;
+          }
+        }
+
         div {
           padding: 2px 5px;
           position: relative;
@@ -148,23 +163,6 @@
               user-select: none;
             }
   
-            .hotbarNum {
-              background: #00d600;
-              position: absolute;
-              top: -6px;
-              left: -6px;
-              margin: 0px;
-              padding: 0px 3px;
-              height: 30px;
-              width: 18px;
-              font-family: font3;
-              font-size: 22px;
-              z-index: 1;
-              text-shadow: 0 0 3px black;
-              font-weight: 900;
-              border-radius: 0px 0px 5px 0px;
-            }
-  
             img {
               position: absolute;
               left: 50%;
@@ -178,64 +176,147 @@
               image-rendering: optimizespeed;
             }
           }
+
+          .hotbar, .armor {
+            border-color: var(--color);
+
+            .slotNum {
+              background: var(--color);
+              position: absolute;
+              top: -5px;
+              left: -5px;
+              margin: 0px;
+              padding: 0px 3px;
+              height: 30px;
+              width: 18px;
+              font-family: font3;
+              font-size: 22px;
+              z-index: 1;
+              text-shadow: 0 0 3px black;
+              font-weight: 900;
+              border-radius: 0px 0px 5px 0px;
+            }
+          }
+
+          .hotbar {--color: #00d600} 
+          .armor {--color: #008eff}
         }
       }
-  
-      .hotbarContainer {
+
+      .rightContainer {
         position: relative;
-        top: calc(100% - 180px);
+        top: 0px;
         right: 0px;
         width: 550px;
-        height: 180px;
-        background: #171717;
-        display: grid;
-        place-items: center;
+        height: 100%;
         flex-grow: 1;
-  
-        .hotbarBox {
-          display: flex;
-  
-          .slot {
-            position: relative;
-            width: 100px;
-            margin: 3px;
-            height: 150px;
-            top: 0px;
-            background: #131313;
-            border: 5px solid #3d3d3d;
-            box-shadow: inset 0 0 30px black;
-            transition: top .15s, background .15s;
-            cursor: pointer;
-  
-            > p {
-              position: absolute;
-              margin: 0px;
-              color: white;
+
+        .hotbarContainer {
+          position: absolute;
+          bottom: 0px;
+          right: 0px;
+          width: 100%;
+          height: 180px;
+          background: #171717;
+          display: grid;
+          place-items: center;
+    
+          .hotbarBox {
+            display: flex;
+    
+            .slot {
+              position: relative;
+              width: 100px;
+              margin: 3px;
+              height: 150px;
+              top: 0px;
+              background: #131313;
+              border: 5px solid #3d3d3d;
+              box-shadow: inset 0 0 30px black;
+              transition: top .15s, background .15s;
+              cursor: pointer;
+    
+              > p {
+                position: absolute;
+                margin: 0px;
+                color: white;
+              }
+    
+              img {
+                image-rendering: pixelated;
+                image-rendering: optimizespeed;
+                position: absolute;
+                width: calc(100% - 10px);
+                left: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                pointer-events: none;
+                user-select: none;
+              }
+
+              .itemAmount {
+                background: #989898;
+                font-family: font2;
+                font-size: 23px;
+                padding-right: 13px;
+                padding-left: 3px;
+                clip-path: polygon(0 0, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
+                letter-spacing: -1px;
+                text-shadow: 0 0 5px black;
+                min-width: 30px;
+                pointer-events: none;
+              }
+    
+              .slotNumber {
+                pointer-events: none;
+                user-select: none;
+                font-family: font1;
+                font-size: 75px;
+                width: 100%;
+                top: 4px;
+                left: 4px;
+                text-align: center;
+                opacity: .05;
+                transition: color .3s, opacity .15s;
+              }
             }
+          }
+        }
   
-            img {
-              image-rendering: pixelated;
-              image-rendering: optimizespeed;
-              position: absolute;
-              width: calc(100% - 10px);
-              left: 5px;
-              top: 50%;
-              transform: translateY(-50%);
-              pointer-events: none;
-              user-select: none;
-            }
+        .armorContainer {
+          position: relative;
+          background: red;
+          width: 100%;
+          height: 400px;
+          right: 0px;
+          display: grid;
+          place-items: center;
+
+          .armorBox {
+            background: blue;
+            position: absolute;
+
+            .armorSlot {
+              position: relative;
+              width: 100px;
+              height: 100px;
+              background: rgb(46, 46, 46);
+              border: 10px solid black;
+              margin: 10px;
   
-            .slotNumber {
-              pointer-events: none;
-              user-select: none;
-              font-family: font1;
-              font-size: 75px;
-              width: 100%;
-              top: 4px;
-              left: 4px;
-              text-align: center;
-              opacity: .05;
-              transition: color .3s, opacity .15s;
+              img {
+                pointer-events: none;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translateX(-50%) translateY(-50%);
+                max-width: calc(100% - 6px);
+                max-height: calc(100% - 6px);
+                object-fit: contain;
+                width: 1000%;
+                image-rendering: pixelated;
+                image-rendering: optimizespeed;
+              }
             }
           }
         }

@@ -23,12 +23,59 @@
       padding: 0px;
       margin: 0px;
       padding: 5px 8px 5px 5px;
-
-      .itemTitle {
-        font-weight: 800;
-        color: yellow;
-        font-size: 20px;
-      }
     }
+  }
+}
+
+#hoverBox > div > pre,
+#itemsMenu #itemMenuPopUp .container pre {
+  .itemTitle {
+    font-weight: 800;
+    color: yellow;
+    font-size: 1.25em;
+  }
+
+  .selfEffect {
+    color: #4083ff;
+    font-weight: 700;
+    font-size: 1.1em;
+  }
+
+  .effect {
+    background: #4c4c4c;
+    border-radius: 5px;
+    padding-bottom: 1px;
+    font-weight: 700;
+    color: #d6d6d6;
+    text-shadow: 0 0 3px black;
+  }
+
+  .effectDuration {
+    background: #463d00;
+    border-radius: 5px;
+    padding-bottom: 1px;
+    font-weight: 700;
+    color: #fff652;
+    line-height: 1.4;
+  }
+
+  .badEffect {
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 10px solid rgb(255, 36, 36);
+    position: relative;
+    top: 16px;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+
+  .goodEffect {
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 10px solid rgb(0, 255, 0);
+    position: relative;
+    margin-right: 5px;
+    margin-left: 5px;
+    bottom: 14px;
   }
 }
