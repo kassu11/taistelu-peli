@@ -83,7 +83,7 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
   const hotbarElements = isHotbarItem ? itemsMenu.querySelectorAll(".hotbarContainer .hotbarBox .slot") : null;
   const index = itemElements ? Array.from(itemElements).indexOf(target)
   : hotbarElements ? Array.from(hotbarElements).indexOf(target) + 1
-  : isArmorSlot ? "armor0" : null;
+  : isArmorSlot ? target.classList[1] : null;
   const item = isInvItem ? itemsMenuArray[index]
   : isHotbarItem ? player.hotbar["slot" + index]
   : isArmorSlot ? player.armor[target.classList[1]] : {};

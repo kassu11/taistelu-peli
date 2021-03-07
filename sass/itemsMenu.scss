@@ -285,23 +285,24 @@
   
         .armorContainer {
           position: relative;
-          background: red;
+          background: #212121;
           width: 100%;
           height: 400px;
           right: 0px;
           display: grid;
           place-items: center;
+          background: linear-gradient(90deg, #00234b 0%, #0055ab 50%, #00234b 100%);
+          border-bottom: 10px solid #000;
 
           .armorBox {
-            background: blue;
             position: absolute;
 
             .armorSlot {
               position: relative;
               width: 100px;
               height: 100px;
-              background: rgb(46, 46, 46);
-              border: 10px solid black;
+              background: #1d7eff;
+              border: 10px solid #002248;
               margin: 10px;
   
               img {
