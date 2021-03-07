@@ -17,7 +17,7 @@
       transform: translateX(-50%) translateY(-80%);
       height: 400px;
       width: 400px;
-      background: url("/images/explosion1.png") no-repeat;
+      background: url("../images/explosion1.png") no-repeat;
       opacity: .7;
       animation: explosion 1.2s ease-in-out forwards, playFrames 1.2s steps(25) forwards;
   
@@ -36,7 +36,7 @@
       transform: translateX(-50%) translateY(-80%);
       height: 300px;
       width: 400px;
-      background: url("/images/uus2.png") no-repeat;
+      background: url("../images/uus2.png") no-repeat;
       opacity: .7;
       animation: explosion2 2s ease-in-out forwards, playFrames 1s steps(21) forwards;
   
