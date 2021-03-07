@@ -8,50 +8,46 @@
     user-select: none;
     overflow: hidden;
   
-    > img {
+    > img, > div {
       position: absolute;
     }
   
     .explosion {
+      --width: -10000px;
       transform: translateX(-50%) translateY(-80%);
-      width: 200px;
+      height: 400px;
+      width: 400px;
+      background: url("/images/explosion1.png") no-repeat;
       opacity: .7;
-      animation-duration: 1.2s;
-      animation-name: explosion;
-      animation-fill-mode: forwards;
-      animation-timing-function: ease-in-out;
+      animation: explosion 1.2s ease-in-out forwards, playFrames 1.2s steps(25) forwards;
   
       @keyframes explosion {
-        0% {opacity: 1; width: 200px}
-        10% {width: 300px}
+        0% {transform: translateX(-50%) translateY(-80%) scale(.65); opacity: 1}
+        10% {transform: translateX(-50%) translateY(-80%) scale(.75)}
         50% {opacity: 1}
-        100% {opacity: 0; width: 250px}
+        100% {opacity: 0; transform: translateX(-50%) translateY(-80%) scale(.65)}
       }
-  
-      .enemyTurn & {
-        filter: opacity(.5);
-      }
+    
+      .enemyTurn & {filter: opacity(.5)}
     }
   
     .explosion2 {
+      --width: -8400px;
       transform: translateX(-50%) translateY(-80%);
+      height: 300px;
       width: 400px;
+      background: url("/images/uus2.png") no-repeat;
       opacity: .7;
-      animation-duration: 2s;
-      animation-name: explosion2;
-      animation-fill-mode: forwards;
-      animation-timing-function: ease-in-out;
+      animation: explosion2 2s ease-in-out forwards, playFrames 1s steps(21) forwards;
   
       @keyframes explosion2 {
-        0% {opacity: 1; width: 200px}
-        10% {width: 400px}
+        0% {transform: translateX(-50%) translateY(-80%) scale(.5); opacity: 1}
+        10% {transform: translateX(-50%) translateY(-80%) scale(1)}
         50% {opacity: 1}
-        100% {opacity: 0; width: 450px}
+        100% {opacity: 0; transform: translateX(-50%) translateY(-80%) scale(1.25)}
       }
   
-      .enemyTurn & {
-        filter: opacity(.8);
-      }
+      .enemyTurn & {filter: opacity(.8)}
     }
   
     .meleDmgPopUp {
@@ -89,4 +85,8 @@
       }
     }
   }
+}
+
+@keyframes playFrames {
+  100% {background-position: var(--width)}
 }

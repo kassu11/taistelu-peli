@@ -21,7 +21,7 @@ const items = {
     name: "Weak stick",
     minMeleDmg: 2,
     maxMeleDmg: 4,
-    useTime: 1,
+    useTime: 0,
     image: "taika.png",
     particle: "explosion"
   },

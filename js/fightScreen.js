@@ -19,6 +19,8 @@ function updateHotbarHovers() {
   updatePlayersHotbar();
 }
 
+startLevel("level_5")
+
 function startLevel(lvlId, time) {
   player.hp = player.maxHpF();
   player.mp = player.maxMp;

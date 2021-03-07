@@ -1,22 +1,19 @@
 function AddBattleParciles({x, y, dmg} = {}, type) {
   const box = document.querySelector("#figtingScreen .effectContainer");
-  const getTime = new Date().getTime();
   if(type == "explosion") {
-    const img = document.createElement("img");
-    img.src = "./images/giphy4.gif?" + getTime;
-    img.classList = "explosion"
-    img.style.left = x + "px";
-    img.style.top = y + "px";
-    removeElement(img, 1300);
-    box.append(img);
+    const div = document.createElement("div");
+    div.classList = "explosion"
+    div.style.left = x + "px";
+    div.style.top = y + "px";
+    removeElement(div, 1300);
+    box.append(div);
   } else if(type == "explosion2") {
-    const img = document.createElement("img");
-    img.src = "./images/uus.gif?" + getTime;
-    img.classList = "explosion2"
-    img.style.left = x + "px";
-    img.style.top = y + "px";
-    removeElement(img, 2000);
-    box.append(img);
+    const div = document.createElement("div");
+    div.classList = "explosion2"
+    div.style.left = x + "px";
+    div.style.top = y + "px";
+    removeElement(div, 2000);
+    box.append(div);
   } else if(type == "meleDmg" || type == "enemyMeleDmg") {
     if(dmg == null || dmg <= 0) return;
     const min = 100,
