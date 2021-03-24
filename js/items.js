@@ -54,7 +54,7 @@ const items = {
   chestplate: {
     id: "chestplate",
     name: "Panssari",
-    image: "basechest.png",
+    image: "basechest3.png",
     canEquipTo: "chest",
     hp: 50
   },

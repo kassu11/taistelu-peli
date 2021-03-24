@@ -10,7 +10,6 @@ let player = new Player({
     {...items["stone_sword"], slot: "hotbarSlot3"},
     items["stone_sword"],
     items["weak_stick"],
-    items["dmgBooster"],
     items["helmet"],
     items["chestplate"],
     items["legs"],

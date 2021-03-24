@@ -22,6 +22,16 @@ const enemies = {
       // {id: "Strength", power: 1, duration: 3},
       // {id: "Strength", power: 1, duration: 3},
     ],
+    drop: [
+      {item: items["helmet"], chance: .2},
+      {item: items["dmgBooster"], chance: .5, amount: [4, 10]},
+      [
+        {item: items["legs"], chance: .5},
+        {item: items["chestplate"], chance: .5},
+        {item: items["weak_stick"], chance: .5},
+        {type: "empty", chance: .2}
+      ]
+    ],
     img: "vihu1.png",
     imgTop: 1,
   },
@@ -32,6 +42,16 @@ const enemies = {
     items: [
       items["weak_stick"],
     ],
+    drop: [
+      {item: items["helmet"], chance: .2},
+      {item: items["dmgBooster"], chance: .5, amount: [4, 10]},
+      [
+        {item: items["legs"], chance: .5},
+        {item: items["chestplate"], chance: .5},
+        {item: items["weak_stick"], chance: .5},
+        {type: "empty", chance: .2}
+      ]
+    ],
     img: "vihu2.png",
     imgTop: 7,
   },
@@ -41,6 +61,16 @@ const enemies = {
     maxMp: 50,
     items: [
       items["weak_stick"],
+    ],
+    drop: [
+      {item: items["helmet"], chance: .2},
+      {item: items["dmgBooster"], chance: .5, amount: [4, 10]},
+      [
+        {item: items["legs"], chance: .5},
+        {item: items["chestplate"], chance: .5},
+        {item: items["weak_stick"], chance: .5},
+        {type: "empty", chance: .2}
+      ]
     ],
     img: "vihu3.png",
     imgTop: 7,
@@ -62,6 +92,16 @@ const enemies = {
       // {id: "Strength", power: 1, duration: 3},
       // {id: "Strength", power: 1, duration: 3},
     ],
+    drop: [
+      {item: items["helmet"], chance: .2},
+      {item: items["dmgBooster"], chance: .5, amount: [4, 10]},
+      [
+        {item: items["legs"], chance: .5},
+        {item: items["chestplate"], chance: .5},
+        {item: items["weak_stick"], chance: .5},
+        {type: "empty", chance: .2}
+      ]
+    ],
     img: "octopus.png",
     imgTop: 7,
   },
@@ -71,6 +111,16 @@ const enemies = {
     maxMp: 50,
     items: [
       items["wooden_sword"],
+    ],
+    drop: [
+      {item: items["helmet"], chance: .2},
+      {item: items["dmgBooster"], chance: .5, amount: [4, 10]},
+      [
+        {item: items["legs"], chance: .5},
+        {item: items["chestplate"], chance: .5},
+        {item: items["weak_stick"], chance: .5},
+        {type: "empty", chance: .2}
+      ]
     ],
     img: "enemy4.png",
     imgTop: 7,
@@ -89,6 +139,17 @@ function Enemy(enemy) {
   this.imgTop = enemy.imgTop;
   this.imgWidth = enemy.imgWidth;
   this.imgHeight = enemy.imgHeight;
+  
+  this.drop = enemy.drop?.map(row => {
+    if(row.item) return row;
+    else if(row.type != "empty") {
+      const chanceIndex = row.map(v => v.chance ?? 0);
+      const totalChance = chanceIndex.reduce((chance, value, index) => chanceIndex[index] = chance + value, 0);
+      const randomChance = Math.random() * totalChance;
+      const selectedItem = row.find((v, index) => randomChance <= chanceIndex[index]);
+      return {...selectedItem, chance: 1}
+    }
+  }) ?? [];
 
   this.effects = enemy.effects?.map(effect => new Effect(effect)) || [];
 }

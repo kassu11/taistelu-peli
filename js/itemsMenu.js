@@ -2,8 +2,6 @@ const itemsMenu = document.querySelector("#itemsMenu");
 const itemsMenuHoverOpacitys = [];
 let itemsMenuArray = [];
 
-generateItemsOnGrid(player.inventory.slice().sort(v => random(-1, 1)));
-
 function generateItemsOnGrid(items) {
   const armorSlotNames = ["head", "chest", "legs"];
   itemsMenuArray = items;
@@ -14,8 +12,6 @@ function generateItemsOnGrid(items) {
   items.forEach(item => {
     let itemHover = item.hoverText?.() ?? "";
     const div = document.createElement("div");
-    const img = document.createElement("img");
-    const p = document.createElement("p");
     div.classList.add("inv");
 
     if(item.slot) {
@@ -35,11 +31,18 @@ function generateItemsOnGrid(items) {
       }
     }
 
-    if(item.image) img.src = "./images/" + item.image;
+    if(item.image) {
+      const img = document.createElement("img");
+      img.src = "./images/" + item.image;
+      div.append(img);
+    } if(item.amount) {
+      const itemAmount = document.createElement("p");
+      itemAmount.textContent = item.amount;
+      itemAmount.classList.add("itemAmount");
+      div.append(itemAmount);
+    }
 
-    addHover(div, itemHover, []);
-
-    div.append(img, p);
+    addHover(div, itemHover, []);    
     itemBox.append(div);
   });
 }
