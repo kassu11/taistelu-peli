@@ -26,5 +26,7 @@ const levels = {
 
 document.querySelector("#inventoryButton").addEventListener("click", e => {
   document.body.classList = "itemsMenu";
+  updateItemsMenuHotbar();
+  updateItemsArmor();
   generateItemsOnGrid(player.inventory.slice());
 });

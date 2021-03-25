@@ -6,8 +6,8 @@ const globalHoverHiiri = {x: 0, y: 0};
 // ]
 // document.querySelector("popUpDmg").appendChild(luoTextiSyntaxt(testiTaulu[0]));
 
-addHover(".playerBox .hpBox", ["default", "ctrl\n\n\n\nasdasdasdhasdakjsdh", "alt", "shift"], ["ctrlKey", "altKey", "shiftKey"]);
-addHover(".playerBox .mpBox", "asdasdasd\nasdasd");
+// addHover(".playerBox .hpBox", ["default", "ctrl\n\n\n\nasdasdasdhasdakjsdh", "alt", "shift"], ["ctrlKey", "altKey", "shiftKey"]);
+// addHover(".playerBox .mpBox", "asdasdasd\nasdasd");
 
 function addHover(target, texts = [], keys = ["default"], logic = "true") {
   const div = document.createElement("div");
@@ -156,8 +156,6 @@ function customTextSyntax(syn = "") {
       } else if(currentLine.startsWith("<v>")) {
         const [,variable, text=""] = currentLine.split("<v>");
         [lineText] = text.split("<");
-        console.log(variable)
-        console.log(selectedSpan)
         try {lineText = eval(variable) ?? "" + lineText}
         catch {return console.error(`"${variable}" is not defined`)}
         index = line.indexOf("<v>", index + 1);

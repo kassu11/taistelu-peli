@@ -47,8 +47,6 @@ function generateItemsOnGrid(items) {
   });
 }
 
-updateItemsMenuHotbar();
-
 function updateItemsMenuHotbar() {
   const hotbarBox = itemsMenu.querySelector(".hotbarBox");
   hotbarBox.innerHTML = "";
@@ -206,7 +204,6 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
   }
 });
 
-updateItemsArmor();
 function updateItemsArmor() {
   const armorBox = itemsMenu.querySelector(".menuWindow .armorContainer .armorBox");
   armorBox.innerHTML = "";
@@ -218,7 +215,10 @@ function updateItemsArmor() {
     div.classList.add(`armorSlot`, v);
 
     if(player.armor[v]?.id) img.src = "./images/" + item.image;
-    else img.src = "./images/base" + v + ".png";
+    else {
+      img.src = "./images/base" + v + ".png";
+      div.classList.add("empty");
+    }
     addHover(div, item.hoverText?.() ?? "", []);
     div.append(img);
     armorBox.append(div);

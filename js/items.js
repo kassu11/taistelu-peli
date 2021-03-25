@@ -32,11 +32,7 @@ const items = {
     image: "voimaLääke.png",
     // particle: "explosion",
     selfEffect: [
-      {id: "Strength", power: 5, duration: 3, effectStatus: "bad"},
-      {id: "Speed", power: 1, duration: 2, effectStatus: "good"},
-      {id: "Weakness", power: 10, duration: 6, effectStatus: "bad"},
-      {id: "Resistance", power: 3, duration: 2, effectStatus: "bad"},
-      {id: "Regenaration", power: 2, duration: 14},
+      {id: "Strength", power: 5, duration: 3, effectStatus: "good"}
     ],
     giveEffect: [
       {id: "Strength", power: 50, duration: 20}
@@ -61,9 +57,18 @@ const items = {
   legs: {
     id: "legs",
     name: "Jalat",
-    image: "baselegs.png",
+    image: "baselegs3.png",
     canEquipTo: "legs",
     hp: 50
+  },
+  hp_pot: {
+    id: "hp_pot",
+    name: "elämä pullo",
+    healV: 10,
+    useTime: 1,
+    amount: 10,
+    needTarget: false,
+    image: "hpPottu.png"
   }
 }
 
@@ -81,6 +86,7 @@ function Item(item, user) {
   this.amount = item.amount;
   this.canEquipTo = base.canEquipTo ?? "hotbar";
   this.hp = base.hp;
+  this.healV = base.healV;
 
   this.needTarget = base.needTarget ?? true;
 
@@ -105,9 +111,10 @@ Item.prototype.hoverText = function() {
   const text = [`<cl>itemTitle<cl>${this.name}§`];
   const calcDmg = this.calcDamage();
 
-  if(calcDmg.minMeleDmg && calcDmg.maxMeleDmg) text.push(`\nDamage: §<c>#ff3636<c><css>font-weight: 600<css>${calcDmg.minMeleDmg}-${calcDmg.maxMeleDmg}§`);
-  else if(calcDmg.minMeleDmg || calcDmg.maxMeleDmg) text.push(`\nDamage: §<c>#ff3636<c><css>font-weight: 600<css>${calcDmg.minMeleDmg ?? calcDmg.maxMeleDmg}§`);
+  if(calcDmg.minMeleDmg && calcDmg.maxMeleDmg) text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${calcDmg.minMeleDmg}-${calcDmg.maxMeleDmg}§`);
+  else if(calcDmg.minMeleDmg || calcDmg.maxMeleDmg) text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${calcDmg.minMeleDmg ?? calcDmg.maxMeleDmg}§`);
   if(this.useTime) text.push(`\nUse time: §${this.useTime} ${this.useTime > 1 ? "Rounds" : "Round"} <c>yellow<c>§`);
+  if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>600<b>§`);
 
   if(this.hp) text.push(`\nHealth boost: §${this.hp}HP<c>lime<c><b>700<b>§`);
 

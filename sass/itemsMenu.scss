@@ -149,14 +149,25 @@
           width: 100%;
           top: 0px;
           left: 0px;
-  
-          .inv{
+          
+          [class="inv"] {
+            &:hover {--color: #424242}
+          }
+
+          .inv {
+            --color: #2b2b2b;
             position: relative;
             width: 70px;
             height: 70px;
             background: #171717;
             margin: 5px;
-            border: 5px solid #2b2b2b;
+            border: 5px solid var(--color);
+            transition: border .15s, background .15s;
+            cursor: pointer;
+
+            &:hover {
+              background: #1f1f1f;
+            }
   
             * {
               pointer-events: none;
@@ -198,9 +209,8 @@
           }
 
           .hotbar, .armor {
-            border-color: var(--color);
-
             .slotNum {
+              transition: background .15s;
               background: var(--color);
               position: absolute;
               top: -5px;
@@ -218,8 +228,14 @@
             }
           }
 
-          .hotbar {--color: #00d600} 
-          .armor {--color: #008eff}
+          .hotbar {
+            --color: #00d600;
+            &:hover {--color: #00b800}
+          } 
+          .armor {
+            --color: #008eff;
+            &:hover {--color: #0067ba}
+          }
         }
       }
 
@@ -278,13 +294,16 @@
                 background: #989898;
                 font-family: font2;
                 font-size: 23px;
-                padding-right: 13px;
-                padding-left: 3px;
-                clip-path: polygon(0 0, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
+                padding-left: 18px;
+                padding-right: 5px;
+                text-align: right;
+                clip-path: polygon(calc(0% + 15px) 0%, 100% 0%, 100% 100%, 0% 100%);
                 letter-spacing: -1px;
                 text-shadow: 0 0 5px black;
                 min-width: 30px;
                 pointer-events: none;
+                right: 0px;
+                bottom: 0px;
               }
     
               .slotNumber {
@@ -338,6 +357,11 @@
                 image-rendering: pixelated;
                 image-rendering: optimizespeed;
               }
+            }
+
+            .armorSlot.empty {
+              opacity: .9;
+              filter: grayscale(1);
             }
           }
         }

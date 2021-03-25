@@ -19,7 +19,7 @@ function updateHotbarHovers() {
   updatePlayersHotbar();
 }
 
-startLevel("level_5"); // <-- poista myöhemmin
+// startLevel("level_5"); // <-- poista myöhemmin
 
 function startLevel(lvlId, time) {
   player.hp = player.maxHpF();
@@ -121,6 +121,8 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
   currentLevel.enemyRounds = item.useTime ?? 1;
   currentLevel.roundNum += 1;
 
+  if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
+
   item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
 
   figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
@@ -148,6 +150,7 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
   updateHotbarHovers();
   currentLevel.enemies.forEach((enemy, card) => updateEnemyCard(card));
   updateEffectHovers();
+  updatePlayerBars();
   updatePlayerEffectBox();
 
   if(enemy.hp <= 0) {
@@ -157,21 +160,26 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
     target.style.animationName = "deathAnimation";
 
     enemy.drop?.forEach(({item = {}, chance, amount}) => {
-      if("id" in item && Math.random() <= chance) {
-        const amount2 = amount 
-          ? Array.isArray(amount) 
-            ? amount.length == 2 
-              ? random(...amount) 
-            : amount[random(amount.length - 1)] 
-          : amount 
-        : null;
+      const itemArray = Array.isArray(item) ? item : [item];
+      if(Math.random() <= chance) {
+        itemArray.forEach(oneItem => {
+          if("id" in oneItem) {
+            const amount2 = amount 
+              ? Array.isArray(amount) 
+                ? amount.length == 2 
+                  ? random(...amount) 
+                : amount[random(amount.length - 1)] 
+              : amount 
+            : null;
 
-        const nItem = new Item(item);
-        const index = nItem.amount ? currentLevel.drop.findIndex(v => v.id == nItem.id) : -1;
-        if(amount2 && "amount" in nItem) nItem.amount = amount2;
-        if(index == -1) currentLevel.drop.push(nItem);
-        else currentLevel.drop[index].amount += nItem.amount;
-      }
+            const nItem = new Item(oneItem);
+            const index = nItem.amount ? currentLevel.drop.findIndex(v => v.id == nItem.id) : -1;
+            if(amount2 && "amount" in nItem) nItem.amount = amount2;
+            if(index == -1) currentLevel.drop.push(nItem);
+            else currentLevel.drop[index].amount += nItem.amount;
+          }
+        }
+      )};
     });
 
     if(currentLevel.enemies.size == 0) playerWonTheBattle();
@@ -192,10 +200,8 @@ function playerWonTheBattle() {
     div.append(img, p)
     figtingScreen.querySelector("#victoryDrop").append(div);
     givePlayerItem(item);
-
-    console.log(item);
+    addHover(div, item.hoverText() ?? "");
   });
-  console.log("#".repeat(100));
 }
 
 function givePlayerItem(itemData) {
@@ -261,10 +267,6 @@ function updateEffectHovers() {
   if(hover == null || (enemyValues == null && playerValues == null)) return;
   hover.style.display = "none";
 
-  console.log(hover)
-  console.log(enemyValues)
-  console.log(playerValues)
-
   if(enemyValues) {
     const [index, title, duration] = enemyValues.split("§");
 
@@ -295,6 +297,8 @@ function updatePlayerBars() {
   const target = figtingScreen.querySelector(".playerBox");
   const hpPercentage = Math.max(player.hp / player.maxHpF(), 0) * 100;
   const mpPercentage = Math.max(player.mp / player.maxMp, 0) * 100;
+  const hpDirection = +target.querySelector(".hpBG1").style.width.slice(0, -1) - hpPercentage;
+  const mpDirection = +target.querySelector(".mpBG1").style.width.slice(0, -1) - mpPercentage;
 
   target.querySelector(".hpText").textContent = player.hp + "/" + player.maxHpF();
   target.querySelector(".mpText").textContent = player.mp + "/" + player.maxMp;
@@ -303,6 +307,11 @@ function updatePlayerBars() {
   target.querySelector(".hpBG2").style.width = hpPercentage + "%";
   target.querySelector(".mpBG1").style.width = mpPercentage + "%";
   target.querySelector(".mpBG2").style.width = mpPercentage + "%";
+
+  if(hpDirection < 0) target.querySelector(".hpBox").classList = "hpBox reverse";
+  else target.querySelector(".hpBox").classList = "hpBox forward";
+  if(mpDirection < 0) target.querySelector(".mpBox").classList = "mpBox reverse";
+  else target.querySelector(".mpBox").classList = "mpBox forward";
 }
 
 async function startEnemyTurn() {

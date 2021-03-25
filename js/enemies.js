@@ -43,13 +43,8 @@ const enemies = {
       items["weak_stick"],
     ],
     drop: [
-      {item: items["helmet"], chance: .2},
-      {item: items["dmgBooster"], chance: .5, amount: [4, 10]},
       [
-        {item: items["legs"], chance: .5},
-        {item: items["chestplate"], chance: .5},
-        {item: items["weak_stick"], chance: .5},
-        {type: "empty", chance: .2}
+        {item: items["dmgBooster"], chance: 1, amount: [10, 5, 15]},
       ]
     ],
     img: "vihu2.png",
