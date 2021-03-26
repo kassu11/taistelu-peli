@@ -1,7 +1,7 @@
 let player = new Player({
   hp: 100,
-  mp: 50,
-  maxHp: 20,
+  mp: 5000,
+  maxHp: 2000,
   maxMp: 50,
   inventory: [
     {...items["stone_sword"], slot: "hotbarSlot1"},
@@ -88,6 +88,3 @@ Player.prototype.effect = function(name, power, duration) {
 
   this.effects[effectSlot] = new Effect({id: name, power, duration});
 }
-
-
-

@@ -40,7 +40,7 @@ const enemies = {
     maxHp: 25,
     maxMp: 30,
     items: [
-      items["weak_stick"],
+      items["hp_pot"],
     ],
     drop: [
       [

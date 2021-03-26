@@ -218,6 +218,8 @@ function updateEnemyCard(target) {
 
   const hpPercentage = Math.max(enemy.hp / enemy.maxHp, 0) * 100;
   const mpPercentage = Math.max(enemy.mp / enemy.maxMp, 0) * 100;
+  const hpDirection = +target.querySelector(".hpBG1").style.width.slice(0, -1) - hpPercentage;
+  const mpDirection = +target.querySelector(".mpBG1").style.width.slice(0, -1) - mpPercentage;
 
   target.querySelector(".hpText").textContent = enemy.hp + "/" + enemy.maxHp;
   target.querySelector(".mpText").textContent = enemy.mp + "/" + enemy.maxMp;
@@ -226,6 +228,11 @@ function updateEnemyCard(target) {
   target.querySelector(".hpBG2").style.width = hpPercentage + "%";
   target.querySelector(".mpBG1").style.width = mpPercentage + "%";
   target.querySelector(".mpBG2").style.width = mpPercentage + "%";
+
+  if(hpDirection < 0) target.querySelector(".hpBox").classList = "hpBox reverse";
+  else if(hpDirection > 0) target.querySelector(".hpBox").classList = "hpBox forward";
+  if(mpDirection < 0) target.querySelector(".mpBox").classList = "mpBox reverse";
+  else if(mpDirection > 0) target.querySelector(".mpBox").classList = "mpBox forward";
 
   target.querySelector(".effectContainer .effectBox").innerHTML = "";
   enemy.effects.forEach((effect, index) => {
@@ -309,9 +316,9 @@ function updatePlayerBars() {
   target.querySelector(".mpBG2").style.width = mpPercentage + "%";
 
   if(hpDirection < 0) target.querySelector(".hpBox").classList = "hpBox reverse";
-  else target.querySelector(".hpBox").classList = "hpBox forward";
+  else if(hpDirection > 0) target.querySelector(".hpBox").classList = "hpBox forward";
   if(mpDirection < 0) target.querySelector(".mpBox").classList = "mpBox reverse";
-  else target.querySelector(".mpBox").classList = "mpBox forward";
+  else if(mpDirection > 0) target.querySelector(".mpBox").classList = "mpBox forward";
 }
 
 async function startEnemyTurn() {
@@ -328,17 +335,17 @@ async function startEnemyTurn() {
             cardLeftoffset = random(0, hotbarWidth - 250) - (hotbarWidth - 250) / 2;
       const cardTop = window.innerHeight - bottom - hotbarHeight / 2,
             cardTopOffset = random(-hotbarHeight / 3, hotbarHeight / 3);
-      const item = enemy.items[results.bestDmgMoves[0]] ?? new Item(items["wooden_sword"], enemy);
+      const item = enemy.items[results.bestDmgMoves[0]] ?? enemy.items[results.bestHpMoves[0]] ?? new Item(items["wooden_sword"], enemy);
 
       card.classList.add("enemyAttacks");
 
       await sleep(300);
-      card.style.left = cardLeft + cardLeftoffset + "px";
-      card.style.top = cardTop + cardTopOffset + "px";
 
       item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
 
       const dmg = item?.calcDamage().meleDmg;
+
+      if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
 
       player.hp -= dmg ?? 0;
       if(dmg) {
@@ -353,6 +360,9 @@ async function startEnemyTurn() {
         playerBox.querySelector(".rightContainer").style.animationName = 'none';
         playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
         playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
+
+        card.style.left = cardLeft + cardLeftoffset + "px";
+        card.style.top = cardTop + cardTopOffset + "px";
       }
 
       if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
@@ -369,6 +379,8 @@ async function startEnemyTurn() {
         if(item.particle) AddBattleParciles({x: particleX, y: particleY}, item.particle);
       }, 150);
       setTimeout(e => card.classList.remove("enemyAttacks"), 350);
+
+      updateEnemyCard(card);
 
       await sleep(300);
 
@@ -400,8 +412,8 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
   const bestResults = {
     "bestDmgMoves": [],
     "bestDmgNum": 0,
-    // "bestHpMoves": [],
-    // "bestHpNum": 0
+    "bestHpMoves": [],
+    "bestHpNum": 0
   }
 
   // for(let i = 0; i < numbersOfIteration; i++) {
@@ -420,6 +432,7 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
   for(const moves of allMovesArray) {
     const nEnemy = new Enemy(enemy);
     let dmg = 0;
+    let hp = 0;
     for(let move of moves) {
       const item = nEnemy.items[move] ?? {};
       if(!item?.id) break;
@@ -427,10 +440,14 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
       nEnemy.effects = nEnemy.effects?.filter(ef => --ef.duration > 0) || [];
       item.selfEffect?.forEach(ef => nEnemy.effect(ef.id, ef.power, ef.duration));
       dmg += item.calcDamage().meleDmg;
+      hp += item.healV ?? 0;
 
       if(dmg > bestResults.bestDmgNum) {
         bestResults.bestDmgMoves = moves;
         bestResults.bestDmgNum = dmg;
+      } else if(hp > bestResults.bestHpNum) {
+        bestResults.bestHpMoves = moves;
+        bestResults.bestHpNum = hp;
       }
     }
   }

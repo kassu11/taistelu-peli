@@ -1,5 +1,6 @@
 const hoverBox = document.querySelector("#hoverBox");
 const globalHoverHiiri = {x: 0, y: 0};
+window.addEventListener("mousemove", ({x, y}) => {globalHoverHiiri.x = x; globalHoverHiiri.y = y});
 
 // let testiTaulu = [
 //   "<css> text-shadow: 2px -6px #0014ff; <css> <c>red<c> <fs>30px<fs> Moro miten menee loladasdasd § <c>white<c> miten § <fs>50px<fs> menee<br> <c>blue<c> § <c>white<c> <fs>20px<fs> Kaunis päivä § paiva <fs>50px<fs> <c>red<c>"
@@ -58,7 +59,6 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
   }
 
   function mouseMove({x, y}) {
-    globalHoverHiiri.x = x, globalHoverHiiri.y = y;
     moveHoverBlock();
   }
 
