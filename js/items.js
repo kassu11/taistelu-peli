@@ -32,13 +32,27 @@ const items = {
     image: "voimaLääke.png",
     // particle: "explosion",
     selfEffect: [
-      {id: "Strength", power: 5, duration: 3, effectStatus: "good"}
+      {id: "Strength", power: 5, duration: 3, effectStatus: "good"},
+      {id: "Regeneration", power: 3, duration: 5, effectStatus: "good"}
     ],
     giveEffect: [
-      {id: "Strength", power: 50, duration: 20}
+      {id: "Strength", power: 50, duration: 20, effectStatus: "good"}
     ],
     amount: 2,
     needTarget: false
+  },
+  suicideStick: {
+    id: "suicideStick",
+    name: "Suicide stick",
+    useTime: 2,
+    image: "taika.png",
+    selfEffect: [
+      {id: "Strength", power: 50, duration: 300, effectStatus: "good"}
+    ],
+    giveEffect: [
+      {id: "Strength", power: 50, duration: 20, effectStatus: "good"}
+    ],
+    needTarget: true
   },
   helmet: {
     id: "helmet",
@@ -68,7 +82,8 @@ const items = {
     useTime: 1,
     amount: 10,
     needTarget: false,
-    image: "hpPottu.png"
+    image: "hpPottu.png",
+    mana: 15
   }
 }
 
@@ -87,6 +102,7 @@ function Item(item, user) {
   this.canEquipTo = base.canEquipTo ?? "hotbar";
   this.hp = base.hp;
   this.healV = base.healV;
+  this.mana = base.mana;
 
   this.needTarget = base.needTarget ?? true;
 
@@ -115,6 +131,7 @@ Item.prototype.hoverText = function() {
   else if(calcDmg.minMeleDmg || calcDmg.maxMeleDmg) text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${calcDmg.minMeleDmg ?? calcDmg.maxMeleDmg}§`);
   if(this.useTime) text.push(`\nUse time: §${this.useTime} ${this.useTime > 1 ? "Rounds" : "Round"} <c>yellow<c>§`);
   if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>600<b>§`);
+  if(this.mana) text.push(`\nMana use: §${this.mana}MP<c>#3a85ff<c><b>700<b>§`);
 
   if(this.hp) text.push(`\nHealth boost: §${this.hp}HP<c>lime<c><b>700<b>§`);
 
@@ -124,6 +141,14 @@ Item.prototype.hoverText = function() {
       if(effect.effectStatus == "good") text.push(`\n§<cl>goodEffect<cl>§<cl>effect<cl> ${effect.title} § for § <cl>effectDuration<cl>${effect.duration} rounds `);
       else text.push(`\n§<cl>badEffect<cl>§<cl>effect<cl> ${effect.title} § for § <cl>effectDuration<cl>${effect.duration} rounds `);
     }); text.push("§")
+  }
+
+  if(this.giveEffect?.length > 0) {
+    text.push(`\n\n§<cl>giveEffect<cl>Gives enemy§`);
+    this.giveEffect.forEach(effect => {
+      if(effect.effectStatus == "good") text.push(`\n§<cl>goodEffect<cl>§<cl>effect<cl> ${effect.title} § for § <cl>effectDuration<cl>${effect.duration} rounds `);
+      else text.push(`\n§<cl>badEffect<cl>§<cl>effect<cl> ${effect.title} § for § <cl>effectDuration<cl>${effect.duration} rounds `);
+    }); text.push("§");
   }
 
   return text.join("");

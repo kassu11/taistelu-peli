@@ -686,11 +686,8 @@ html {
             right: 15px;
             box-shadow: 0 0 0 5px #0096D8;
             .infoText, .mpText {color: #bdebff}
-            > div {
-              right: 0px;
-              @at-root #figtingScreen .mpBox .mpBG1, #figtingScreen .mpBox .mpBG2 {
-                background: linear-gradient(90deg, #143f6a 0%, #38586b 100%);
-              }
+            @at-root #figtingScreen .mpBox .mpBG1, #figtingScreen .mpBox .mpBG2 {
+              background: linear-gradient(90deg, #143f6a 0%, #38586b 100%);
             }
           }
         }

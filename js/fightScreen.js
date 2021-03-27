@@ -33,7 +33,7 @@ function startLevel(lvlId, time) {
   document.body.classList = "figtingMode";
   currentLevel.id = lvlId;
   currentLevel.enemies.clear();
-  currentLevel.roundNum = 0;
+  currentLevel.roundNum = 1;
   currentLevel.enemyRounds = 0;
   currentLevel.drop = [];
   figtingScreen.querySelector(".enemyBox").innerHTML = "";
@@ -93,99 +93,105 @@ function addEnemyCard(enemy, time) {
 }
 
 figtingScreen.querySelector(".endFightBox").addEventListener("click", () => {
-  player.hp = 0;
   document.querySelector("#figthEndScreen").classList = "defeat";
+  player.hp = 0;
 });
 
 figtingScreen.querySelector(".skipRoundBox").addEventListener("click", () => {
   if(currentLevel.enemyRounds !== 0) return;
   currentLevel.enemyRounds = 1;
-  currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
-  player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
+  giveEffectsToPlAndEn();
+  updateNextRound();
   startEnemyTurn();
 });
 
 document.querySelector(".enemyContainer").addEventListener("click", e => {
   const item = player.hotbar[player.currentSlot];
-  let target = e.target;
-  const hasNotTarget = (e.target.classList.contains("clickZone") && !item.needTarget);
-  while(!target.classList.contains("enemyCard") && !hasNotTarget) {
-    target = target?.parentElement;
-    if(target?.classList.contains("enemyContainer") || target == null) return;
-  } 
-  const enemy = hasNotTarget ? new Enemy(enemies["octopus"]) : currentLevel.enemies.get(target);
-  if(hasNotTarget) {
+  const target = findParentElementWithClass(e.target, "enemyCard");
+  const enemy = !item.needTarget ? {} : currentLevel.enemies.get(target);
+  
+  if(!item.needTarget) {
     if(currentLevel.enemyRounds > 0) return;
   } else if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds > 0) return;
+  if(item.mana > player.mp) return;
+
+  giveEffectsToPlAndEn();
   
   currentLevel.enemyRounds = item.useTime ?? 1;
-  currentLevel.roundNum += 1;
-
-  if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
-
-  item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
-
-  figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
   
+  if(item.needTarget) item.giveEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
   const dmg = item.calcDamage().meleDmg;
   enemy.hp -= dmg;
-
+  
+  item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
+  if(item.mana) player.mp -= item.mana;
+  if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
+  if(item.needTarget) addPlayerItemUseParticle(target, item.particle, {x: e.x, y: e.y, dmg}); 
   if(item.amount && --item.amount <= 0) {
     const index = player.inventory.findIndex(e => e.slot == item.slot);
     if(index != -1) player.inventory.splice(index, 1);
     player.hotbar[player.currentSlot] = {};
   }
-  
-  if(!hasNotTarget) {
-    if(item.particle) AddBattleParciles({x: e.x, y: e.y}, item.particle);
-    AddBattleParciles({x: e.x, y: e.y, dmg}, "meleDmg");
-    target.style.animationName = 'none';
-    target.offsetHeight; /* trigger reflow */
-    target.style.animationName = "shake" + random(0, 9);
-  }
 
-  currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
-  player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
-
-  updateHotbarHovers();
-  currentLevel.enemies.forEach((enemy, card) => updateEnemyCard(card));
-  updateEffectHovers();
-  updatePlayerBars();
-  updatePlayerEffectBox();
-
+  updateNextRound();
   if(enemy.hp <= 0) {
-    removeElement(target, 2500);
-    currentLevel.enemies.delete(target);
-    target.classList.add("deathAnimation");
-    target.style.animationName = "deathAnimation";
-
-    enemy.drop?.forEach(({item = {}, chance, amount}) => {
-      const itemArray = Array.isArray(item) ? item : [item];
-      if(Math.random() <= chance) {
-        itemArray.forEach(oneItem => {
-          if("id" in oneItem) {
-            const amount2 = amount 
-              ? Array.isArray(amount) 
-                ? amount.length == 2 
-                  ? random(...amount) 
-                : amount[random(amount.length - 1)] 
-              : amount 
-            : null;
-
-            const nItem = new Item(oneItem);
-            const index = nItem.amount ? currentLevel.drop.findIndex(v => v.id == nItem.id) : -1;
-            if(amount2 && "amount" in nItem) nItem.amount = amount2;
-            if(index == -1) currentLevel.drop.push(nItem);
-            else currentLevel.drop[index].amount += nItem.amount;
-          }
-        }
-      )};
-    });
-
+    removeDeadEnemy(target, enemy);
     if(currentLevel.enemies.size == 0) playerWonTheBattle();
     else setTimeout(startEnemyTurn, 1900);
   } else startEnemyTurn();  
 });
+
+function findParentElementWithClass(elem, text) {
+  let current = elem;
+  while(true) {
+    if(current == null || current?.classList.contains(text)) return current;
+    current = current.parentElement;
+  }
+}
+
+function addPlayerItemUseParticle(target, particle, {x, y, dmg}) {
+  if(particle) AddBattleParciles({x, y}, particle);
+  AddBattleParciles({x, y, dmg}, "meleDmg");
+  target.style.animationName = 'none';
+  target.offsetHeight; /* trigger reflow */
+  target.style.animationName = "shake" + random(0, 9);
+}
+
+function updateNextRound() {
+  currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
+  player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
+
+  currentLevel.roundNum += 1;
+  figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
+
+  currentLevel.enemies.forEach((enemy, card) => updateEnemyCard(card));
+  updateHotbarHovers();
+  updateEffectHovers();
+  updatePlayerBars();
+  updatePlayerEffectBox();
+}
+
+function removeDeadEnemy(target, enemy) {
+  removeElement(target, 2500);
+  currentLevel.enemies.delete(target);
+  target.classList.add("deathAnimation");
+  target.style.animationName = "deathAnimation";
+
+  enemy.drop?.forEach(({item = {}, chance, amount}) => {
+    const itemArray = Array.isArray(item) ? item : [item];
+    if(Math.random() <= chance) {
+      itemArray.forEach(oneItem => {
+        if(!("id" in oneItem)) return;
+        const nItem = new Item(oneItem);
+        const amount2 = converArrayOfNumbers(amount);
+        const index = itemStackIndex(currentLevel.drop, nItem);
+        if(amount2 && "amount" in nItem) nItem.amount = amount2;
+        if(index == -1) currentLevel.drop.push(nItem);
+        else currentLevel.drop[index].amount += nItem.amount;
+      }
+    )};
+  });
+}
 
 function playerWonTheBattle() {
   setTimeout(() => document.querySelector("#figthEndScreen").classList = "victory", 1900);
@@ -204,12 +210,24 @@ function playerWonTheBattle() {
   });
 }
 
+function converArrayOfNumbers(arr) {
+  if(!Array.isArray(arr) && Number.isInteger(arr)) return arr;
+  if(!Number.isInteger(arr)) return null;
+  if(arr.length == 2) return random(...arr);
+  return arr[random(arr.length - 1)];
+}
+
+function itemStackIndex(arr, item) {
+  if(!("amount" in item)) return -1;
+  if(Array.isArray(arr)) return arr.findIndex(v => v.id == item.id);
+  return -1;
+}
+
 function givePlayerItem(itemData) {
   const item = new Item(itemData);
-  const index = item.amount ? player.inventory.findIndex(v => v.id == item.id) : -1;
-  if(index !== -1) {
-    player.inventory[index].amount += item.amount;
-  } else player.inventory.push(item);
+  const index = itemStackIndex(player.inventory, item);
+  if(index == -1) player.inventory.push(item);
+  else player.inventory[index].amount += item.amount;
 }
 
 function updateEnemyCard(target) {
@@ -255,7 +273,7 @@ function updatePlayerEffectBox() {
   player.effects.forEach((effect, index) => {
     const div = document.createElement("div");
     const img = document.createElement("img");
-    img.src = effect.img ?? "";
+    if(effect.img) img.src = effect.img;
     const p = document.createElement("p");
     p.textContent = effect.duration;
     div.append(img, p);
@@ -327,14 +345,7 @@ async function startEnemyTurn() {
   while(currentLevel.enemyRounds > 0) {
     await sleep(350);
     for(const [card, enemy] of currentLevel.enemies) {
-      const playerBox = figtingScreen.querySelector(".playerBox");
       const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
-      const {left, width, bottom} = card.getBoundingClientRect();
-      const {height: hotbarHeight, width: hotbarWidth} = playerBox.querySelector(".hotbarBox").getBoundingClientRect();
-      const cardLeft = window.innerWidth / 2 - left - width / 2,
-            cardLeftoffset = random(0, hotbarWidth - 250) - (hotbarWidth - 250) / 2;
-      const cardTop = window.innerHeight - bottom - hotbarHeight / 2,
-            cardTopOffset = random(-hotbarHeight / 3, hotbarHeight / 3);
       const item = enemy.items[results.bestDmgMoves[0]] ?? enemy.items[results.bestHpMoves[0]] ?? new Item(items["wooden_sword"], enemy);
 
       card.classList.add("enemyAttacks");
@@ -342,48 +353,17 @@ async function startEnemyTurn() {
       await sleep(300);
 
       item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
-
       const dmg = item?.calcDamage().meleDmg;
-
-      if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
-
       player.hp -= dmg ?? 0;
-      if(dmg) {
-        playerBox.querySelector(".centerContainer").style.animationName = 'none';
-        playerBox.querySelector(".centerContainer").offsetHeight; /* trigger reflow */
-        playerBox.querySelector(".centerContainer").style.animationName = "hotbarShake" + random(0, 3);
-
-        playerBox.querySelector(".leftContainer").style.animationName = 'none';
-        playerBox.querySelector(".leftContainer").offsetHeight; /* trigger reflow */
-        playerBox.querySelector(".leftContainer").style.animationName = "playerBarsShake" + random(0, 3);
-
-        playerBox.querySelector(".rightContainer").style.animationName = 'none';
-        playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
-        playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
-
-        card.style.left = cardLeft + cardLeftoffset + "px";
-        card.style.top = cardTop + cardTopOffset + "px";
-      }
-
+      
+      if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
+      if(dmg) enemyTurnAnimations("attack", card, dmg, item);
       if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
 
-      setTimeout(e => {
-        const particleX = window.innerWidth / 2 + cardLeftoffset;
-        const particleY = window.innerHeight - hotbarHeight / 2 + cardTopOffset;
-        card.style.left = null;
-        card.style.top = null;
-        if(dmg) {
-          updatePlayerBars();
-          AddBattleParciles({x: particleX, y: particleY - 100, dmg}, "enemyMeleDmg");
-        }
-        if(item.particle) AddBattleParciles({x: particleX, y: particleY}, item.particle);
-      }, 150);
+      updateEnemyCard(card);
       setTimeout(e => card.classList.remove("enemyAttacks"), 350);
 
-      updateEnemyCard(card);
-
       await sleep(300);
-
       if(player.hp <= 0) {
         figtingScreen.classList.remove("enemyTurn");
         await sleep(500);
@@ -391,43 +371,61 @@ async function startEnemyTurn() {
         return;
       }
     }
-    currentLevel.roundNum += 1;
-    figtingScreen.querySelector("#roundNumber").textContent = currentLevel.roundNum;
-    currentLevel.enemies.forEach(e => e.effects = e.effects?.filter(ef => --ef.duration > 0) || []);
-    player.effects = player.effects?.filter(ef => --ef.duration > 0) || [];
-    currentLevel.enemies.forEach((enemy, card) => updateEnemyCard(card));
-    updateEffectHovers();
-    updateHotbarHovers();
-    updatePlayerEffectBox();
+    giveEffectsToPlAndEn();
+    updateNextRound();
     currentLevel.enemyRounds--;
   };
   document.querySelector("#figtingScreen").classList.remove("enemyTurn");
 }
 
+function enemyTurnAnimations(type, card, dmg, item) {
+  if(type == "attack") {
+    const playerBox = figtingScreen.querySelector(".playerBox");
+    const {left, width, bottom} = card.getBoundingClientRect();
+    const {height: hotbarHeight, width: hotbarWidth} = playerBox.querySelector(".hotbarBox").getBoundingClientRect();
+    const cardLeft = window.innerWidth / 2 - left - width / 2,
+          cardLeftoffset = random(0, hotbarWidth - 250) - (hotbarWidth - 250) / 2;
+    const cardTop = window.innerHeight - bottom - hotbarHeight / 2,
+          cardTopOffset = random(-hotbarHeight / 3, hotbarHeight / 3);
+
+    playerBox.querySelector(".centerContainer").style.animationName = 'none';
+    playerBox.querySelector(".centerContainer").offsetHeight; /* trigger reflow */
+    playerBox.querySelector(".centerContainer").style.animationName = "hotbarShake" + random(0, 3);
+
+    playerBox.querySelector(".leftContainer").style.animationName = 'none';
+    playerBox.querySelector(".leftContainer").offsetHeight; /* trigger reflow */
+    playerBox.querySelector(".leftContainer").style.animationName = "playerBarsShake" + random(0, 3);
+
+    playerBox.querySelector(".rightContainer").style.animationName = 'none';
+    playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
+    playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
+
+    card.style.left = cardLeft + cardLeftoffset + "px";
+    card.style.top = cardTop + cardTopOffset + "px";
+
+    setTimeout(e => {
+      const particleX = window.innerWidth / 2 + cardLeftoffset;
+      const particleY = window.innerHeight - hotbarHeight / 2 + cardTopOffset;
+      card.style.left = null;
+      card.style.top = null;
+      if(item.particle) AddBattleParciles({x: particleX, y: particleY}, item.particle);
+      if(dmg) {
+        updatePlayerBars();
+        AddBattleParciles({x: particleX, y: particleY - 100, dmg}, "enemyMeleDmg");
+      }
+    }, 150);
+  }
+}
+
 function countAllEnemyMoves(numberOfMoves, enemy) {
   const itemsNum = enemy.items.length;
-  // const allMovesArray = [new Array(numberOfMoves).fill(0)];
   const allMovesArray = numberGrid(itemsNum, numberOfMoves);
-  // const numbersOfIteration = Math.min(itemsNum ** numberOfMoves - 1, 1000);
   const bestResults = {
     "bestDmgMoves": [],
     "bestDmgNum": 0,
     "bestHpMoves": [],
     "bestHpNum": 0
   }
-
-  // for(let i = 0; i < numbersOfIteration; i++) {
-  //   const lastMove = allMovesArray.slice(-1)[0].map(e => e);
-  //   for(let j = 0; j < lastMove.length; j++) {
-  //     if(lastMove[j] == itemsNum - 1) {
-  //       if(lastMove[j + 1] == itemsNum - 1) continue;
-  //       lastMove[j] = 0;
-  //       if(lastMove[j + 1] != null) lastMove[j + 1]++
-  //     } else lastMove[j]++;
-  //     allMovesArray.push(lastMove);
-  //     break;
-  //   }
-  // }
 
   for(const moves of allMovesArray) {
     const nEnemy = new Enemy(enemy);
@@ -517,18 +515,20 @@ document.querySelectorAll("#figthEndScreen .backButton").forEach(button => butto
 }));
 
 const numberGridObject = {};
-function numberGrid(num = 2, amount = 3) {
+function numberGrid(itemsCount = 2, Turns = 3) {
+  const num = Math.min( Math.max(itemsCount, 0), 7 );
+  const amount = Math.min( Math.max(Turns, 1), 6 );
   const key = `${num}x${amount}`;
   if(key in numberGridObject) return numberGridObject[key];
   function loop(array, col) {
     const arr = [];
-    for(let i = num; i >= 0; i--) {
+    for(let i = num; --i >= 0;) {
       const copy = array.slice();
       copy[col] = i;
       if(0 !== col) arr.push(...loop(copy, col - 1));
       else arr.push(copy);
     } return arr;
-  } return numberGridObject[key] = loop(new Array(amount).fill(0), Math.min(amount - 1, 5));
+  } return numberGridObject[key] = loop(Array(amount).fill(0), amount - 1);
 }
 
 function statsFromEnemiMoves() { // En oo tehny mitään viel

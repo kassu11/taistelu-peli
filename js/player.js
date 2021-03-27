@@ -1,11 +1,13 @@
 let player = new Player({
   hp: 100,
-  mp: 5000,
-  maxHp: 2000,
+  mp: 500,
+  maxHp: 50,
   maxMp: 50,
   inventory: [
-    {...items["stone_sword"], slot: "hotbarSlot1"},
+    {...items["wooden_sword"], slot: "hotbarSlot1"},
     {...items["hp_pot"], slot: "hotbarSlot2"},
+    {...items["suicideStick"], slot: "hotbarSlot3"},
+    {...items["dmgBooster"], slot: "hotbarSlot4"},
   ],
   currentSlot: "slot1",
   effects: [
@@ -34,7 +36,7 @@ let player = new Player({
   ],
   armor: {
     head: {},
-    chest: {},
+    chest: items["chestplate"],
     legs: {},
   }
 });
