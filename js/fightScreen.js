@@ -30,12 +30,13 @@ function startLevel(lvlId, time) {
   updateHotbarHovers();
   updatePlayerBars();
   updatePlayerEffectBox();
+  document.querySelector("#figthEndScreen").classList = "hidden"
   document.body.classList = "figtingMode";
   currentLevel.id = lvlId;
   currentLevel.enemies.clear();
   currentLevel.roundNum = 1;
   currentLevel.enemyRounds = 0;
-  currentLevel.drop = [];
+  currentLevel.drops = [];
   figtingScreen.querySelector(".enemyBox").innerHTML = "";
   const selectedLevel = levels[lvlId];
   const currentEnemies = selectedLevel.enemies?.map(name => new Enemy(enemies[name]));
@@ -113,7 +114,7 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
   if(!item.needTarget) {
     if(currentLevel.enemyRounds > 0) return;
   } else if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds > 0) return;
-  if(item.mana > player.mp) return;
+  if(item.mana > player.mp || !("id" in item)) return;
 
   giveEffectsToPlAndEn();
   
@@ -177,17 +178,17 @@ function removeDeadEnemy(target, enemy) {
   target.classList.add("deathAnimation");
   target.style.animationName = "deathAnimation";
 
-  enemy.drop?.forEach(({item = {}, chance, amount}) => {
-    const itemArray = Array.isArray(item) ? item : [item];
+  enemy.drops?.forEach(({items = {}, chance, amount}) => {
+    const itemArray = Array.isArray(items) ? items : [items];
     if(Math.random() <= chance) {
       itemArray.forEach(oneItem => {
         if(!("id" in oneItem)) return;
         const nItem = new Item(oneItem);
         const amount2 = converArrayOfNumbers(amount);
-        const index = itemStackIndex(currentLevel.drop, nItem);
+        const index = itemStackIndex(currentLevel.drops, nItem);
         if(amount2 && "amount" in nItem) nItem.amount = amount2;
-        if(index == -1) currentLevel.drop.push(nItem);
-        else currentLevel.drop[index].amount += nItem.amount;
+        if(index == -1) currentLevel.drops.push(nItem);
+        else currentLevel.drops[index].amount += nItem.amount;
       }
     )};
   });
@@ -195,7 +196,7 @@ function removeDeadEnemy(target, enemy) {
 
 function playerWonTheBattle() {
   setTimeout(() => document.querySelector("#figthEndScreen").classList = "victory", 1900);
-  currentLevel.drop.forEach(item => {
+  currentLevel.drops.forEach(item => {
     const div = document.createElement("div");
     const img = document.createElement("img");
     const p = document.createElement("p");
@@ -211,8 +212,8 @@ function playerWonTheBattle() {
 }
 
 function converArrayOfNumbers(arr) {
-  if(!Array.isArray(arr) && Number.isInteger(arr)) return arr;
-  if(!Number.isInteger(arr)) return null;
+  if(Number.isInteger(arr)) return arr;
+  if(!Array.isArray(arr)) return null;
   if(arr.length == 2) return random(...arr);
   return arr[random(arr.length - 1)];
 }
@@ -346,7 +347,7 @@ async function startEnemyTurn() {
     await sleep(350);
     for(const [card, enemy] of currentLevel.enemies) {
       const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
-      const item = enemy.items[results.bestDmgMoves[0]] ?? enemy.items[results.bestHpMoves[0]] ?? new Item(items["wooden_sword"], enemy);
+      const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["wooden_sword"], enemy);
 
       card.classList.add("enemyAttacks");
 
@@ -359,6 +360,7 @@ async function startEnemyTurn() {
       if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
       if(dmg) enemyTurnAnimations("attack", card, dmg, item);
       if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
+      if(item.mana) enemy.mp -= item.mana;
 
       updateEnemyCard(card);
       setTimeout(e => card.classList.remove("enemyAttacks"), 350);
@@ -376,6 +378,14 @@ async function startEnemyTurn() {
     currentLevel.enemyRounds--;
   };
   document.querySelector("#figtingScreen").classList.remove("enemyTurn");
+}
+
+function reduceBestItemIndexForEnemy(enemy, allMoves) {
+  const maxPlDmg = Object.values(player.hotbar).reduce((ac, item) => Math.max(ac, item.calcDamage?.().maxMeleDmg ?? 0), 0);
+  if(maxPlDmg >= enemy.hp) {
+    const hpIndex = allMoves.bestHpMoves[0];
+    if(enemy.items[hpIndex]?.healV * currentLevel.enemyRounds + enemy.hp > maxPlDmg) return hpIndex
+  } return allMoves.bestDmgMoves[0];
 }
 
 function enemyTurnAnimations(type, card, dmg, item) {
@@ -434,7 +444,9 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
     for(let move of moves) {
       const item = nEnemy.items[move] ?? {};
       if(!item?.id) break;
+      if(item.mana > nEnemy.mp) break;
 
+      nEnemy.mp -= item.mana ?? 0;
       nEnemy.effects = nEnemy.effects?.filter(ef => --ef.duration > 0) || [];
       item.selfEffect?.forEach(ef => nEnemy.effect(ef.id, ef.power, ef.duration));
       dmg += item.calcDamage().meleDmg;
@@ -511,6 +523,7 @@ document.querySelectorAll("#figthEndScreen .backButton").forEach(button => butto
   document.querySelector("#figthEndScreen").classList = "hidden";
   document.querySelector("#roundNumber").textContent = 1;
   document.body.classList = "levelMenu";
+  currentLevel.enemyRounds = 0;
   player.effects = [];
 }));
 

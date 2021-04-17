@@ -10,7 +10,7 @@
   color: white;
 
   > div {
-    background: rgba(0, 0, 0, 0.836);
+    background: rgba(0, 0, 0, 0.89);
     position: absolute;
     z-index: 100;
     pointer-events: none;
@@ -33,6 +33,15 @@
     font-weight: 800;
     color: yellow;
     font-size: 1.25em;
+  }
+
+  .dmg {
+    color: #ff3636;
+    font-weight: 600;
+    &.old {
+      text-decoration: line-through;
+      font-size: 10px;
+    }
   }
 
   .selfEffect {

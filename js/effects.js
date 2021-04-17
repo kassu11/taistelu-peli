@@ -35,3 +35,11 @@ function giveEffectsToPlAndEn() {
 
   updatePlayerBars();
 }
+
+function effect(name, power, duration) {
+  const effectSlotNumber = this.effects?.findIndex(({id}) => id == name);
+  const hasMorePower = this.effects[effectSlotNumber]?.power > power;
+  const effectSlot = effectSlotNumber == -1 ? this.effects.length : effectSlotNumber;
+
+  if(!hasMorePower) this.effects[effectSlot] = new Effect({id: name, power, duration});
+}

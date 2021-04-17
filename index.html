@@ -99,13 +99,22 @@
     </div>
 
     <div id="levelMenu">
-      <button onclick="startLevel('level_1')">Level 1</button>
-      <button onclick="startLevel('level_2')">Level 2</button>
-      <button onclick="startLevel('level_3')">Level 3</button>
-      <button onclick="startLevel('level_4')">Level 4</button>
-      <button onclick="startLevel('level_5')">Level 5</button>
+      <div class="levelButtons">
+        <button id="inventoryButton">Inventory</button>
+      </div>
 
-      <button id="inventoryButton">Inventory</button>
+      <div class="enemyBox"></div>
+      <div class="levelInfoScreen" style="display: none;">
+        <div class="infoBox">
+          <div class="title">
+            <p>Enemy info</p>
+            <div class="close">
+              <i class="gg-close"></i>
+            </div>
+          </div>
+          <div class="enemyRowContainer"></div>
+        </div>
+      </div>
     </div>
 
     <div id="itemsMenu">

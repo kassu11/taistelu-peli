@@ -4,10 +4,11 @@ let player = new Player({
   maxHp: 50,
   maxMp: 50,
   inventory: [
-    {...items["wooden_sword"], slot: "hotbarSlot1"},
+    {...items["stone_sword"], slot: "hotbarSlot1"},
     {...items["hp_pot"], slot: "hotbarSlot2"},
     {...items["suicideStick"], slot: "hotbarSlot3"},
     {...items["dmgBooster"], slot: "hotbarSlot4"},
+    {id: "dmgBooster", slot: "hotbarSlot5"},
   ],
   currentSlot: "slot1",
   effects: [
@@ -84,9 +85,4 @@ function Player(arr) {
 }
 
 
-Player.prototype.effect = function(name, power, duration) {
-  const effectSlotNumber = this.effects?.findIndex(({id}) => id == name);
-  const effectSlot = effectSlotNumber == -1 ? this.effects.length : effectSlotNumber;
-
-  this.effects[effectSlot] = new Effect({id: name, power, duration});
-}
+Player.prototype.effect = effect;

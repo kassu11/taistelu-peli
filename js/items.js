@@ -12,7 +12,7 @@ const items = {
     name: "Stone sword",
     minMeleDmg: 15,
     maxMeleDmg: 25,
-    useTime: 0,
+    useTime: 1,
     image: "heikkous.png",
     particle: "explosion2"
   },
@@ -21,7 +21,7 @@ const items = {
     name: "Weak stick",
     minMeleDmg: 2,
     maxMeleDmg: 4,
-    useTime: 0,
+    useTime: 1,
     image: "taika.png",
     particle: "explosion"
   },
@@ -89,16 +89,16 @@ const items = {
 
 function Item(item, user) {
   const base = items[item.id];
-  this.user = user;
+  this.user = user ?? item.user;
   this.id = item.id;
-  this.name = item.name;
+  this.name = item.name ?? base.name ?? "";
   this.minMeleDmg = base.minMeleDmg;
   this.maxMeleDmg = base.maxMeleDmg;
   this.useTime = base.useTime;
   this.image = base.image;
   this.particle = base.particle;
   this.slot = item.slot;
-  this.amount = item.amount;
+  this.amount = item.amount ?? base.amount;
   this.canEquipTo = base.canEquipTo ?? "hotbar";
   this.hp = base.hp;
   this.healV = base.healV;
@@ -114,7 +114,7 @@ Item.prototype.calcDamage = function() {
   const dmgPercentage = this.user?.effects?.reduce((arr, effect) => arr += effect.dmgPercentage || 0, 1) || 1;
 
   const minMeleDmg = (this.minMeleDmg ?? this.maxMeleDmg ?? 0) * dmgPercentage;
-  const maxMeleDmg = (this.maxMeleDmg ?? 0) * dmgPercentage;
+  const maxMeleDmg = (this.maxMeleDmg ?? this.minMeleDmg ?? 0) * dmgPercentage;
 
   return {
     meleDmg: Math.max( Math.floor( random(minMeleDmg, maxMeleDmg) ), 0 ),
@@ -127,8 +127,19 @@ Item.prototype.hoverText = function() {
   const text = [`<cl>itemTitle<cl>${this.name}§`];
   const calcDmg = this.calcDamage();
 
-  if(calcDmg.minMeleDmg && calcDmg.maxMeleDmg) text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${calcDmg.minMeleDmg}-${calcDmg.maxMeleDmg}§`);
-  else if(calcDmg.minMeleDmg || calcDmg.maxMeleDmg) text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${calcDmg.minMeleDmg ?? calcDmg.maxMeleDmg}§`);
+  if(calcDmg.minMeleDmg) {
+    const oldDmgText = [];
+    if(this.minMeleDmg) oldDmgText.push(this.minMeleDmg);
+    if(this.maxMeleDmg > oldDmgText) oldDmgText.push(this.maxMeleDmg);
+    const dmgText = [calcDmg.minMeleDmg];
+    if(calcDmg.maxMeleDmg > dmgText) dmgText.push(calcDmg.maxMeleDmg);
+
+    if(oldDmgText.join("") == dmgText.join("")) {
+      text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${dmgText.join("-")}§`);
+    } else text.push(`\nDamage: §<cl>dmg old<cl>${oldDmgText.join("-")}§<cl>dmg<cl> ${dmgText.join("-")}§`);
+    // } else text.push(`\nDamage: §<cl>dmg<cl>${dmgText.join("-")} §<cl>dmg old<cl>${oldDmgText.join("-")}§`);
+  }
+
   if(this.useTime) text.push(`\nUse time: §${this.useTime} ${this.useTime > 1 ? "Rounds" : "Round"} <c>yellow<c>§`);
   if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>600<b>§`);
   if(this.mana) text.push(`\nMana use: §${this.mana}MP<c>#3a85ff<c><b>700<b>§`);

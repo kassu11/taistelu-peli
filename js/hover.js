@@ -21,13 +21,14 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
   if(typeof keys == "string") keys = [keys];
   if(keys.indexOf("default") == -1) keys.unshift("default");
 
-  target[0].addEventListener("mouseenter", mouseEnter);
+  target[0].addEventListener("mouseover", mouseOver);
   target[0].addEventListener("mousemove", mouseMove);
   target[0].addEventListener("mouseout", mouseOut);
 
   moveHoverBlock();
 
-  function mouseEnter({ctrlKey, altKey, shiftKey}) {
+  function mouseOver(e) {
+    e.stopPropagation();
     window.onkeydown = null;
     window.onkeyup = null;
     window.onkeydown = ({ctrlKey, altKey, shiftKey, repeat}) => keyUpAndDown({ctrlKey, altKey, shiftKey, repeat});
@@ -36,9 +37,9 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
     hoverBox.innerHTML = "";
     div.innerHTML = "";
 
-    if(ctrlKey) div.append(customTextSyntax(texts[keys.indexOf("ctrlKey")]));
-    else if(altKey) div.append(customTextSyntax(texts[keys.indexOf("altKey")]));
-    else if(shiftKey) div.append(customTextSyntax(texts[keys.indexOf("shiftKey")]));
+    if(e.ctrlKey && keys.some(e => e == "ctrlKey")) div.append(customTextSyntax(texts[keys.indexOf("ctrlKey")]));
+    else if(e.altKey && keys.some(e => e == "altKey")) div.append(customTextSyntax(texts[keys.indexOf("altKey")]));
+    else if(e.shiftKey && keys.some(e => e == "shiftKey")) div.append(customTextSyntax(texts[keys.indexOf("shiftKey")]));
     else div.append(customTextSyntax(texts[keys.indexOf("default")]));
     hoverBox.append(div);
 
@@ -71,7 +72,8 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
     div.style.top = Math.min(y, maxTop) + "px";
   }
 
-  function mouseOut() {
+  function mouseOut(e) {
+    e.stopPropagation();
     window.onkeydown = null;
     window.onkeyup = null;
     hoverBox.innerHTML = ""
@@ -160,7 +162,20 @@ function customTextSyntax(syn = "") {
         catch {return console.error(`"${variable}" is not defined`)}
         index = line.indexOf("<v>", index + 1);
         if(index == -1) return console.error(`"<v>" has no closing!`);
-      } selectedSpan.textContent += lineText;
+      } else if(currentLine.startsWith("<i>")) {
+        const [,source, text=""] = currentLine.split("<i>");
+        const img = document.createElement("img");
+        const className = source.indexOf("[") != -1 ? source.split("[")[1].split("]")[0] : "";
+        img.src = runVariableTest(source.replace("[" + className + "]", ""));
+        [lineText] = text.split("<");
+        if(line.indexOf("<i>") !== index) {
+          selectedSpan.append(nspan);
+          selectedSpan = nspan;
+        } selectedSpan.append(img);
+        img.classList = className;
+        index = line.indexOf("<i>", index + 1);
+        if(index == -1) return console.error(`"<i>" has no closing!`);
+      } selectedSpan.innerHTML += lineText;
       index = line.indexOf("<", index + 1);
     } while(index !== -1);
   } return pre;
@@ -186,7 +201,6 @@ function customTextSyntax(syn = "") {
   }
 }
 
-
 // <f><f> = font size
 // \n = line break
 // <css><css> = raw css
@@ -196,6 +210,7 @@ function customTextSyntax(syn = "") {
 // <cl><cl> = set classlist on span
 // <b><b> = fontweight
 // <ff><ff> = font-family
+// <i>img src [class name]<i> = add image
 // § = new span
 
 // luoGlobalHover("pelaaja", [
