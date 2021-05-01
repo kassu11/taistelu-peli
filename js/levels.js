@@ -71,85 +71,87 @@ for(const [key, value] of Object.entries(levels)) {
 function getEnemyDropTreeElements(enemy) {
   const id = enemy?.id ?? enemy;
 
-  return enemies[id]?.drops?.map(row => {
+  return enemies[id]?.drops?.map(drop => {
     const slotsDiv = document.createElement("div");
-
-    if(row.items) {
-      const items = Array.isArray(row.items) ? row.items : [row.items];
-      const amount = row.amount?.slice?.();
-      const amounts = row.amount ? Array.isArray(amount) ? amount.length == 2 ? [amount[0] +"-"+ amount[1]] : amount.sort((e1, e2) => e1 - e2) : [row.amount] : [0];
-      const currentPercentage = Math.floor(row.chance * 100);
-      const percentageColor = getPercentageColor(currentPercentage);
-      slotsDiv.classList.add("items");
-      slotsDiv.setAttribute("percentage", currentPercentage);
-      if(items.length > 1) addHover(slotsDiv, `You will get these\nitems §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
-      else addHover(slotsDiv, `You will get this\nitem §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
-      items.forEach(item => {
-        const amountDiv = document.createElement("div");
-        amountDiv.classList.add("amount");
-        amounts.forEach(amount => {
-          const [div] = emmet(".slot");
-          const img = document.createElement("img");
-          const p = document.createElement("p");
-
-          if(amount) p.textContent = amount;
-          if(amounts.length > 2) {       
-            amountDiv.append(div);
-            slotsDiv.append(amountDiv);
-          } else slotsDiv.append(div);
-
-          const nItem = new Item(item, player);
-          addHover(div, nItem.hoverText() ?? "");
-
-          img.src = "./images/" + item.image;
-          div.append(img, p);
-        });
+    if(drop?.type == "all") typeAll(drop, slotsDiv);
+    else if(drop?.type == "one") typeOne(drop, slotsDiv);
+    else if(drop.amount?.length > 2) addAmount(drop, slotsDiv);
+    else addItem(drop, slotsDiv);
+  
+    function typeAll(arr, elem, per) {
+      const [allElem] = emmet(".items");
+      allElem.setAttribute("percentage", per ?? arr.chance ?? "");
+      elem.append(allElem);
+      addHover(allElem, `You will get these\nitems §<b>700<b><c>${getPercentageColor(per ?? arr.chance)}<c>${per ?? arr.chance}%§ of the time`);
+      arr.items.forEach(drop => {
+        if(drop?.type == "all") typeAll(drop, allElem);
+        else if(drop?.type == "one") typeOne(drop, allElem, per ?? arr.chance);
+        else if(drop.amount?.length > 2) addAmount(drop, allElem);
+        else addItemInsideAll(drop, allElem);
       });
-
-    } else if(row.type !== "empty") {
-      slotsDiv.classList.add("row");
-      const totalChance = row.reduce((acc, item) => item.type == "empty" ? acc : acc + item.chance, 0) ?? 1;
-      let totalPercentage = 100;
-      row.forEach(row => {
-        if(row.type == "empty" || !row.items) return totalPercentage -= Math.floor((row.chance / (totalChance + row.chance) || 0) * 100);
-        const items = Array.isArray(row.items) ? row.items : [row.items];
-        const amount = row.amount?.slice?.();
-        const amounts = row.amount ? Array.isArray(amount) ? amount.length == 2 ? [amount[0] +"-"+ amount[1]] : amount.sort((e1, e2) => e1 - e2) : [row.amount] : [0];
-        const itemsDiv = document.createElement("div");
-        const currentPercentage = Math.floor(row.chance / totalChance * 100);
-        const percentageColor = getPercentageColor(currentPercentage);
-        itemsDiv.classList.add("items");
-        itemsDiv.setAttribute("percentage", currentPercentage);
-        if(items.length > 1) addHover(itemsDiv, `You will get these\nitems §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
-        else addHover(itemsDiv, `You will get this\nitem §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
-        slotsDiv.append(itemsDiv);
-        items.forEach(item => {
-          const amountDiv = document.createElement("div");
-          if(amounts.length > 2) {
-            itemsDiv.append(amountDiv)
-            amountDiv.classList.add("amount");
-          }
-          amounts.forEach(amount => {
-            const [div] = emmet(".slot")
-            const img = document.createElement("img");
-            const p = document.createElement("p");
-
-            if(amount) p.textContent = amount;
-            if(amounts.length > 2) amountDiv.append(div);
-            else itemsDiv.append(div);
-
-            const nItem = new Item(item, player);
-            addHover(div, nItem.hoverText() ?? "");
-
-            img.src = "./images/" + item.image;
-            div.append(img, p);
-          });
-        });
+    }
+  
+    function typeOne(arr, elem, per) {
+      const combinedChances = arr.items.map(item => item.chance ?? 0).reduce((acc, v) => [...acc, (acc[acc.length - 1] || 0) + v], []);
+      const totalChance = Math.max(...combinedChances);
+      const [oneElem] = emmet(".row");
+      oneElem.setAttribute("percentage", per ?? arr.chance ?? "");
+      addHover(oneElem, `One of the following items \nwill drop §<c>${getPercentageColor(per ?? arr.chance)}<c><b>700<b>${per ?? arr.chance}% §of the time`);
+      elem.append(oneElem);
+      arr.items.forEach(drop => {
+        if(drop?.type == "all") typeAll(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
+        else if(drop?.type == "one") typeOne(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
+        else if(drop.amount?.length > 2) addAmountInsideOne(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
+        else addItem(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
       });
-      slotsDiv.setAttribute("percentage", totalPercentage);
-      const percentageColor = getPercentageColor(totalPercentage);
-      addHover(slotsDiv, [`One of the following items \nwill drop §<c>${percentageColor}<c><b>700<b>${totalPercentage}% §of the time`]);
-    } return slotsDiv;
+    }
+
+    function addItem(arr, elem, per) {
+      const nItem = new Item(arr.item);
+      const [items] = emmet(".items>.slot>img+p");
+      items.setAttribute("percentage", per ?? arr.chance ?? "");
+      elem.append(items);
+      items.querySelector("img").src = "./images/" + nItem.image;
+      items.querySelector("p").textContent = arr.amount?.join?.("-") ?? arr.amount ?? "";
+      addHover(items, `You will get this\nitem §<b>700<b><c>${getPercentageColor(per ?? arr.chance)}<c>${per ?? arr.chance}%§ of the time`);
+      addHover(items.querySelector(".slot"), nItem.hoverText() ?? "");
+    }
+
+    function addItemInsideAll(arr, elem) {
+      const nItem = new Item(arr.item);
+      const [slot] = emmet(".slot>img+p");
+      elem.append(slot);
+      slot.querySelector("img").src = "./images/" + nItem.image;
+      slot.querySelector("p").textContent = arr.amount?.join?.("-") ?? arr.amount ?? "";
+      addHover(slot, nItem.hoverText() ?? "");
+    }
+
+    function addAmount(arr, elem) {
+      const [amountElem] = emmet(".amount");
+      const nItem = new Item(arr.item);
+      elem.append(amountElem);
+      addHover(amountElem, nItem.hoverText() ?? "");
+      arr.amount.slice().sort().reverse().forEach(amount => {
+        const [slot] = emmet(".slot>img+p");
+        slot.querySelector("img").src = "./images/" + nItem.image;
+        slot.querySelector("p").textContent = amount
+        amountElem.append(slot);
+      });
+    }
+
+    function addAmountInsideOne(arr, elem, per) {
+      const [amountElem] = emmet(".items>.amount");
+      const nItem = new Item(arr.item);
+      amountElem.setAttribute("percentage", per ?? arr.chance ?? "");
+      addHover(amountElem, nItem.hoverText() ?? "");
+      elem.append(amountElem);
+      arr.amount.slice().sort().reverse().forEach(amount => {
+        const [slot] = emmet(".slot>img+p");
+        slot.querySelector("img").src = "./images/" + nItem.image;
+        slot.querySelector("p").textContent = amount
+        amountElem.querySelector(".amount").append(slot);
+      })
+    } return slotsDiv.childNodes[0];
   }) ?? [];
 }
 

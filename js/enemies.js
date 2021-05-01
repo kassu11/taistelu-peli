@@ -1,55 +1,22 @@
 const enemies = {
-  tongue_monster: {
-    id: "tongue_monster",
-    maxHp: 20,
-    maxMp: 10,
-    items: [
-      items["weak_stick"],
-    ],
-    effects: [
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-    ],
-    drops: [
-      // {items: items["helmet"], chance: .2},
-      // {items: items["dmgBooster"], chance: .5, amount: [4, 10]},
-      [
-        {items: items["legs"], chance: .2},
-        {items: items["chestplate"], chance: .25},
-        {items: items["weak_stick"], chance: .25},
-        {type: "empty", chance: .5}
-      ]
-    ],
-    img: "vihu1.png",
-    imgTop: 1,
-  },
   week_slime: {
     id: "week_slime",
     maxHp: 10,
     maxMp: 30,
     items: [
-      {...items["hp_pot"], amount: 4},
+      {...items["hp_pot"], "amount": 4},
       {...items["weak_stick"]},
     ],
     drops: [
-      [
-        {items: items["dmgBooster"], chance: .1, amount: 1},
-        {items: items["chestplate"], chance: .1},
-        {type: "empty", chance: 1.8}
-      ],
-      {items: items["hp_pot"], chance: 1, amount: [1, 2]},
+      {
+        "type": "one",
+        "chance": 10,
+        "items": [
+          {"item": items["dmgBooster"], "amount": 1, "chance": 50},
+          {"item": items["chestplate"], "chance": 50},
+        ]
+      },
+      {"item": items["hp_pot"], "chance": 100, "amount": [1, 2]}
     ],
     img: "vihu2.png",
     imgTop: 7,
@@ -62,14 +29,16 @@ const enemies = {
       items["weak_stick"],
     ],
     drops: [
-      // {items: items["helmet"], chance: .2, amount: [1,2,3,4,5]},
-      [
-        {items: items["legs"], chance: .5},
-        {items: items["chestplate"], chance: .5},
-        {items: items["helmet"], chance: .5},
-        {type: "empty", chance: .6}
-      ],
-      {items: items["dmgBooster"], chance: 1, amount: [2, 4]},
+      {
+        "type": "one",
+        "chance": 75,
+        "items": [
+          {"item": items["legs"], "chance": 50},
+          {"item": items["chestplate"], "chance": 50},
+          {"item": items["helmet"], "chance": 50},
+        ]
+      },
+      {"item": items["dmgBooster"], "chance": 100, "amount": [2, 4]}
     ],
     img: "vihu3.png",
     imgTop: 7,
@@ -85,28 +54,28 @@ const enemies = {
     ],
     effects: [
       // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
-      // {id: "Strength", power: 1, duration: 3},
     ],
     drops: [
-      {items: items["helmet"], chance: .2},
-      {items: items["dmgBooster"], chance: .5, amount: [4, 10]},
-      [
-        {items: items["legs"], chance: .5},
-        {items: items["chestplate"], chance: .5},
-        {items: items["weak_stick"], chance: .5},
-        {type: "empty", chance: .2}
-      ],
-      [
-        {items: items["hp_pot"], chance: .5},
-        {items: items["weak_stick"], chance: .5},
-        {items: items["suicideStick"], chance: .5},
-        {items: items["dmgBooster"], chance: .5, amount: [5, 6, 10]},
-        {type: "empty", chance: .2}
-      ]
+      {
+        "type": "one",
+        "chance": 80,
+        "items": [
+          {"item": items["legs"], "chance": 50},
+          {"item": items["chestplate"], "chance": 50},
+          {"item": items["weak_stick"], "chance": 50},
+        ]
+      },
+      {
+        "type": "one",
+        "chance": 80,
+        "items": [
+          {"item": items["hp_pot"], "chance": 50},
+          {"item": items["weak_stick"], "chance": 50},
+          {"item": items["suicideStick"], "chance": 50},
+          {"item": items["dmgBooster"], "amount": [7, 5, 6, 10], "chance": 50},
+        ]
+      },
+      {"item": items["helmet"], "chance": 100, "amount": [2, 4]}
     ],
     img: "octopus.png",
     imgTop: 7,
@@ -119,18 +88,39 @@ const enemies = {
       items["wooden_sword"],
     ],
     drops: [
-      {items: items["helmet"], chance: .2},
-      {items: items["dmgBooster"], chance: .5, amount: [4, 10]},
-      [
-        {items: items["legs"], chance: .5},
-        {items: items["chestplate"], chance: .5},
-        {items: items["weak_stick"], chance: .5},
-        {type: "empty", chance: .2}
-      ]
+      {
+        "type": "one",
+        "chance": 80,
+        "items": [
+          {"item": items["legs"], "chance": 30},
+          {"item": items["chestplate"], "chance": 30},
+          {"item": items["helmet"], "chance": 30},
+          {
+            "type": "all",
+            "chance": 10,
+            "items": [
+              {"item": items["hp_pot"], "amount": [2, 5]},
+              {"item": items["dmgBooster"], "amount": [4, 2]},
+            ]
+          }
+        ]
+      },
     ],
     img: "enemy4.png",
     imgTop: 7,
-  }
+  },
+  tongue_monster: {
+    id: "tongue_monster",
+    maxHp: 20,
+    maxMp: 10,
+    items: [
+      items["weak_stick"],
+    ],
+    effects: [],
+    drops: [],
+    img: "vihu1.png",
+    imgTop: 1,
+  },
 }
 
 function Enemy(enemy) {
@@ -145,84 +135,18 @@ function Enemy(enemy) {
   this.imgTop = enemy.imgTop;
   this.imgWidth = enemy.imgWidth;
   this.imgHeight = enemy.imgHeight;
-  
-  this.drops = enemy.drops?.map(row => {
-    if(row.items) return row;
-    else if(row.type != "empty") {
-      const chanceIndex = row.map(v => v.chance ?? 0);
-      const totalChance = chanceIndex.reduce((chance, value, index) => chanceIndex[index] = chance + value, 0);
-      const randomChance = Math.random() * totalChance;
-      const selectedItem = row.find((v, index) => randomChance <= chanceIndex[index]);
-      return {...selectedItem, chance: 1}
-    }
-  }) ?? [];
 
-  console.log(this.drops);
+  this.drops = dropsFromLootTable(enemy.drops);
 
   this.effects = enemy.effects?.map(effect => new Effect(effect)) || [];
 }
 
 Enemy.prototype.effect = effect;
 
-console.log(
-  test(
-    [
-      // {
-      //   "type": "all",
-      //   "chance": 100,
-      //   "items": [
-      //     {"item": {}, "amount": 10},
-      //     {
-      //       "type": "one",
-      //       "items": [
-      //         {"item": {}, "amount": 10, "chance": 5},
-      //         {
-      //           "type": "all",
-      //           "amount": 10, 
-      //           "chance": 100,
-      //           "items": [
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5},
-      //             {"item": {}, "amount": 10, "chance": 5}
-      //           ]
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-      {"item": {}, "amount": 5, "chance": 50},
-    ]
-  )
-)
-
-
-
-function test(lootTable) {
+function dropsFromLootTable(lootTable = []) {
   const items = [];
 
-  // console.dir(lootTable)
-
-  lootTable.forEach(drop => {
+  lootTable?.forEach(drop => {
     const r = random(1, 100);
     if(r > drop.chance || drop.chance == null) return;
     if(drop?.type == "all") typeAll(drop);

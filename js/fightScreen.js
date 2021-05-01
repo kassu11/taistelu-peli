@@ -178,19 +178,13 @@ function removeDeadEnemy(target, enemy) {
   target.classList.add("deathAnimation");
   target.style.animationName = "deathAnimation";
 
-  enemy.drops?.forEach(({items = {}, chance, amount}) => {
-    const itemArray = Array.isArray(items) ? items : [items];
-    if(Math.random() <= chance) {
-      itemArray.forEach(oneItem => {
-        if(!("id" in oneItem)) return;
-        const nItem = new Item(oneItem);
-        const amount2 = converArrayOfNumbers(amount);
-        const index = itemStackIndex(currentLevel.drops, nItem);
-        if(amount2 && "amount" in nItem) nItem.amount = amount2;
-        if(index == -1) currentLevel.drops.push(nItem);
-        else currentLevel.drops[index].amount += nItem.amount;
-      }
-    )};
+  enemy.drops?.forEach(drop => {
+    const nItem = new Item(drop.item);
+    const amount = convertArrayOfNumbers(drop.amount);
+    const index = itemStackIndex(currentLevel.drops, nItem);
+    if(amount && "amount" in nItem) nItem.amount = amount;
+    if(index == -1) currentLevel.drops.push(nItem);
+    else currentLevel.drops[index].amount += nItem.amount;
   });
 }
 
@@ -211,7 +205,7 @@ function playerWonTheBattle() {
   });
 }
 
-function converArrayOfNumbers(arr) {
+function convertArrayOfNumbers(arr) {
   if(Number.isInteger(arr)) return arr;
   if(!Array.isArray(arr)) return null;
   if(arr.length == 2) return random(...arr);

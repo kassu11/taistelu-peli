@@ -154,9 +154,10 @@
             position: relative;
             display: flex;
             height: fit-content;
+            border: 2px solid white;
 
-            &::before, &::after {position: absolute}
             &::after {
+              position: absolute;
               left: 50%;
               transform: translateX(-50%);
               padding: 0px 6px;
@@ -169,23 +170,20 @@
               border-right: 2px solid #fff;
               border-left: 2px solid #fff;
             }
-            &::before {
-              left: 0px;
-              right: 0px;
-              height: 10px;
-              top: -1px;
-              content: "";
-              border: 2px solid #fff;
-              border-bottom: 0px solid #0000;
-            }
           }
 
           .row {
             margin: 0px 3px;
             background: #2f2f2f;
             padding: 3px 5px 8px;
+            border-style: dashed;
             &::after {background: #1f1f1f}
-            &::before {border-style: dashed}
+            
+            @at-root #levelMenu .dropTree .row > .row {margin: 23px 3px 0px}
+            @at-root #levelMenu .dropTree .items > .row {
+              margin: 6px 3px 0px;
+              &::after {display: none}
+            }
           }
           
           .items {
@@ -210,7 +208,7 @@
               width: 70px;
               height: 70px;
               background: #171717;
-              margin: 5px;
+              margin: 2px;
               border: 5px solid #2b2b2b;
           
               * {
