@@ -37,7 +37,7 @@ const enemies = {
   },
   week_slime: {
     id: "week_slime",
-    maxHp: 25,
+    maxHp: 10,
     maxMp: 30,
     items: [
       {...items["hp_pot"], amount: 4},
@@ -45,31 +45,31 @@ const enemies = {
     ],
     drops: [
       [
-        {items: items["dmgBooster"], chance: 1, amount: [10, 5, 15, 34, 656, 1, 32, 54]},
-        {items: [items["chestplate"], items["helmet"]], chance: 1},
+        {items: items["dmgBooster"], chance: .1, amount: 1},
+        {items: items["chestplate"], chance: .1},
+        {type: "empty", chance: 1.8}
       ],
-      {items: items["dmgBooster"], chance: 1, amount: [10, 5, 15]},
-      {items: [items["chestplate"], items["legs"], items["helmet"]], chance: 1, amount: [1,2,3]},
+      {items: items["hp_pot"], chance: 1, amount: [1, 2]},
     ],
     img: "vihu2.png",
     imgTop: 7,
   },
   red_guy: {
     id: "red_guy",
-    maxHp: 50,
-    maxMp: 50,
+    maxHp: 40,
+    maxMp: 10,
     items: [
       items["weak_stick"],
     ],
     drops: [
-      {items: items["helmet"], chance: .2, amount: [1,2,3,4,5]},
-      // {items: items["dmgBooster"], chance: .5, amount: [4, 10]},
-      // [
-      //   {items: items["legs"], chance: .5},
-      //   {items: items["chestplate"], chance: .5},
-      //   {items: items["weak_stick"], chance: .5},
-      //   {type: "empty", chance: .2}
-      // ]
+      // {items: items["helmet"], chance: .2, amount: [1,2,3,4,5]},
+      [
+        {items: items["legs"], chance: .5},
+        {items: items["chestplate"], chance: .5},
+        {items: items["helmet"], chance: .5},
+        {type: "empty", chance: .6}
+      ],
+      {items: items["dmgBooster"], chance: 1, amount: [2, 4]},
     ],
     img: "vihu3.png",
     imgTop: 7,
@@ -157,7 +157,99 @@ function Enemy(enemy) {
     }
   }) ?? [];
 
+  console.log(this.drops);
+
   this.effects = enemy.effects?.map(effect => new Effect(effect)) || [];
 }
 
 Enemy.prototype.effect = effect;
+
+console.log(
+  test(
+    [
+      // {
+      //   "type": "all",
+      //   "chance": 100,
+      //   "items": [
+      //     {"item": {}, "amount": 10},
+      //     {
+      //       "type": "one",
+      //       "items": [
+      //         {"item": {}, "amount": 10, "chance": 5},
+      //         {
+      //           "type": "all",
+      //           "amount": 10, 
+      //           "chance": 100,
+      //           "items": [
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5},
+      //             {"item": {}, "amount": 10, "chance": 5}
+      //           ]
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // },
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+      {"item": {}, "amount": 5, "chance": 50},
+    ]
+  )
+)
+
+
+
+function test(lootTable) {
+  const items = [];
+
+  // console.dir(lootTable)
+
+  lootTable.forEach(drop => {
+    const r = random(1, 100);
+    if(r > drop.chance || drop.chance == null) return;
+    if(drop?.type == "all") typeAll(drop);
+    else if(drop?.type == "one") typeOne(drop);
+    else items.push(drop)
+  });
+
+  function typeAll(arr) {
+    arr.items.forEach(drop => {
+      console.log(drop)
+      if(drop?.type == "all") typeAll(drop);
+      else if(drop?.type == "one") typeOne(drop);
+      else items.push(drop);
+    });
+  }
+
+  function typeOne(arr) {
+    const combinedChances = arr.items.map(item => item.chance ?? 0).reduce((acc, v) => [...acc, (acc[acc.length - 1] || 0) + v], []);
+    const totalChance = Math.max(...combinedChances);
+    const r = random(1, totalChance || 1);
+    const index = combinedChances.findIndex(chance => r <= chance);
+    const drop = arr.items[index];
+    if(drop == null) return;
+    else if(drop?.type == "all") typeAll(drop);
+    else if(drop?.type == "one") typeOne(drop);
+    else items.push(drop);
+  }
+
+  return items;
+}

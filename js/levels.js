@@ -11,7 +11,7 @@ const levels = {
     enemies: ["week_slime"]
   },
   level_2: {
-    enemies: ["red_guy", "tongue_monster"]
+    enemies: ["red_guy"]
   },
   level_3: {
     enemies: ["week_slime", "week_slime", "week_slime"]
@@ -78,14 +78,17 @@ function getEnemyDropTreeElements(enemy) {
       const items = Array.isArray(row.items) ? row.items : [row.items];
       const amount = row.amount?.slice?.();
       const amounts = row.amount ? Array.isArray(amount) ? amount.length == 2 ? [amount[0] +"-"+ amount[1]] : amount.sort((e1, e2) => e1 - e2) : [row.amount] : [0];
+      const currentPercentage = Math.floor(row.chance * 100);
+      const percentageColor = getPercentageColor(currentPercentage);
       slotsDiv.classList.add("items");
-      slotsDiv.setAttribute("percentage", Math.floor(row.chance * 100));
-      if(items.length > 1) addHover(slotsDiv, "Tämä on Monta Tavaraa");
+      slotsDiv.setAttribute("percentage", currentPercentage);
+      if(items.length > 1) addHover(slotsDiv, `You will get these\nitems §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
+      else addHover(slotsDiv, `You will get this\nitem §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
       items.forEach(item => {
         const amountDiv = document.createElement("div");
         amountDiv.classList.add("amount");
         amounts.forEach(amount => {
-          const div = document.createElement("div");
+          const [div] = emmet(".slot");
           const img = document.createElement("img");
           const p = document.createElement("p");
 
@@ -95,9 +98,9 @@ function getEnemyDropTreeElements(enemy) {
             slotsDiv.append(amountDiv);
           } else slotsDiv.append(div);
 
-          addHover(div, "loool" ?? "");
+          const nItem = new Item(item, player);
+          addHover(div, nItem.hoverText() ?? "");
 
-          div.classList.add("slot");  
           img.src = "./images/" + item.image;
           div.append(img, p);
         });
@@ -108,15 +111,17 @@ function getEnemyDropTreeElements(enemy) {
       const totalChance = row.reduce((acc, item) => item.type == "empty" ? acc : acc + item.chance, 0) ?? 1;
       let totalPercentage = 100;
       row.forEach(row => {
-        if(row.type == "empty" || !row.items) return totalPercentage -= Math.floor((row.chance || 0) * 100);
+        if(row.type == "empty" || !row.items) return totalPercentage -= Math.floor((row.chance / (totalChance + row.chance) || 0) * 100);
         const items = Array.isArray(row.items) ? row.items : [row.items];
         const amount = row.amount?.slice?.();
         const amounts = row.amount ? Array.isArray(amount) ? amount.length == 2 ? [amount[0] +"-"+ amount[1]] : amount.sort((e1, e2) => e1 - e2) : [row.amount] : [0];
         const itemsDiv = document.createElement("div");
+        const currentPercentage = Math.floor(row.chance / totalChance * 100);
+        const percentageColor = getPercentageColor(currentPercentage);
         itemsDiv.classList.add("items");
-        itemsDiv.setAttribute("percentage", Math.floor(row.chance / totalChance * 100));
-        if(items.length > 1) addHover(itemsDiv, ["", "Tämä on Monta Tavaraa"], ["shiftKey"]);
-        // else addHover(itemsDiv, "");
+        itemsDiv.setAttribute("percentage", currentPercentage);
+        if(items.length > 1) addHover(itemsDiv, `You will get these\nitems §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
+        else addHover(itemsDiv, `You will get this\nitem §<b>700<b><c>${percentageColor}<c>${currentPercentage}%§ of the time`);
         slotsDiv.append(itemsDiv);
         items.forEach(item => {
           const amountDiv = document.createElement("div");
@@ -125,7 +130,7 @@ function getEnemyDropTreeElements(enemy) {
             amountDiv.classList.add("amount");
           }
           amounts.forEach(amount => {
-            const div = document.createElement("div");
+            const [div] = emmet(".slot")
             const img = document.createElement("img");
             const p = document.createElement("p");
 
@@ -133,9 +138,8 @@ function getEnemyDropTreeElements(enemy) {
             if(amounts.length > 2) amountDiv.append(div);
             else itemsDiv.append(div);
 
-            div.classList.add("slot")
-
-            addHover(div, "loool" ?? "");
+            const nItem = new Item(item, player);
+            addHover(div, nItem.hoverText() ?? "");
 
             img.src = "./images/" + item.image;
             div.append(img, p);
@@ -143,10 +147,14 @@ function getEnemyDropTreeElements(enemy) {
         });
       });
       slotsDiv.setAttribute("percentage", totalPercentage);
-      const percentageColor = ["#ff6363", "#fcff63", "#73ff63"][[35, 50, 100].findIndex(e => e >= totalPercentage)];
-      addHover(slotsDiv, ["", `One of the following items \nwill drop §<c>${percentageColor}<c><b>700<b>${totalPercentage}% §of the time`], ["shiftKey"]);
+      const percentageColor = getPercentageColor(totalPercentage);
+      addHover(slotsDiv, [`One of the following items \nwill drop §<c>${percentageColor}<c><b>700<b>${totalPercentage}% §of the time`]);
     } return slotsDiv;
   }) ?? [];
+}
+
+function getPercentageColor(val = 0) {
+  return ["#ff6363", "#fcff63", "#73ff63"][[35, 50, 100].findIndex(e => e >= val)];
 }
 
 levelMenu.querySelector(".levelInfoScreen .close").addEventListener("click", () => {

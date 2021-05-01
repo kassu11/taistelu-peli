@@ -36,10 +36,20 @@ const items = {
       {id: "Regeneration", power: 3, duration: 5, effectStatus: "good"}
     ],
     giveEffect: [
-      {id: "Strength", power: 50, duration: 20, effectStatus: "good"}
+      // {id: "Strength", power: 50, duration: 20, effectStatus: "good"}
     ],
     amount: 2,
     needTarget: false
+  },
+  hp_pot: {
+    id: "hp_pot",
+    name: "Elämä pullo",
+    healV: 10,
+    useTime: 1,
+    amount: 10,
+    needTarget: false,
+    image: "hpPottu.png",
+    mana: 15
   },
   suicideStick: {
     id: "suicideStick",
@@ -75,16 +85,6 @@ const items = {
     canEquipTo: "legs",
     hp: 50
   },
-  hp_pot: {
-    id: "hp_pot",
-    name: "elämä pullo",
-    healV: 10,
-    useTime: 1,
-    amount: 10,
-    needTarget: false,
-    image: "hpPottu.png",
-    mana: 15
-  }
 }
 
 function Item(item, user) {

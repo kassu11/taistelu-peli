@@ -114,6 +114,11 @@
 
       .enemyRow {
         display: flex;
+        &:not(:first-child) {
+          margin-top: 5px;
+          border-top: 2px solid #8b8b8b;
+          padding-top: 5px;
+        }
 
         @at-root #levelMenu .enemyCard {
           display: flex;
@@ -143,6 +148,7 @@
         @at-root #levelMenu .dropTree {
           display: flex;
           margin: 10px 0px 0px;
+          padding-right: 5px;
 
           .row, .items {
             position: relative;
@@ -175,7 +181,7 @@
           }
 
           .row {
-            margin: 0px 1px;
+            margin: 0px 3px;
             background: #2f2f2f;
             padding: 3px 5px 8px;
             &::after {background: #1f1f1f}
@@ -184,9 +190,9 @@
           
           .items {
             margin: 23px 3px 0px;
-            padding: 5px;
+            padding: 10px 5px 5px;
             background: #808080;
-            @at-root #levelMenu .dropTree > .items {top: -23px}
+            @at-root #levelMenu .dropTree > .items {margin-top: 0px}
 
             .amount {
               display: flex;
@@ -246,8 +252,6 @@
       
             &::after {
               padding: 0px 4px;
-              margin: 0;
-              top: -12px;
               background: #565656;
             }
           }

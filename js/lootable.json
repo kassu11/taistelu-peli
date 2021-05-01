@@ -1,0 +1,18 @@
+[
+  {
+    "type": "all",
+    "chance": 100,
+    "items": [
+      {"item": {}, "amount": 10},
+      {
+        "type": "one",
+        "chance": 20,
+        "items": [
+          {"item": {}, "amount": 10},
+          {"item": {}, "amount": 10}
+        ]
+      }
+    ]
+  },
+  {"item": {}, "amount": 5, "chance": 100}
+]

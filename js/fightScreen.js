@@ -26,7 +26,7 @@ function startLevel(lvlId, time) {
   player.mp = player.maxMp;
   if(!(time > 0)) player.effects = [];
   figtingScreen.querySelectorAll(".playerBox > div").forEach(container => container.style = null);
-  setTimeout(e => figtingScreen.querySelector("#victoryDrop").innerHTML = "", 400);
+  Array.from(figtingScreen.querySelector("#victoryDrop").children).forEach(e => removeElement(e, 400));
   updateHotbarHovers();
   updatePlayerBars();
   updatePlayerEffectBox();
