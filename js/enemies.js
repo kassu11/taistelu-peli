@@ -7,6 +7,9 @@ const enemies = {
       {...items["hp_pot"], "amount": 4},
       {...items["weak_stick"]},
     ],
+    effects: [
+      {id: "Poison", power: 5, duration: 6},
+    ],
     drops: [
       {
         "type": "one",
@@ -121,6 +124,15 @@ const enemies = {
     img: "vihu1.png",
     imgTop: 1,
   },
+  devil: {
+    id: "devil",
+    maxHp: 20,
+    maxMp: 10,
+    items: [
+      items["weak_stick"],
+    ],
+    img: "hahmo1.png",
+  },
 }
 
 function Enemy(enemy) {
@@ -177,3 +189,30 @@ function dropsFromLootTable(lootTable = []) {
 
   return items;
 }
+
+// {
+//   let tulos = 0;
+//   const maxNum = 10000;
+  
+//   const A = .9
+//   const B = .8
+//   const C = .5
+//   const D = .5
+//   const E = .5
+  
+//   console.log(tulos / maxNum);
+  
+//   console.log(A + B - A * B);
+//   console.log(A + B + C - (A * B) - (A * C) - (B * C) + (A * B * C));
+  
+//   console.log(
+//     (A + B + C + D) - 
+//     (A * B) - (A * C) - (A * D) - 
+//     (B * C) - (B * D) - 
+//     (C * D) +
+//     (A * B * C) + (A * B * D) +
+//     (A * C * D) +
+//     (B * C * D) -
+//     (A * B * C * D)
+//   );
+// }

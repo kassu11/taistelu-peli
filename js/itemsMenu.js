@@ -69,6 +69,12 @@ function updateItemsMenuHotbar() {
 itemsMenu.querySelector("#levelsMenuButton").addEventListener("click", e => {
   document.body.classList = "levelMenu"
 });
+itemsMenu.querySelector("#armorButton").addEventListener("click", e => {
+  itemsMenu.classList = "inv"
+});
+itemsMenu.querySelector("#craftingMenuButton").addEventListener("click", e => {
+  itemsMenu.classList = "craft"
+});
 
 itemsMenu.addEventListener("click", ({target, x, y}) => {
   const container = itemsMenu.querySelector("#itemMenuPopUp .container");
@@ -230,3 +236,7 @@ function itemsMenuInventoryResize() {
   const num1 = (innerWidth - 550);
   itemsMenu.querySelector(".inventoryContainer").style.width = Math.max(num1 - 70 - num1 % 80, 0) + "px";
 } itemsMenuInventoryResize();
+
+
+
+const allCraftableItems = Object.values(items);

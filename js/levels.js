@@ -22,6 +22,12 @@ const levels = {
   level_5: {
     enemies: ["week_slime", "fish_dude", "week_slime"]
   },
+  level_6: {
+    enemies: ["devil", "fish_dude"]
+  },
+  level_7: {
+    enemies: ["tongue_monster", "tongue_monster", "devil"]
+  },
 }
 
 document.querySelector("#inventoryButton").addEventListener("click", () => {
@@ -49,10 +55,8 @@ for(const [key, value] of Object.entries(levels)) {
     levelMenu.querySelector(".levelInfoScreen .enemyRowContainer").innerHTML = "";
 
     const enemyRow = value.enemies.map(id => {
-      const [row] = emmet("div.enemyRow>.enemyCard+.dropTree");
-      const [img] = emmet("img");
-      img.src = "./images/" + enemies[id].img;
-      row.querySelector(".enemyCard").append(img);
+      const [row] = emmet("div.enemyRow>.enemyCard>img^div.dropTree");
+      row.querySelector(".enemyCard>img").src = "./images/" + enemies[id].img;
       row.querySelector(".dropTree").append(...getEnemyDropTreeElements(id));
       return row;
     });
@@ -131,7 +135,7 @@ function getEnemyDropTreeElements(enemy) {
       const nItem = new Item(arr.item);
       elem.append(amountElem);
       addHover(amountElem, nItem.hoverText() ?? "");
-      arr.amount.slice().sort().reverse().forEach(amount => {
+      arr.amount.slice().sort((e, v) => e - v).forEach(amount => {
         const [slot] = emmet(".slot>img+p");
         slot.querySelector("img").src = "./images/" + nItem.image;
         slot.querySelector("p").textContent = amount
@@ -145,7 +149,7 @@ function getEnemyDropTreeElements(enemy) {
       amountElem.setAttribute("percentage", per ?? arr.chance ?? "");
       addHover(amountElem, nItem.hoverText() ?? "");
       elem.append(amountElem);
-      arr.amount.slice().sort().reverse().forEach(amount => {
+      arr.amount.slice().sort((e, v) => e - v).forEach(amount => {
         const [slot] = emmet(".slot>img+p");
         slot.querySelector("img").src = "./images/" + nItem.image;
         slot.querySelector("p").textContent = amount

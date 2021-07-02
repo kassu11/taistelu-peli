@@ -18,17 +18,27 @@ function Effect(effect) {
       this.img = "./images/miekka1.png";
       break;
     }
+    case "Poison": {
+      const poisonArr = [3, 5, 10, 15, 30];
+      if(effect.power <= 0) this.poisonHP = 3;
+      else if(effect.power <= poisonArr.length) this.poisonHP = poisonArr[effect.power - 1];
+      else this.poisonHP = Math.round((effect.power - 3) ** 2 * 10 / 5) * 5;
+      this.img = "./images/miekka1.png";
+      break;
+    }
   }
 }
 
 function giveEffectsToPlAndEn() {
   player.effects.forEach(effect => {
     if(effect.regenHP) player.hp = Math.min(player.maxHpF(), player.hp + effect.regenHP);
+    if(effect.poisonHP) player.hp -= effect.poisonHP;
   });
 
   currentLevel.enemies.forEach(enemy => {
     enemy.effects.forEach((effect, card) => {
       if(effect.regenHP) enemy.hp = Math.min(enemy.maxHp, enemy.hp + effect.regenHP);
+      if(effect.poisonHP) enemy.hp -= effect.poisonHP;
       updateEnemyCard(card);
     });
   });

@@ -98,15 +98,21 @@ figtingScreen.querySelector(".endFightBox").addEventListener("click", () => {
   player.hp = 0;
 });
 
-figtingScreen.querySelector(".skipRoundBox").addEventListener("click", () => {
+figtingScreen.querySelector(".skipRoundBox").addEventListener("click", async () => {
   if(currentLevel.enemyRounds !== 0) return;
   currentLevel.enemyRounds = 1;
   giveEffectsToPlAndEn();
   updateNextRound();
-  startEnemyTurn();
+
+  const currentEnemyCount = currentLevel.enemies.size;
+  for(const [card, enemy] of currentLevel.enemies) if(enemy.hp <= 0) {removeDeadEnemy(card, enemy); await sleep(50)};
+  
+  if(currentEnemyCount == currentLevel.enemies.size) startEnemyTurn();
+  else if(currentLevel.enemies.size == 0) playerWonTheBattle();
+  else setTimeout(startEnemyTurn, 1900);
 });
 
-document.querySelector(".enemyContainer").addEventListener("click", e => {
+document.querySelector(".enemyContainer").addEventListener("click", async (e) => {
   const item = player.hotbar[player.currentSlot];
   const target = findParentElementWithClass(e.target, "enemyCard");
   const enemy = !item.needTarget ? {} : currentLevel.enemies.get(target);
@@ -135,11 +141,13 @@ document.querySelector(".enemyContainer").addEventListener("click", e => {
   }
 
   updateNextRound();
-  if(enemy.hp <= 0) {
-    removeDeadEnemy(target, enemy);
-    if(currentLevel.enemies.size == 0) playerWonTheBattle();
-    else setTimeout(startEnemyTurn, 1900);
-  } else startEnemyTurn();  
+  
+  const currentEnemyCount = currentLevel.enemies.size;
+  for(const [card, enemy] of currentLevel.enemies) if(enemy.hp <= 0) {removeDeadEnemy(card, enemy); await sleep(50)};
+  
+  if(currentEnemyCount == currentLevel.enemies.size) startEnemyTurn();
+  else if(currentLevel.enemies.size == 0) playerWonTheBattle();
+  else setTimeout(startEnemyTurn, 1900);
 });
 
 function findParentElementWithClass(elem, text) {

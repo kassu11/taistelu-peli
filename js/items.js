@@ -5,7 +5,14 @@ const items = {
     minMeleDmg: 10,
     maxMeleDmg: 20,
     useTime: 2,
-    image: "miekka1.png"
+    image: "miekka1.png",
+    craftingRecipes: [
+      {
+        items: [
+
+        ],
+      }
+    ]
   },
   stone_sword: {
     id: "stone_sword",
@@ -33,13 +40,14 @@ const items = {
     // particle: "explosion",
     selfEffect: [
       {id: "Strength", power: 5, duration: 3, effectStatus: "good"},
-      {id: "Regeneration", power: 3, duration: 5, effectStatus: "good"}
+      {id: "Regeneration", power: 3, duration: 5, effectStatus: "good"},
+      {id: "Poison", power: 1, duration: 20, effectStatus: "bad"},
     ],
     giveEffect: [
-      // {id: "Strength", power: 50, duration: 20, effectStatus: "good"}
+      {id: "Poison", power: 1, duration: 20, effectStatus: "bad"}
     ],
     amount: 2,
-    needTarget: false
+    needTarget: true
   },
   hp_pot: {
     id: "hp_pot",

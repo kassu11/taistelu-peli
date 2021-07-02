@@ -7,7 +7,7 @@ let player = new Player({
     {...items["weak_stick"], slot: "hotbarSlot1"},
     {...items["stone_sword"], slot: "hotbarSlot2"},
     // {...items["suicideStick"], slot: "hotbarSlot3"},
-    // {...items["dmgBooster"], slot: "hotbarSlot4"},
+    {...items["dmgBooster"], slot: "hotbarSlot4"},
     // {id: "dmgBooster", slot: "hotbarSlot5"},
   ],
   currentSlot: "slot1",
